@@ -1,4 +1,4 @@
-define(["exports", "./component", "./store", "./actions"], function (exports, _component, _store, _actions) {
+define(["exports", "./application", "./component", "./store", "./actions"], function (exports, _application, _component, _store, _actions) {
     "use strict";
 
     var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -7,7 +7,7 @@ define(["exports", "./component", "./store", "./actions"], function (exports, _c
 
     var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
-    var Application = _interopRequire(_component);
+    var Application = _interopRequire(_application);
 
     var Component = _interopRequire(_component);
 
