@@ -1,4 +1,4 @@
-import Application from './component';
+import Application from './application';
 import Component from './component';
 import Store from './store';
 import Actions from './actions';

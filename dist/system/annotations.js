@@ -1,10 +1,11 @@
-System.register(["./component", "./store", "./actions"], function (_export) {
+System.register(["./application", "./component", "./store", "./actions"], function (_export) {
     "use strict";
 
     var Application, Component, Store, Actions, _prototypeProperties, _classCallCheck, AnnotationsCache;
     return {
-        setters: [function (_component) {
-            Application = _component["default"];
+        setters: [function (_application) {
+            Application = _application["default"];
+        }, function (_component) {
             Component = _component["default"];
         }, function (_store) {
             Store = _store["default"];
