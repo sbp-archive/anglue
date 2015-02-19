@@ -94,7 +94,6 @@ System.register([], function (_export) {
                          */
                         value: function applyDecorators(instance) {
                             var decorators = this.decorators;
-
                             for (var _iterator = decorators[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
                                 var decorator = _step.value;
                                 decorator.decorate(instance);
@@ -110,9 +109,9 @@ System.register([], function (_export) {
                          * @param  {Array} classes An array of classes you want to module names for
                          * @return {Array} The name of the angular modules for these classes
                          */
-                        value: function getModuleNames(classes) {
+                        value: function getModuleNames() {
+                            var classes = arguments[0] === undefined ? [] : arguments[0];
                             var names = [];
-
                             for (var _iterator = classes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
                                 var cls = _step.value;
                                 var annotation = cls.annotation;
