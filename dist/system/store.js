@@ -42,7 +42,7 @@ System.register(["angular", "./annotation"], function (_export) {
                     },
                     getInjectionTokens: {
                         value: function getInjectionTokens() {
-                            return ["LuxaFlux", "ApplicationDispatcher"].concat(_get(Object.getPrototypeOf(Store.prototype), "getInjectionTokens", this).call(this));
+                            return ["LuxyFlux", "ApplicationDispatcher"].concat(_get(Object.getPrototypeOf(Store.prototype), "getInjectionTokens", this).call(this));
                         },
                         writable: true,
                         configurable: true
@@ -52,14 +52,14 @@ System.register(["angular", "./annotation"], function (_export) {
                             var TargetCls = this.targetCls;
                             var annotation = this;
 
-                            return function (LuxaFlux, ApplicationDispatcher) {
+                            return function (LuxyFlux, ApplicationDispatcher) {
                                 var injected = Array.from(arguments).slice(2);
                                 var instance = _applyConstructor(TargetCls, _toConsumableArray(injected));
 
                                 annotation.applyInjectionBindings(instance, injected);
                                 annotation.applyDecorators(instance);
 
-                                return LuxaFlux.createActions({
+                                return LuxyFlux.createStore({
                                     name: "store." + annotation.name,
                                     dispatcher: ApplicationDispatcher,
                                     handlers: TargetCls.handlers,

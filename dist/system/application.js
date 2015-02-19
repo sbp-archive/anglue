@@ -30,7 +30,7 @@ System.register(["angular", "./annotation"], function (_export) {
                     dependencies: {
                         get: function () {
                             var targetCls = this.targetCls;
-                            return ["ui.router", "connect-luxaflux"].concat(targetCls.dependencies, this.getModuleNames(targetCls.components), this.getModuleNames(targetCls.stores), this.getModuleNames(targetCls.actions));
+                            return ["ui.router", "luxyflux"].concat(targetCls.dependencies, this.getModuleNames(targetCls.components), this.getModuleNames(targetCls.stores), this.getModuleNames(targetCls.actions));
                         },
                         configurable: true
                     },
@@ -47,17 +47,17 @@ System.register(["angular", "./annotation"], function (_export) {
                         configurable: true
                     },
                     configure: {
-                        value: function configure() {
+                        value: function configure(angularModule) {
                             // The ApplicationDispatcher is the (singleton) dispatcher instance used
                             // in our entire application. Every ActionCreator in this app dispatches
                             // through this instance and all app stores are registered to it
-                            this.module.service("ApplicationDispatcher", ["LuxaFluxDispatcher", "$rootScope", function (Dispatcher, $rootScope) {
+                            angularModule.service("ApplicationDispatcher", ["LuxyFluxDispatcher", "$rootScope", function (Dispatcher, $rootScope) {
                                 return new Dispatcher("ApplicationDispatcher", $rootScope);
                             }]);
 
                             var routes = this.targetCls.routes;
                             if (routes) {
-                                this._module.config(["$stateProvider", "$urlRouterProvider", function routerConfig($stateProvider, $urlRouterProvider) {
+                                angularModule.config(["$stateProvider", "$urlRouterProvider", function routerConfig($stateProvider, $urlRouterProvider) {
                                     if (routes.defaultRoute) {
                                         $urlRouterProvider.otherwise(routes.defaultRoute);
                                         delete routes.defaultRoute;

@@ -6,7 +6,7 @@ export class Application extends Annotation {
         var targetCls = this.targetCls;
         return [
             'ui.router',
-            'connect-luxaflux'
+            'luxyflux'
         ].concat(
             targetCls.dependencies,
             this.getModuleNames(targetCls.components),
@@ -28,12 +28,12 @@ export class Application extends Annotation {
         return this._module;
     }
 
-    configure() {
+    configure(angularModule) {
         // The ApplicationDispatcher is the (singleton) dispatcher instance used
         // in our entire application. Every ActionCreator in this app dispatches
         // through this instance and all app stores are registered to it
-        this.module.service('ApplicationDispatcher', [
-            'LuxaFluxDispatcher',
+        angularModule.service('ApplicationDispatcher', [
+            'LuxyFluxDispatcher',
             '$rootScope',
             function(Dispatcher, $rootScope) {
                 return new Dispatcher(
@@ -45,7 +45,7 @@ export class Application extends Annotation {
 
         var routes = this.targetCls.routes;
         if (routes) {
-            this._module.config([
+            angularModule.config([
                 '$stateProvider',
                 '$urlRouterProvider',
                 function routerConfig($stateProvider, $urlRouterProvider) {

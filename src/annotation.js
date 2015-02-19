@@ -44,7 +44,7 @@ export class Annotation {
         var injections = this.injections;
 
         Object.keys(injections).forEach((binding, index) => {
-            Object.defineProperty(instane, binding, {
+            Object.defineProperty(instance, binding, {
                 value: injected[index]
             });
         });
@@ -61,6 +61,7 @@ export class Annotation {
      */
     applyDecorators(instance) {
         var decorators = this.decorators;
+
         for (let decorator of decorators) {
             decorator.decorate(instance);
         }
@@ -73,8 +74,9 @@ export class Annotation {
      */
     getModuleNames(classes) {
         var names = [];
-        for (cls of classes) {
-            var annotation = cls.annotation;
+
+        for (let cls of classes) {
+            let annotation = cls.annotation;
             if (annotation) {
                 names.push(annotation.module.name);
             }

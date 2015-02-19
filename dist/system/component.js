@@ -31,7 +31,6 @@ System.register(["angular", "./annotation"], function (_export) {
                 _prototypeProperties(Component, null, {
                     controllerCls: {
                         get: function () {
-                            var TargetCls = this.targetCls;
                             var annotation = this;
 
                             return (function (_targetCls) {
@@ -43,7 +42,7 @@ System.register(["angular", "./annotation"], function (_export) {
                                     annotation.applyInjectionBindings(this, injected);
                                     annotation.applyDecorators(this);
 
-                                    _get(Object.getPrototypeOf(controllerCls.prototype), "constructor", this).apply(this, arguments);
+                                    _get(Object.getPrototypeOf(controllerCls.prototype), "constructor", this).apply(this, injected);
 
                                     if (this.activate instanceof Function) {
                                         this.activate();

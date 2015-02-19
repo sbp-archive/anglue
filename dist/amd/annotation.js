@@ -69,7 +69,7 @@ define(["exports"], function (exports) {
                     var injections = this.injections;
 
                     Object.keys(injections).forEach(function (binding, index) {
-                        Object.defineProperty(instane, binding, {
+                        Object.defineProperty(instance, binding, {
                             value: injected[index]
                         });
                     });
@@ -90,6 +90,7 @@ define(["exports"], function (exports) {
                  */
                 value: function applyDecorators(instance) {
                     var decorators = this.decorators;
+
                     for (var _iterator = decorators[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
                         var decorator = _step.value;
                         decorator.decorate(instance);
@@ -107,8 +108,9 @@ define(["exports"], function (exports) {
                  */
                 value: function getModuleNames(classes) {
                     var names = [];
+
                     for (var _iterator = classes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
-                        cls = _step.value;
+                        var cls = _step.value;
                         var annotation = cls.annotation;
                         if (annotation) {
                             names.push(annotation.module.name);

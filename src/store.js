@@ -9,7 +9,7 @@ export class Store extends Annotation {
 
     getInjectionTokens() {
         return [
-            'LuxaFlux',
+            'LuxyFlux',
             'ApplicationDispatcher'
         ].concat(super.getInjectionTokens());
     }
@@ -18,14 +18,14 @@ export class Store extends Annotation {
         var TargetCls = this.targetCls;
         var annotation = this;
 
-        return function(LuxaFlux, ApplicationDispatcher) {
+        return function(LuxyFlux, ApplicationDispatcher) {
             var injected = Array.from(arguments).slice(2);
             var instance = new TargetCls(...injected);
 
             annotation.applyInjectionBindings(instance, injected);
             annotation.applyDecorators(instance);
 
-            return LuxaFlux.createActions({
+            return LuxyFlux.createStore({
                 name: 'store.' + annotation.name,
                 dispatcher: ApplicationDispatcher,
                 handlers: TargetCls.handlers,
