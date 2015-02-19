@@ -1,10 +1,11 @@
+import Application from './component';
 import Component from './component';
 import Store from './store';
 import Actions from './actions';
 
 export {Component, Store, Actions};
 
-export class Annotations {
+export class AnnotationsCache {
     constructor() {
         this.components = new Map();
         this.stores = new Map();
@@ -20,7 +21,20 @@ export class Annotations {
     }
 
     get Actions() {
-        return ActionCreators;
+        return Actions;
+    }
+
+    get Application() {
+        return Application;
+    }
+
+    getApplication(name, targetCls) {
+        var application = this.components.get(name);
+        if (!application) {
+            application = new Application(name, targetCls);
+            this.components.set(name, application);
+        }
+        return application;
     }
 
     getComponent(name, targetCls) {
@@ -50,4 +64,4 @@ export class Annotations {
         return actions;
     }
 }
-export default new Annotations;
+export default new AnnotationsCache();

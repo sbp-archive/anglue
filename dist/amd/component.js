@@ -1,4 +1,4 @@
-define(["exports", "module", "./annotation"], function (exports, module, _annotation) {
+define(["exports", "angular", "./annotation"], function (exports, _angular, _annotation) {
     "use strict";
 
     var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -11,9 +11,11 @@ define(["exports", "module", "./annotation"], function (exports, module, _annota
 
     var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+    var angular = _interopRequire(_angular);
+
     var Annotation = _interopRequire(_annotation);
 
-    var Component = (function (Annotation) {
+    var Component = exports.Component = (function (Annotation) {
         function Component() {
             _classCallCheck(this, Component);
 
@@ -25,70 +27,59 @@ define(["exports", "module", "./annotation"], function (exports, module, _annota
         _inherits(Component, Annotation);
 
         _prototypeProperties(Component, null, {
+            controllerCls: {
+                get: function () {
+                    var TargetCls = this.targetCls;
+                    var annotation = this;
+
+                    return (function (_targetCls) {
+                        function controllerCls() {
+                            _classCallCheck(this, controllerCls);
+
+                            var injected = Array.from(arguments);
+
+                            annotation.applyInjectionBindings(this, injected);
+                            annotation.applyDecorators(this);
+
+                            _get(Object.getPrototypeOf(controllerCls.prototype), "constructor", this).apply(this, arguments);
+
+                            if (this.activate instanceof Function) {
+                                this.activate();
+                            }
+                        }
+
+                        _inherits(controllerCls, _targetCls);
+
+                        return controllerCls;
+                    })(this.targetCls);
+                },
+                configurable: true
+            },
+            dependencies: {
+                get: function () {
+                    var targetCls = this.targetCls;
+                    return targetCls.dependencies.concat(this.getModuleNames(targetCls.components));
+                },
+                configurable: true
+            },
             module: {
                 get: function () {
                     var _this = this;
                     if (!this._module) {
-                        var name;
-                        var injections;
-                        var decorators;
-                        var controllerArray;
-                        var ComponentCls;
-                        var componentAnnotation;
-                        (function () {
-                            name = _this.name;
-                            injections = _this.injections;
-                            decorators = _this.decorators;
-                            controllerArray = [];
-                            ComponentCls = _this.targetCls;
-                            componentAnnotation = _this;
+                        var name = this.name;
 
+                        this._module = angular.module("components." + name, this.dependencies);
 
-                            Object.keys(injections).forEach(function (binding) {
-                                controllerArray.push(injections[binding]);
-                            });
+                        this._module.directive(name, function () {
+                            return {
+                                restrict: "E",
+                                controllerAs: name,
+                                bindToController: true,
+                                controller: _this.getInjectionTokens().concat([_this.controllerCls])
+                            };
+                        });
 
-                            var ControllerCls = (function (ComponentCls) {
-                                function ControllerCls() {
-                                    var _this2 = this;
-                                    _classCallCheck(this, ControllerCls);
-
-                                    var injected = Array.from(arguments);
-                                    Object.keys(injections).forEach(function (binding, index) {
-                                        Object.defineProperty(_this2, binding, { value: injected[index] });
-                                    });
-                                    Object.defineProperty(this, "_componentAnnotation", { value: componentAnnotation });
-
-                                    for (var _iterator = decorators[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
-                                        var decorator = _step.value;
-                                        decorator.decorate(this);
-                                    }
-
-                                    _get(Object.getPrototypeOf(ControllerCls.prototype), "constructor", this).apply(this, arguments);
-
-                                    if (this.activate instanceof Function) {
-                                        this.activate();
-                                    }
-                                }
-
-                                _inherits(ControllerCls, ComponentCls);
-
-                                return ControllerCls;
-                            })(ComponentCls);
-
-                            ;
-                            controllerArray.push(ControllerCls);
-
-                            _this._module = angular.module("components." + name, _this.dependencies);
-                            _this._module.directive(name, function () {
-                                return {
-                                    restrict: "E",
-                                    controllerAs: name,
-                                    bindToController: true,
-                                    controller: controllerArray
-                                };
-                            });
-                        })();
+                        this.configure(this._module);
                     }
 
                     return this._module;
@@ -99,7 +90,9 @@ define(["exports", "module", "./annotation"], function (exports, module, _annota
 
         return Component;
     })(Annotation);
-
-    module.exports = Component;
+    exports["default"] = Component;
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
 });
 //# sourceMappingURL=component.js.map
