@@ -3,7 +3,6 @@ import Annotation from './annotation';
 
 export class Component extends Annotation {
     get controllerCls() {
-        var TargetCls = this.targetCls;
         var annotation = this;
 
         return class controllerCls extends this.targetCls {
@@ -13,13 +12,13 @@ export class Component extends Annotation {
                 annotation.applyInjectionBindings(this, injected);
                 annotation.applyDecorators(this);
 
-                super(...arguments);
+                super(...injected);
 
                 if (this.activate instanceof Function) {
                     this.activate();
                 }
             }
-        }
+        };
     }
 
     get dependencies() {
