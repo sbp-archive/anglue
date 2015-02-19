@@ -26,6 +26,7 @@ System.register(["./component", "./store", "./actions"], function (_export) {
                 function AnnotationsCache() {
                     _classCallCheck(this, AnnotationsCache);
 
+                    this.applications = new Map();
                     this.components = new Map();
                     this.stores = new Map();
                     this.actions = new Map();
@@ -58,10 +59,10 @@ System.register(["./component", "./store", "./actions"], function (_export) {
                     },
                     getApplication: {
                         value: function getApplication(name, targetCls) {
-                            var application = this.components.get(name);
+                            var application = this.applications.get(name);
                             if (!application) {
                                 application = new Application(name, targetCls);
-                                this.components.set(name, application);
+                                this.applications.set(name, application);
                             }
                             return application;
                         },

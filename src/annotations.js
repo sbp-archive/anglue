@@ -7,6 +7,7 @@ export {Component, Store, Actions};
 
 export class AnnotationsCache {
     constructor() {
+        this.applications = new Map();
         this.components = new Map();
         this.stores = new Map();
         this.actions = new Map();
@@ -29,10 +30,10 @@ export class AnnotationsCache {
     }
 
     getApplication(name, targetCls) {
-        var application = this.components.get(name);
+        var application = this.applications.get(name);
         if (!application) {
             application = new Application(name, targetCls);
-            this.components.set(name, application);
+            this.applications.set(name, application);
         }
         return application;
     }
