@@ -1,5 +1,5 @@
 {
-  "name": "connect-annoflux",
+  "name": "anglue",
   "version": "0.0.1",
   "authors": [
     "Tommy Maintz <tommy.maintz@gmail.com>"
@@ -21,7 +21,8 @@
   ],
   "dependencies": {
     "angular": "~1.3.13",
-    "connect-luxaflux": "git@github.schubergphilis.com:frontend/connect-luxaflux.git#*"
+    "angular-ui-router": "~0.2.11",
+    "luxyflux": "git@github.schubergphilis.com:frontend/luxyflux.git#*"
   },
   "devDependencies": {
     "angular-mocks": "~1.3.13"

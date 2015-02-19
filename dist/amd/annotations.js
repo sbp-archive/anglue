@@ -7,6 +7,8 @@ define(["exports", "./component", "./store", "./actions"], function (exports, _c
 
     var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+    var Application = _interopRequire(_component);
+
     var Component = _interopRequire(_component);
 
     var Store = _interopRequire(_store);
@@ -16,16 +18,16 @@ define(["exports", "./component", "./store", "./actions"], function (exports, _c
     exports.Component = Component;
     exports.Store = Store;
     exports.Actions = Actions;
-    var Annotations = exports.Annotations = (function () {
-        function Annotations() {
-            _classCallCheck(this, Annotations);
+    var AnnotationsCache = exports.AnnotationsCache = (function () {
+        function AnnotationsCache() {
+            _classCallCheck(this, AnnotationsCache);
 
             this.components = new Map();
             this.stores = new Map();
             this.actions = new Map();
         }
 
-        _prototypeProperties(Annotations, null, {
+        _prototypeProperties(AnnotationsCache, null, {
             Component: {
                 get: function () {
                     return Component;
@@ -40,8 +42,26 @@ define(["exports", "./component", "./store", "./actions"], function (exports, _c
             },
             Actions: {
                 get: function () {
-                    return ActionCreators;
+                    return Actions;
                 },
+                configurable: true
+            },
+            Application: {
+                get: function () {
+                    return Application;
+                },
+                configurable: true
+            },
+            getApplication: {
+                value: function getApplication(name, targetCls) {
+                    var application = this.components.get(name);
+                    if (!application) {
+                        application = new Application(name, targetCls);
+                        this.components.set(name, application);
+                    }
+                    return application;
+                },
+                writable: true,
                 configurable: true
             },
             getComponent: {
@@ -82,9 +102,9 @@ define(["exports", "./component", "./store", "./actions"], function (exports, _c
             }
         });
 
-        return Annotations;
+        return AnnotationsCache;
     })();
-    exports["default"] = new Annotations();
+    exports["default"] = new AnnotationsCache();
     Object.defineProperty(exports, "__esModule", {
         value: true
     });

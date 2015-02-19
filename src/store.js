@@ -1,58 +1,52 @@
+import angular from 'angular';
 import Annotation from './annotation';
 
 export class Store extends Annotation {
+    get serviceName() {
+        var name = this.name;
+        return name[0].toUpperCase() + name.slice(1) + 'Store';
+    }
+
+    getInjectionTokens() {
+        return [
+            'LuxaFlux',
+            'ApplicationDispatcher'
+        ].concat(super.getInjectionTokens());
+    }
+
+    get factoryFn() {
+        var TargetCls = this.targetCls;
+        var annotation = this;
+
+        return function(LuxaFlux, ApplicationDispatcher) {
+            var injected = Array.from(arguments).slice(2);
+            var instance = new TargetCls(...injected);
+
+            annotation.applyInjectionBindings(instance, injected);
+            annotation.applyDecorators(instance);
+
+            return LuxaFlux.createActions({
+                name: 'store.' + annotation.name,
+                dispatcher: ApplicationDispatcher,
+                handlers: TargetCls.handlers,
+                decorate: instance
+            });
+        };
+    }
+
     get module() {
         if (!this._module) {
-            var name = this.name;
-            var injections = this.injections;
-            var decorators = this.decorators;
-            var factoryArray = ['LuxaFlux', 'ApplicationDispatcher'];
-            var StoreCls = this.targetCls;
-            var storeAnnotation = this;
-            var factoryName = name[0].toUpperCase() + name.slice(1) + 'Store';
-
-            Object.keys(injections).forEach((binding) => {
-                factoryArray.push(injections[binding]);
-            });
-
-            var factoryFn = function() {
-                var store = new StoreCls();
-                var args = Array.from(arguments);
-                var injected = args.slice(2);
-                Object.keys(injections).forEach((binding, index) => {
-                    Object.defineProperty(
-                        store,
-                        binding,
-                        {value: injected[index]}
-                    );
-                });
-                Object.defineProperty(
-                    store,
-                    '_storeAnnotation',
-                    {value: storeAnnotation}
-                );
-
-                for (let decorator of decorators) {
-                    decorator.decorate(this);
-                }
-
-                var LuxaFlux = args[0];
-                var ApplicationDispatcher = args[1];
-
-                return LuxaFlux.createStore({
-                    name: 'store.' + name,
-                    dispatcher: ApplicationDispatcher,
-                    handlers: StoreCls.handlers,
-                    decorate: store
-                });
-            };
-            factoryArray.push(factoryFn);
-
             this._module = angular.module(
-                'stores.' + name,
+                'stores.' + this.name,
                 this.dependencies
             );
-            this._module.factory(factoryName, factoryArray);
+
+            this._module.factory(
+                this.serviceName,
+                this.getInjectionTokens().concat([this.factoryFn])
+            );
+
+            this.configure(this._module);
         }
         return this._module;
     }

@@ -1,13 +1,21 @@
-define(["exports", "./annotation"], function (exports, _annotation) {
+define(["exports", "angular", "./annotation"], function (exports, _angular, _annotation) {
     "use strict";
 
     var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
+    var _applyConstructor = function (Constructor, args) { var instance = Object.create(Constructor.prototype); var result = Constructor.apply(instance, args); return result != null && (typeof result == "object" || typeof result == "function") ? result : instance; };
+
+    var _toConsumableArray = function (arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } };
+
     var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+    var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
     var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
     var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+    var angular = _interopRequire(_angular);
 
     var Annotation = _interopRequire(_annotation);
 
@@ -23,49 +31,50 @@ define(["exports", "./annotation"], function (exports, _annotation) {
         _inherits(Store, Annotation);
 
         _prototypeProperties(Store, null, {
+            serviceName: {
+                get: function () {
+                    var name = this.name;
+                    return name[0].toUpperCase() + name.slice(1) + "Store";
+                },
+                configurable: true
+            },
+            getInjectionTokens: {
+                value: function getInjectionTokens() {
+                    return ["LuxaFlux", "ApplicationDispatcher"].concat(_get(Object.getPrototypeOf(Store.prototype), "getInjectionTokens", this).call(this));
+                },
+                writable: true,
+                configurable: true
+            },
+            factoryFn: {
+                get: function () {
+                    var TargetCls = this.targetCls;
+                    var annotation = this;
+
+                    return function (LuxaFlux, ApplicationDispatcher) {
+                        var injected = Array.from(arguments).slice(2);
+                        var instance = _applyConstructor(TargetCls, _toConsumableArray(injected));
+
+                        annotation.applyInjectionBindings(instance, injected);
+                        annotation.applyDecorators(instance);
+
+                        return LuxaFlux.createActions({
+                            name: "store." + annotation.name,
+                            dispatcher: ApplicationDispatcher,
+                            handlers: TargetCls.handlers,
+                            decorate: instance
+                        });
+                    };
+                },
+                configurable: true
+            },
             module: {
                 get: function () {
                     if (!this._module) {
-                        var name = this.name;
-                        var injections = this.injections;
-                        var decorators = this.decorators;
-                        var factoryArray = ["LuxaFlux", "ApplicationDispatcher"];
-                        var StoreCls = this.targetCls;
-                        var storeAnnotation = this;
-                        var factoryName = name[0].toUpperCase() + name.slice(1) + "Store";
+                        this._module = angular.module("stores." + this.name, this.dependencies);
 
-                        Object.keys(injections).forEach(function (binding) {
-                            factoryArray.push(injections[binding]);
-                        });
+                        this._module.factory(this.serviceName, this.getInjectionTokens().concat([this.factoryFn]));
 
-                        var factoryFn = function () {
-                            var store = new StoreCls();
-                            var args = Array.from(arguments);
-                            var injected = args.slice(2);
-                            Object.keys(injections).forEach(function (binding, index) {
-                                Object.defineProperty(store, binding, { value: injected[index] });
-                            });
-                            Object.defineProperty(store, "_storeAnnotation", { value: storeAnnotation });
-
-                            for (var _iterator = decorators[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
-                                var decorator = _step.value;
-                                decorator.decorate(this);
-                            }
-
-                            var LuxaFlux = args[0];
-                            var ApplicationDispatcher = args[1];
-
-                            return LuxaFlux.createStore({
-                                name: "store." + name,
-                                dispatcher: ApplicationDispatcher,
-                                handlers: StoreCls.handlers,
-                                decorate: store
-                            });
-                        };
-                        factoryArray.push(factoryFn);
-
-                        this._module = angular.module("stores." + name, this.dependencies);
-                        this._module.factory(factoryName, factoryArray);
+                        this.configure(this._module);
                     }
                     return this._module;
                 },
