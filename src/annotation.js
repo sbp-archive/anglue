@@ -61,7 +61,6 @@ export class Annotation {
      */
     applyDecorators(instance) {
         var decorators = this.decorators;
-
         for (let decorator of decorators) {
             decorator.decorate(instance);
         }
@@ -72,9 +71,8 @@ export class Annotation {
      * @param  {Array} classes An array of classes you want to module names for
      * @return {Array} The name of the angular modules for these classes
      */
-    getModuleNames(classes) {
+    getModuleNames(classes = []) {
         var names = [];
-
         for (let cls of classes) {
             let annotation = cls.annotation;
             if (annotation) {

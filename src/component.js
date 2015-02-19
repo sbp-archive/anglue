@@ -23,7 +23,8 @@ export class Component extends Annotation {
 
     get dependencies() {
         var targetCls = this.targetCls;
-        return targetCls.dependencies.concat(
+        return [].concat(
+            targetCls.dependencies || [],
             this.getModuleNames(targetCls.components)
         );
     }

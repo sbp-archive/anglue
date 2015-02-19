@@ -57,7 +57,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
             dependencies: {
                 get: function () {
                     var targetCls = this.targetCls;
-                    return targetCls.dependencies.concat(this.getModuleNames(targetCls.components));
+                    return [].concat(targetCls.dependencies || [], this.getModuleNames(targetCls.components));
                 },
                 configurable: true
             },

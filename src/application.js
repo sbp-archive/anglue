@@ -8,7 +8,7 @@ export class Application extends Annotation {
             'ui.router',
             'luxyflux'
         ].concat(
-            targetCls.dependencies,
+            targetCls.dependencies || [],
             this.getModuleNames(targetCls.components),
             this.getModuleNames(targetCls.stores),
             this.getModuleNames(targetCls.actions)

@@ -28,7 +28,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
             dependencies: {
                 get: function () {
                     var targetCls = this.targetCls;
-                    return ["ui.router", "luxyflux"].concat(targetCls.dependencies, this.getModuleNames(targetCls.components), this.getModuleNames(targetCls.stores), this.getModuleNames(targetCls.actions));
+                    return ["ui.router", "luxyflux"].concat(targetCls.dependencies || [], this.getModuleNames(targetCls.components), this.getModuleNames(targetCls.stores), this.getModuleNames(targetCls.actions));
                 },
                 configurable: true
             },

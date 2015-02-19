@@ -59,7 +59,7 @@ System.register(["angular", "./annotation"], function (_export) {
                     dependencies: {
                         get: function () {
                             var targetCls = this.targetCls;
-                            return targetCls.dependencies.concat(this.getModuleNames(targetCls.components));
+                            return [].concat(targetCls.dependencies || [], this.getModuleNames(targetCls.components));
                         },
                         configurable: true
                     },
