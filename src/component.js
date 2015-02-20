@@ -33,10 +33,15 @@ export class Component extends Annotation {
         return this.targetCls.template || null;
     }
 
+    get bindings() {
+        return this.targetCls.bindings || null;
+    }
+
     get module() {
         if (!this._module) {
             var name = this.name;
             var template = this.template;
+            var bindings = this.bindings;
 
             this._module = angular.module(
                 'components.' + name,
@@ -58,6 +63,14 @@ export class Component extends Annotation {
                 }
                 else if (template.inline) {
                     directiveConfig.template = template.inline;
+                }
+            }
+
+            if (bindings) {
+                let scope = directiveConfig.scope = {};
+                for (let binding of Object.keys(bindings)) {
+                    let attr = bindings[binding];
+                    scope[binding] = `=${attr}`;
                 }
             }
 

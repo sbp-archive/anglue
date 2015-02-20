@@ -67,11 +67,18 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                 },
                 configurable: true
             },
+            bindings: {
+                get: function () {
+                    return this.targetCls.bindings || null;
+                },
+                configurable: true
+            },
             module: {
                 get: function () {
                     if (!this._module) {
                         var name = this.name;
                         var template = this.template;
+                        var bindings = this.bindings;
 
                         this._module = angular.module("components." + name, this.dependencies);
 
@@ -87,6 +94,15 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                                 directiveConfig.templateUrl = template.url;
                             } else if (template.inline) {
                                 directiveConfig.template = template.inline;
+                            }
+                        }
+
+                        if (bindings) {
+                            var scope = directiveConfig.scope = {};
+                            for (var _iterator = Object.keys(bindings)[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
+                                var binding = _step.value;
+                                var attr = bindings[binding];
+                                scope[binding] = "=" + attr;
                             }
                         }
 
