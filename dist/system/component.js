@@ -63,21 +63,37 @@ System.register(["angular", "./annotation"], function (_export) {
                         },
                         configurable: true
                     },
+                    template: {
+                        get: function () {
+                            return this.targetCls.template || null;
+                        },
+                        configurable: true
+                    },
                     module: {
                         get: function () {
-                            var _this = this;
                             if (!this._module) {
                                 var name = this.name;
+                                var template = this.template;
 
                                 this._module = angular.module("components." + name, this.dependencies);
 
+                                var directiveConfig = {
+                                    restrict: "E",
+                                    controllerAs: name,
+                                    bindToController: true,
+                                    controller: this.getInjectionTokens().concat([this.controllerCls])
+                                };
+
+                                if (template) {
+                                    if (template.url) {
+                                        directiveConfig.templateUrl = template.url;
+                                    } else if (template.inline) {
+                                        directiveConfig.template = template.inline;
+                                    }
+                                }
+
                                 this._module.directive(name, function () {
-                                    return {
-                                        restrict: "E",
-                                        controllerAs: name,
-                                        bindToController: true,
-                                        controller: _this.getInjectionTokens().concat([_this.controllerCls])
-                                    };
+                                    return directiveConfig;
                                 });
 
                                 this.configure(this._module);

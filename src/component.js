@@ -29,24 +29,40 @@ export class Component extends Annotation {
         );
     }
 
+    get template() {
+        return this.targetCls.template || null;
+    }
+
     get module() {
         if (!this._module) {
             var name = this.name;
+            var template = this.template;
 
             this._module = angular.module(
                 'components.' + name,
                 this.dependencies
             );
 
+            var directiveConfig = {
+                restrict: 'E',
+                controllerAs: name,
+                bindToController: true,
+                controller: this.getInjectionTokens().concat([
+                    this.controllerCls
+                ])
+            };
+
+            if (template) {
+                if (template.url) {
+                    directiveConfig.templateUrl = template.url;
+                }
+                else if (template.inline) {
+                    directiveConfig.template = template.inline;
+                }
+            }
+
             this._module.directive(name, () => {
-                return {
-                    restrict: 'E',
-                    controllerAs: name,
-                    bindToController: true,
-                    controller: this.getInjectionTokens().concat([
-                        this.controllerCls
-                    ])
-                };
+                return directiveConfig;
             });
 
             this.configure(this._module);
