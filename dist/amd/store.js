@@ -40,7 +40,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
             },
             getInjectionTokens: {
                 value: function getInjectionTokens() {
-                    return ["LuxyFlux", "ApplicationDispatcher"].concat(_get(Object.getPrototypeOf(Store.prototype), "getInjectionTokens", this).call(this));
+                    return ["LuxyFlux", "LuxyFluxStore", "ApplicationDispatcher"].concat(_get(Object.getPrototypeOf(Store.prototype), "getInjectionTokens", this).call(this));
                 },
                 writable: true,
                 configurable: true
@@ -50,8 +50,8 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                     var TargetCls = this.targetCls;
                     var annotation = this;
 
-                    return function (LuxyFlux, ApplicationDispatcher) {
-                        var injected = Array.from(arguments).slice(2);
+                    return function (LuxyFlux, LuxyFluxStore, ApplicationDispatcher) {
+                        var injected = Array.from(arguments).slice(3);
                         var instance = _applyConstructor(TargetCls, _toConsumableArray(injected));
 
                         annotation.applyInjectionBindings(instance, injected);
@@ -62,7 +62,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                             dispatcher: ApplicationDispatcher,
                             handlers: TargetCls.handlers,
                             decorate: instance
-                        });
+                        }, LuxyFluxStore);
                     };
                 },
                 configurable: true
