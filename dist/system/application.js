@@ -51,8 +51,8 @@ System.register(["angular", "./annotation"], function (_export) {
                             // The ApplicationDispatcher is the (singleton) dispatcher instance used
                             // in our entire application. Every ActionCreator in this app dispatches
                             // through this instance and all app stores are registered to it
-                            angularModule.service("ApplicationDispatcher", ["LuxyFluxDispatcher", "$rootScope", function (Dispatcher, $rootScope) {
-                                return new Dispatcher("ApplicationDispatcher", $rootScope);
+                            angularModule.service("ApplicationDispatcher", ["LuxyFluxDispatcher", function (Dispatcher) {
+                                return new Dispatcher("ApplicationDispatcher");
                             }]);
 
                             var routes = this.targetCls.routes;

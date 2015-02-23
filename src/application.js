@@ -34,12 +34,8 @@ export class Application extends Annotation {
         // through this instance and all app stores are registered to it
         angularModule.service('ApplicationDispatcher', [
             'LuxyFluxDispatcher',
-            '$rootScope',
-            function(Dispatcher, $rootScope) {
-                return new Dispatcher(
-                    'ApplicationDispatcher',
-                    $rootScope
-                );
+            function(Dispatcher) {
+                return new Dispatcher('ApplicationDispatcher');
             }
         ]);
 
