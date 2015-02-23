@@ -2,6 +2,10 @@ export class Annotation {
     constructor(name, targetCls) {
         this.name = name;
         this.targetCls = targetCls;
+
+        // We allow the decorators to decorate the targetCls
+        // before we create and configure the module
+        this.applyClassDecorators(targetCls);
     }
 
     getInjectionTokens() {
@@ -57,12 +61,27 @@ export class Annotation {
     /**
      * This method decorates the created instance with all the
      * targetCls decorators
-     * @param  {[type]} instance The created instance to be decorated
+     * @param  {Instance} instance The created instance to be decorated
      */
     applyDecorators(instance) {
         var decorators = this.decorators;
         for (let decorator of decorators) {
-            decorator.decorate(instance);
+            if (decorator.decorate instanceof Function) {
+                decorator.decorate(instance);
+            }
+        }
+    }
+
+    /**
+     * This method decorates the class with all the targetCls decorators
+     * @param  {Class} instance The targetCls to be decorated
+     */
+    applyClassDecorators(targetCls) {
+        var decorators = this.decorators;
+        for (let decorator of decorators) {
+            if (decorator.decorateClass instanceof Function) {
+                decorator.decorateClass(targetCls);
+            }
         }
     }
 
