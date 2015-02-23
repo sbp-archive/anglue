@@ -11,6 +11,10 @@ define(["exports"], function (exports) {
 
             this.name = name;
             this.targetCls = targetCls;
+
+            // We allow the decorators to decorate the targetCls
+            // before we create and configure the module
+            this.applyClassDecorators(targetCls);
         }
 
         _prototypeProperties(Annotation, null, {
@@ -86,13 +90,33 @@ define(["exports"], function (exports) {
                 /**
                  * This method decorates the created instance with all the
                  * targetCls decorators
-                 * @param  {[type]} instance The created instance to be decorated
+                 * @param  {Instance} instance The created instance to be decorated
                  */
                 value: function applyDecorators(instance) {
                     var decorators = this.decorators;
                     for (var _iterator = decorators[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
                         var decorator = _step.value;
-                        decorator.decorate(instance);
+                        if (decorator.decorate instanceof Function) {
+                            decorator.decorate(instance);
+                        }
+                    }
+                },
+                writable: true,
+                configurable: true
+            },
+            applyClassDecorators: {
+
+                /**
+                 * This method decorates the class with all the targetCls decorators
+                 * @param  {Class} instance The targetCls to be decorated
+                 */
+                value: function applyClassDecorators(targetCls) {
+                    var decorators = this.decorators;
+                    for (var _iterator = decorators[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
+                        var decorator = _step.value;
+                        if (decorator.decorateClass instanceof Function) {
+                            decorator.decorateClass(targetCls);
+                        }
                     }
                 },
                 writable: true,
