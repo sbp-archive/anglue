@@ -3,9 +3,9 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
 
     var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
-    var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
     var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+    var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
     var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
@@ -32,15 +32,19 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                     var annotation = this;
 
                     return (function (_targetCls) {
-                        function controllerCls() {
+                        function controllerCls($scope) {
                             _classCallCheck(this, controllerCls);
 
-                            var injected = Array.from(arguments);
+                            var injected = Array.from(arguments).slice(1);
 
                             annotation.applyInjectionBindings(this, injected);
                             annotation.applyDecorators(this);
 
                             _get(Object.getPrototypeOf(controllerCls.prototype), "constructor", this).apply(this, injected);
+
+                            if (this.onDestroy instanceof Function) {
+                                $scope.$on("$destroy", this.onDestroy.bind(this));
+                            }
 
                             if (this.activate instanceof Function) {
                                 this.activate();
@@ -52,6 +56,13 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                         return controllerCls;
                     })(this.targetCls);
                 },
+                configurable: true
+            },
+            getInjectionTokens: {
+                value: function getInjectionTokens() {
+                    return ["$scope"].concat(_get(Object.getPrototypeOf(Component.prototype), "getInjectionTokens", this).call(this));
+                },
+                writable: true,
                 configurable: true
             },
             dependencies: {
