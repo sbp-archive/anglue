@@ -6,19 +6,29 @@ export class Component extends Annotation {
         var annotation = this;
 
         return class controllerCls extends this.targetCls {
-            constructor() {
-                var injected = Array.from(arguments);
+            constructor($scope) {
+                var injected = Array.from(arguments).slice(1);
 
                 annotation.applyInjectionBindings(this, injected);
                 annotation.applyDecorators(this);
 
                 super(...injected);
 
+                if (this.onDestroy instanceof Function) {
+                    $scope.$on('$destroy', this.onDestroy.bind(this));
+                }
+
                 if (this.activate instanceof Function) {
                     this.activate();
                 }
             }
         };
+    }
+
+    getInjectionTokens() {
+        return [
+            '$scope'
+        ].concat(super.getInjectionTokens());
     }
 
     get dependencies() {
@@ -60,8 +70,7 @@ export class Component extends Annotation {
             if (template) {
                 if (template.url) {
                     directiveConfig.templateUrl = template.url;
-                }
-                else if (template.inline) {
+                } else if (template.inline) {
                     directiveConfig.template = template.inline;
                 }
             }
