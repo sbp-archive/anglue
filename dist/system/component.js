@@ -99,6 +99,7 @@ System.register(["angular", "./annotation"], function (_export) {
                                     restrict: "E",
                                     controllerAs: name,
                                     bindToController: true,
+                                    scope: true,
                                     controller: this.getInjectionTokens().concat([this.controllerCls])
                                 };
 

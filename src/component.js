@@ -62,6 +62,7 @@ export class Component extends Annotation {
                 restrict: 'E',
                 controllerAs: name,
                 bindToController: true,
+                scope: true,
                 controller: this.getInjectionTokens().concat([
                     this.controllerCls
                 ])

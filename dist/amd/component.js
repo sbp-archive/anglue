@@ -97,6 +97,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                             restrict: "E",
                             controllerAs: name,
                             bindToController: true,
+                            scope: true,
                             controller: this.getInjectionTokens().concat([this.controllerCls])
                         };
 
