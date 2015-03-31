@@ -29,30 +29,6 @@ define(["exports", "./application", "./component", "./store", "./actions"], func
         }
 
         _prototypeProperties(AnnotationsCache, null, {
-            Component: {
-                get: function () {
-                    return Component;
-                },
-                configurable: true
-            },
-            Store: {
-                get: function () {
-                    return Store;
-                },
-                configurable: true
-            },
-            Actions: {
-                get: function () {
-                    return Actions;
-                },
-                configurable: true
-            },
-            Application: {
-                get: function () {
-                    return Application;
-                },
-                configurable: true
-            },
             getApplication: {
                 value: function getApplication(name, targetCls) {
                     var application = this.applications.get(name);

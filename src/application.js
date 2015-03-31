@@ -4,14 +4,15 @@ import Annotation from './annotation';
 export class Application extends Annotation {
     get dependencies() {
         var targetCls = this.targetCls;
-        return [
-            'ui.router',
-            'luxyflux'
-        ].concat(
+        var extraDependencies = ['luxyflux'];
+        if (this.targetCls.routes) {
+            extraDependencies.push('ui.router');
+        }
+        return extraDependencies.concat(
             targetCls.dependencies || [],
-            this.getModuleNames(targetCls.components),
-            this.getModuleNames(targetCls.stores),
-            this.getModuleNames(targetCls.actions)
+            Annotation.getModuleNames(targetCls.components),
+            Annotation.getModuleNames(targetCls.stores),
+            Annotation.getModuleNames(targetCls.actions)
         );
     }
 

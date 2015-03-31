@@ -17,7 +17,30 @@ define(["exports"], function (exports) {
             this.applyClassDecorators(targetCls);
         }
 
-        _prototypeProperties(Annotation, null, {
+        _prototypeProperties(Annotation, {
+            getModuleNames: {
+
+                /**
+                 * Returns all the angular module names for an array of classes
+                 * @param  {Array} classes An array of classes you want to module names for
+                 * @return {Array} The name of the angular modules for these classes
+                 */
+                value: function getModuleNames() {
+                    var classes = arguments[0] === undefined ? [] : arguments[0];
+                    var names = [];
+                    for (var _iterator = classes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
+                        var cls = _step.value;
+                        var annotation = cls.annotation;
+                        if (annotation) {
+                            names.push(annotation.module.name);
+                        }
+                    }
+                    return names;
+                },
+                writable: true,
+                configurable: true
+            }
+        }, {
             getInjectionTokens: {
                 value: function getInjectionTokens() {
                     var tokens = [];
@@ -55,7 +78,7 @@ define(["exports"], function (exports) {
                  * configure the angular module after it is created
                  * @param {module} module The created angular module
                  */
-                value: function configure() {},
+                value: function configure(module) {},
                 writable: true,
                 configurable: true
             },
@@ -64,9 +87,9 @@ define(["exports"], function (exports) {
                 /**
                  * This method applies all the requested injection bindings
                  * from the targetCls to the created instance
-                 * @param  {TargetCls} instance The created instance that
+                 * @param  {Object} instance The created instance that
                  * wants the bindings
-                 * @param  {Array<Binding>} injected An array with the injected
+                 * @param  {Array<>} injected An array with the injected
                  * instances that we will apply on the class instance
                  */
                 value: function applyInjectionBindings(instance, injected) {
@@ -90,7 +113,7 @@ define(["exports"], function (exports) {
                 /**
                  * This method decorates the created instance with all the
                  * targetCls decorators
-                 * @param  {Instance} instance The created instance to be decorated
+                 * @param  {Object} instance The created instance to be decorated
                  */
                 value: function applyDecorators(instance) {
                     var decorators = this.decorators;
@@ -108,7 +131,7 @@ define(["exports"], function (exports) {
 
                 /**
                  * This method decorates the class with all the targetCls decorators
-                 * @param  {Class} instance The targetCls to be decorated
+                 * @param  {Object} targetCls The targetCls to be decorated
                  */
                 value: function applyClassDecorators(targetCls) {
                     var decorators = this.decorators;
@@ -118,28 +141,6 @@ define(["exports"], function (exports) {
                             decorator.decorateClass(targetCls);
                         }
                     }
-                },
-                writable: true,
-                configurable: true
-            },
-            getModuleNames: {
-
-                /**
-                 * Returns all the angular module names for an array of classes
-                 * @param  {Array} classes An array of classes you want to module names for
-                 * @return {Array} The name of the angular modules for these classes
-                 */
-                value: function getModuleNames() {
-                    var classes = arguments[0] === undefined ? [] : arguments[0];
-                    var names = [];
-                    for (var _iterator = classes[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
-                        var cls = _step.value;
-                        var annotation = cls.annotation;
-                        if (annotation) {
-                            names.push(annotation.module.name);
-                        }
-                    }
-                    return names;
                 },
                 writable: true,
                 configurable: true

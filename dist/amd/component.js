@@ -30,17 +30,18 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
             controllerCls: {
                 get: function () {
                     var annotation = this;
+                    var TargetCls = this.targetCls;
 
-                    return (function (_targetCls) {
-                        function controllerCls($scope) {
-                            _classCallCheck(this, controllerCls);
+                    var ControllerCls = (function (TargetCls) {
+                        function ControllerCls($scope) {
+                            _classCallCheck(this, ControllerCls);
 
                             var injected = Array.from(arguments).slice(1);
 
                             annotation.applyInjectionBindings(this, injected);
                             annotation.applyDecorators(this);
 
-                            _get(Object.getPrototypeOf(controllerCls.prototype), "constructor", this).apply(this, injected);
+                            _get(Object.getPrototypeOf(ControllerCls.prototype), "constructor", this).apply(this, injected);
 
                             if (this.onDestroy instanceof Function) {
                                 $scope.$on("$destroy", this.onDestroy.bind(this));
@@ -51,10 +52,12 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                             }
                         }
 
-                        _inherits(controllerCls, _targetCls);
+                        _inherits(ControllerCls, TargetCls);
 
-                        return controllerCls;
-                    })(this.targetCls);
+                        return ControllerCls;
+                    })(TargetCls);
+
+                    return ControllerCls;
                 },
                 configurable: true
             },
@@ -68,7 +71,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
             dependencies: {
                 get: function () {
                     var targetCls = this.targetCls;
-                    return [].concat(targetCls.dependencies || [], this.getModuleNames(targetCls.components));
+                    return [].concat(targetCls.dependencies || [], Annotation.getModuleNames(targetCls.components));
                 },
                 configurable: true
             },

@@ -13,22 +13,6 @@ export class AnnotationsCache {
         this.actions = new Map();
     }
 
-    get Component() {
-        return Component;
-    }
-
-    get Store() {
-        return Store;
-    }
-
-    get Actions() {
-        return Actions;
-    }
-
-    get Application() {
-        return Application;
-    }
-
     getApplication(name, targetCls) {
         var application = this.applications.get(name);
         if (!application) {

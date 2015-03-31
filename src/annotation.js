@@ -34,14 +34,14 @@ export class Annotation {
      * configure the angular module after it is created
      * @param {module} module The created angular module
      */
-    configure() {}
+    configure(module) {}
 
     /**
      * This method applies all the requested injection bindings
      * from the targetCls to the created instance
-     * @param  {TargetCls} instance The created instance that
+     * @param  {Object} instance The created instance that
      * wants the bindings
-     * @param  {Array<Binding>} injected An array with the injected
+     * @param  {Array<>} injected An array with the injected
      * instances that we will apply on the class instance
      */
     applyInjectionBindings(instance, injected) {
@@ -61,7 +61,7 @@ export class Annotation {
     /**
      * This method decorates the created instance with all the
      * targetCls decorators
-     * @param  {Instance} instance The created instance to be decorated
+     * @param  {Object} instance The created instance to be decorated
      */
     applyDecorators(instance) {
         var decorators = this.decorators;
@@ -74,7 +74,7 @@ export class Annotation {
 
     /**
      * This method decorates the class with all the targetCls decorators
-     * @param  {Class} instance The targetCls to be decorated
+     * @param  {Object} targetCls The targetCls to be decorated
      */
     applyClassDecorators(targetCls) {
         var decorators = this.decorators;
@@ -90,7 +90,7 @@ export class Annotation {
      * @param  {Array} classes An array of classes you want to module names for
      * @return {Array} The name of the angular modules for these classes
      */
-    getModuleNames(classes = []) {
+    static getModuleNames(classes = []) {
         var names = [];
         for (let cls of classes) {
             let annotation = cls.annotation;

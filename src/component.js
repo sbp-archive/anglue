@@ -4,8 +4,9 @@ import Annotation from './annotation';
 export class Component extends Annotation {
     get controllerCls() {
         var annotation = this;
+        var TargetCls = this.targetCls;
 
-        return class controllerCls extends this.targetCls {
+        class ControllerCls extends TargetCls {
             constructor($scope) {
                 var injected = Array.from(arguments).slice(1);
 
@@ -22,7 +23,9 @@ export class Component extends Annotation {
                     this.activate();
                 }
             }
-        };
+        }
+
+        return ControllerCls;
     }
 
     getInjectionTokens() {
@@ -35,7 +38,7 @@ export class Component extends Annotation {
         var targetCls = this.targetCls;
         return [].concat(
             targetCls.dependencies || [],
-            this.getModuleNames(targetCls.components)
+            Annotation.getModuleNames(targetCls.components)
         );
     }
 
