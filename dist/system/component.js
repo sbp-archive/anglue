@@ -99,7 +99,7 @@ System.register(["angular", "./annotation"], function (_export) {
                                 this._module = angular.module("components." + name, this.dependencies);
 
                                 var directiveConfig = {
-                                    restrict: "E",
+                                    restrict: "EA",
                                     controllerAs: name,
                                     bindToController: true,
                                     scope: true,

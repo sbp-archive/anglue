@@ -97,7 +97,7 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                         this._module = angular.module("components." + name, this.dependencies);
 
                         var directiveConfig = {
-                            restrict: "E",
+                            restrict: "EA",
                             controllerAs: name,
                             bindToController: true,
                             scope: true,

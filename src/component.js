@@ -62,7 +62,7 @@ export class Component extends Annotation {
             );
 
             var directiveConfig = {
-                restrict: 'E',
+                restrict: 'EA',
                 controllerAs: name,
                 bindToController: true,
                 scope: true,

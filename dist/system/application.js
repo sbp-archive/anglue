@@ -31,7 +31,7 @@ System.register(["angular", "./annotation"], function (_export) {
                         get: function () {
                             var targetCls = this.targetCls;
                             var extraDependencies = ["luxyflux"];
-                            if (this.targetCls.routes) {
+                            if (targetCls.routes) {
                                 extraDependencies.push("ui.router");
                             }
                             return extraDependencies.concat(targetCls.dependencies || [], Annotation.getModuleNames(targetCls.components), Annotation.getModuleNames(targetCls.stores), Annotation.getModuleNames(targetCls.actions));

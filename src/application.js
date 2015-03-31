@@ -5,7 +5,7 @@ export class Application extends Annotation {
     get dependencies() {
         var targetCls = this.targetCls;
         var extraDependencies = ['luxyflux'];
-        if (this.targetCls.routes) {
+        if (targetCls.routes) {
             extraDependencies.push('ui.router');
         }
         return extraDependencies.concat(
