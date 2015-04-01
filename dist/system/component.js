@@ -112,6 +112,9 @@ System.register(["angular", "./annotation"], function (_export) {
                                     } else if (template.inline) {
                                         directiveConfig.template = template.inline;
                                     }
+                                    if (template.replace) {
+                                        directiveConfig.replace = true;
+                                    }
                                 }
 
                                 if (bindings) {

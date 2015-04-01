@@ -77,6 +77,9 @@ export class Component extends Annotation {
                 } else if (template.inline) {
                     directiveConfig.template = template.inline;
                 }
+                if (template.replace) {
+                    directiveConfig.replace = true;
+                }
             }
 
             if (bindings) {

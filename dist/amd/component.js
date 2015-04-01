@@ -110,6 +110,9 @@ define(["exports", "angular", "./annotation"], function (exports, _angular, _ann
                             } else if (template.inline) {
                                 directiveConfig.template = template.inline;
                             }
+                            if (template.replace) {
+                                directiveConfig.replace = true;
+                            }
                         }
 
                         if (bindings) {
