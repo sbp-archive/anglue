@@ -1,147 +1,165 @@
-System.register(["angular", "./annotation"], function (_export) {
-    "use strict";
+var _defaults = function (obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; };
 
-    var angular, Annotation, _prototypeProperties, _get, _inherits, _classCallCheck, Component;
+System.register(['angular', './annotation'], function (_export) {
+    var angular, Annotation, _classCallCheck, _createClass, _get, _inherits, Component;
+
     return {
         setters: [function (_angular) {
-            angular = _angular["default"];
+            angular = _angular['default'];
         }, function (_annotation) {
-            Annotation = _annotation["default"];
+            Annotation = _annotation['default'];
         }],
         execute: function () {
-            _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+            'use strict';
 
-            _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+            _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-            _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+            _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-            _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+            _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-            Component = _export("Component", (function (Annotation) {
+            _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) _defaults(subClass, superClass); };
+
+            Component = (function (_Annotation) {
                 function Component() {
                     _classCallCheck(this, Component);
 
-                    if (Annotation != null) {
-                        Annotation.apply(this, arguments);
+                    if (_Annotation != null) {
+                        _Annotation.apply(this, arguments);
                     }
                 }
 
-                _inherits(Component, Annotation);
+                _inherits(Component, _Annotation);
 
-                _prototypeProperties(Component, null, {
-                    controllerCls: {
-                        get: function () {
-                            var annotation = this;
-                            var TargetCls = this.targetCls;
+                _createClass(Component, [{
+                    key: 'controllerCls',
+                    get: function () {
+                        var annotation = this;
+                        var TargetCls = this.targetCls;
 
-                            var ControllerCls = (function (TargetCls) {
-                                function ControllerCls($scope) {
-                                    _classCallCheck(this, ControllerCls);
+                        var ControllerCls = (function (_TargetCls) {
+                            function ControllerCls($scope) {
+                                _classCallCheck(this, ControllerCls);
 
-                                    var injected = Array.from(arguments).slice(1);
+                                var injected = Array.from(arguments).slice(1);
 
-                                    annotation.applyInjectionBindings(this, injected);
-                                    annotation.applyDecorators(this);
+                                _get(Object.getPrototypeOf(ControllerCls.prototype), 'constructor', this).apply(this, injected);
 
-                                    _get(Object.getPrototypeOf(ControllerCls.prototype), "constructor", this).apply(this, injected);
+                                annotation.applyInjectionBindings(this, injected);
+                                annotation.applyDecorators(this);
 
-                                    if (this.onDestroy instanceof Function) {
-                                        $scope.$on("$destroy", this.onDestroy.bind(this));
-                                    }
-
-                                    if (this.activate instanceof Function) {
-                                        this.activate();
-                                    }
+                                if (this.onDestroy instanceof Function) {
+                                    $scope.$on('$destroy', this.onDestroy.bind(this));
                                 }
 
-                                _inherits(ControllerCls, TargetCls);
-
-                                return ControllerCls;
-                            })(TargetCls);
-
-                            return ControllerCls;
-                        },
-                        configurable: true
-                    },
-                    getInjectionTokens: {
-                        value: function getInjectionTokens() {
-                            return ["$scope"].concat(_get(Object.getPrototypeOf(Component.prototype), "getInjectionTokens", this).call(this));
-                        },
-                        writable: true,
-                        configurable: true
-                    },
-                    dependencies: {
-                        get: function () {
-                            var targetCls = this.targetCls;
-                            return [].concat(targetCls.dependencies || [], Annotation.getModuleNames(targetCls.components));
-                        },
-                        configurable: true
-                    },
-                    template: {
-                        get: function () {
-                            return this.targetCls.template || null;
-                        },
-                        configurable: true
-                    },
-                    bindings: {
-                        get: function () {
-                            return this.targetCls.bindings || null;
-                        },
-                        configurable: true
-                    },
-                    module: {
-                        get: function () {
-                            if (!this._module) {
-                                var name = this.name;
-                                var template = this.template;
-                                var bindings = this.bindings;
-
-                                this._module = angular.module("components." + name, this.dependencies);
-
-                                var directiveConfig = {
-                                    restrict: "EA",
-                                    controllerAs: name,
-                                    bindToController: true,
-                                    scope: true,
-                                    controller: this.getInjectionTokens().concat([this.controllerCls])
-                                };
-
-                                if (template) {
-                                    if (template.url) {
-                                        directiveConfig.templateUrl = template.url;
-                                    } else if (template.inline) {
-                                        directiveConfig.template = template.inline;
-                                    }
-                                    if (template.replace) {
-                                        directiveConfig.replace = true;
-                                    }
+                                if (this.activate instanceof Function) {
+                                    this.activate();
                                 }
-
-                                if (bindings) {
-                                    var scope = directiveConfig.scope = {};
-                                    for (var _iterator = Object.keys(bindings)[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
-                                        var binding = _step.value;
-                                        var attr = bindings[binding];
-                                        scope[binding] = "=" + attr;
-                                    }
-                                }
-
-                                this._module.directive(name, function () {
-                                    return directiveConfig;
-                                });
-
-                                this.configure(this._module);
                             }
 
-                            return this._module;
-                        },
-                        configurable: true
+                            _inherits(ControllerCls, _TargetCls);
+
+                            return ControllerCls;
+                        })(TargetCls);
+
+                        return ControllerCls;
                     }
-                });
+                }, {
+                    key: 'getInjectionTokens',
+                    value: function getInjectionTokens() {
+                        return ['$scope'].concat(_get(Object.getPrototypeOf(Component.prototype), 'getInjectionTokens', this).call(this));
+                    }
+                }, {
+                    key: 'dependencies',
+                    get: function () {
+                        var targetCls = this.targetCls;
+                        return [].concat(targetCls.dependencies || [], Annotation.getModuleNames(targetCls.components));
+                    }
+                }, {
+                    key: 'template',
+                    get: function () {
+                        return this.targetCls.template || null;
+                    }
+                }, {
+                    key: 'bindings',
+                    get: function () {
+                        return this.targetCls.bindings || null;
+                    }
+                }, {
+                    key: 'module',
+                    get: function () {
+                        if (!this._module) {
+                            var name = this.name;
+                            var template = this.template;
+                            var bindings = this.bindings;
+
+                            this._module = angular.module('components.' + name, this.dependencies);
+
+                            var directiveConfig = {
+                                restrict: 'EA',
+                                controllerAs: name,
+                                bindToController: true,
+                                scope: true,
+                                controller: this.getInjectionTokens().concat([this.controllerCls])
+                            };
+
+                            if (template) {
+                                if (template.url) {
+                                    directiveConfig.templateUrl = template.url;
+                                } else if (template.inline) {
+                                    directiveConfig.template = template.inline;
+                                }
+                                if (template.replace) {
+                                    directiveConfig.replace = true;
+                                }
+                            }
+
+                            if (bindings) {
+                                var scope = directiveConfig.scope = {};
+                                var _iteratorNormalCompletion = true;
+                                var _didIteratorError = false;
+                                var _iteratorError = undefined;
+
+                                try {
+                                    for (var _iterator = Object.keys(bindings)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                        var binding = _step.value;
+
+                                        var attr = bindings[binding];
+                                        scope[binding] = '=' + attr;
+                                    }
+                                } catch (err) {
+                                    _didIteratorError = true;
+                                    _iteratorError = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion && _iterator['return']) {
+                                            _iterator['return']();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError) {
+                                            throw _iteratorError;
+                                        }
+                                    }
+                                }
+                            }
+
+                            this._module.directive(name, function () {
+                                return directiveConfig;
+                            });
+
+                            this.configure(this._module);
+                        }
+
+                        return this._module;
+                    }
+                }]);
 
                 return Component;
-            })(Annotation));
-            _export("default", Component);
+            })(Annotation);
+
+            _export('Component', Component);
+
+            _export('default', Component);
         }
     };
 });

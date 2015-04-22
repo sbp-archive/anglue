@@ -10,10 +10,10 @@ export class Component extends Annotation {
             constructor($scope) {
                 var injected = Array.from(arguments).slice(1);
 
+                super(...injected);
+
                 annotation.applyInjectionBindings(this, injected);
                 annotation.applyDecorators(this);
-
-                super(...injected);
 
                 if (this.onDestroy instanceof Function) {
                     $scope.$on('$destroy', this.onDestroy.bind(this));
