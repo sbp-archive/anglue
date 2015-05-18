@@ -164,7 +164,7 @@ System.register(['angular', './annotation'], function (_export) {
                                     Object.keys(events).forEach(function (event) {
                                         if (attr[event]) {
                                             eventHandlers[events[event]] = function (locals) {
-                                                scope.$eval(attr[event], locals);
+                                                scope.$parent.$eval(attr[event], locals);
                                             };
                                         }
                                     });

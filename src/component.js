@@ -107,7 +107,7 @@ export class Component extends Annotation {
                     Object.keys(events).forEach((event) => {
                         if (attr[event]) {
                             eventHandlers[events[event]] = (locals) => {
-                                scope.$eval(attr[event], locals);
+                                scope.$parent.$eval(attr[event], locals);
                             };
                         }
                     });
