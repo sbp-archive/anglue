@@ -60,6 +60,15 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
 
                     _inherits(ControllerCls, _TargetCls);
 
+                    _createClass(ControllerCls, [{
+                        key: 'fireComponentEvent',
+                        value: function fireComponentEvent(event, locals) {
+                            if (this._event_handlers && this._event_handlers[event]) {
+                                this._event_handlers[event].call(this, locals);
+                            }
+                        }
+                    }]);
+
                     return ControllerCls;
                 })(TargetCls);
 
@@ -87,12 +96,18 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
                 return this.targetCls.bindings || null;
             }
         }, {
+            key: 'events',
+            get: function () {
+                return this.targetCls.events || null;
+            }
+        }, {
             key: 'module',
             get: function () {
                 if (!this._module) {
                     var name = this.name;
                     var template = this.template;
                     var bindings = this.bindings;
+                    var events = this.events;
 
                     this._module = _angular2.module('components.' + name, this.dependencies);
 
@@ -142,6 +157,19 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
                                 }
                             }
                         }
+                    }
+
+                    if (events) {
+                        directiveConfig.link = function (scope, el, attr, ctrl) {
+                            var eventHandlers = ctrl._event_handlers = {};
+                            Object.keys(events).forEach(function (event) {
+                                if (attr[event]) {
+                                    eventHandlers[events[event]] = function (locals) {
+                                        scope.$eval(attr[event], locals);
+                                    };
+                                }
+                            });
+                        };
                     }
 
                     this._module.directive(name, function () {

@@ -23,6 +23,12 @@ export class Component extends Annotation {
                     this.activate();
                 }
             }
+
+            fireComponentEvent(event, locals) {
+                if (this._event_handlers && this._event_handlers[event]) {
+                    this._event_handlers[event].call(this, locals);
+                }
+            }
         }
 
         return ControllerCls;
@@ -50,11 +56,16 @@ export class Component extends Annotation {
         return this.targetCls.bindings || null;
     }
 
+    get events() {
+        return this.targetCls.events || null;
+    }
+
     get module() {
         if (!this._module) {
             var name = this.name;
             var template = this.template;
             var bindings = this.bindings;
+            var events = this.events;
 
             this._module = angular.module(
                 'components.' + name,
@@ -88,6 +99,19 @@ export class Component extends Annotation {
                     let attr = bindings[binding];
                     scope[binding] = `=${attr}`;
                 }
+            }
+
+            if (events) {
+                directiveConfig.link = (scope, el, attr, ctrl) => {
+                    var eventHandlers = ctrl._event_handlers = {};
+                    Object.keys(events).forEach((event) => {
+                        if (attr[event]) {
+                            eventHandlers[events[event]] = (locals) => {
+                                scope.$eval(attr[event], locals);
+                            };
+                        }
+                    });
+                };
             }
 
             this._module.directive(name, () => {
