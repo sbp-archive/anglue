@@ -7,17 +7,30 @@ export class Component extends Annotation {
         var TargetCls = this.targetCls;
 
         class ControllerCls extends TargetCls {
-            constructor($scope) {
-                var injected = Array.from(arguments).slice(1);
+            constructor($scope, LuxyFlux, LuxyFluxStore, ApplicationDispatcher) {
+                var injected = Array.from(arguments).slice(4);
+                var componentStores = annotation.componentStores;
 
                 super(...injected);
+
+                Object.keys(componentStores).forEach((injectionName) => {
+                    this[injectionName] = new componentStores[injectionName]();
+                });
 
                 annotation.applyInjectionBindings(this, injected);
                 annotation.applyDecorators(this);
 
-                if (this.onDestroy instanceof Function) {
-                    $scope.$on('$destroy', this.onDestroy.bind(this));
-                }
+                $scope.$on('$destroy', () => {
+                    if (this.onDestroy instanceof Function) {
+                        this.onDestroy.call(this);
+                    }
+
+                    Object.keys(componentStores).forEach((injectionName) => {
+                        this[injectionName].dispatcher = null;
+                        this[injectionName] = null;
+                    });
+                });
+
 
                 if (this.activate instanceof Function) {
                     this.activate();
@@ -36,15 +49,32 @@ export class Component extends Annotation {
 
     getInjectionTokens() {
         return [
-            '$scope'
+            '$scope',
+            'LuxyFlux',
+            'LuxyFluxStore',
+            'ApplicationDispatcher'
         ].concat(super.getInjectionTokens());
+    }
+
+    getComponentStoreClasses() {
+        var componentStores = this.componentStores;
+        var classes = [];
+
+        Object.keys(componentStores).forEach((injectionName) => {
+            let storeClass = componentStores[injectionName];
+            if (classes.indexOf(storeClass) === -1) {
+                classes.push(storeClass);
+            }
+        });
+        return classes;
     }
 
     get dependencies() {
         var targetCls = this.targetCls;
         return [].concat(
             targetCls.dependencies || [],
-            Annotation.getModuleNames(targetCls.components)
+            Annotation.getModuleNames(targetCls.components),
+            Annotation.getModuleNames(this.getComponentStoreClasses())
         );
     }
 
@@ -58,6 +88,10 @@ export class Component extends Annotation {
 
     get events() {
         return this.targetCls.events || null;
+    }
+
+    get componentStores() {
+        return this.targetCls.componentStores || {};
     }
 
     get module() {

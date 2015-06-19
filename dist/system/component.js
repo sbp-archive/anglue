@@ -38,19 +38,33 @@ System.register(['angular', './annotation'], function (_export) {
                         var TargetCls = this.targetCls;
 
                         var ControllerCls = (function (_TargetCls) {
-                            function ControllerCls($scope) {
+                            function ControllerCls($scope, LuxyFlux, LuxyFluxStore, ApplicationDispatcher) {
+                                var _this = this;
+
                                 _classCallCheck(this, ControllerCls);
 
-                                var injected = Array.from(arguments).slice(1);
+                                var injected = Array.from(arguments).slice(4);
+                                var componentStores = annotation.componentStores;
 
                                 _get(Object.getPrototypeOf(ControllerCls.prototype), 'constructor', this).apply(this, injected);
+
+                                Object.keys(componentStores).forEach(function (injectionName) {
+                                    _this[injectionName] = new componentStores[injectionName]();
+                                });
 
                                 annotation.applyInjectionBindings(this, injected);
                                 annotation.applyDecorators(this);
 
-                                if (this.onDestroy instanceof Function) {
-                                    $scope.$on('$destroy', this.onDestroy.bind(this));
-                                }
+                                $scope.$on('$destroy', function () {
+                                    if (_this.onDestroy instanceof Function) {
+                                        _this.onDestroy.call(_this);
+                                    }
+
+                                    Object.keys(componentStores).forEach(function (injectionName) {
+                                        _this[injectionName].dispatcher = null;
+                                        _this[injectionName] = null;
+                                    });
+                                });
 
                                 if (this.activate instanceof Function) {
                                     this.activate();
@@ -76,13 +90,27 @@ System.register(['angular', './annotation'], function (_export) {
                 }, {
                     key: 'getInjectionTokens',
                     value: function getInjectionTokens() {
-                        return ['$scope'].concat(_get(Object.getPrototypeOf(Component.prototype), 'getInjectionTokens', this).call(this));
+                        return ['$scope', 'LuxyFlux', 'LuxyFluxStore', 'ApplicationDispatcher'].concat(_get(Object.getPrototypeOf(Component.prototype), 'getInjectionTokens', this).call(this));
+                    }
+                }, {
+                    key: 'getComponentStoreClasses',
+                    value: function getComponentStoreClasses() {
+                        var componentStores = this.componentStores;
+                        var classes = [];
+
+                        Object.keys(componentStores).forEach(function (injectionName) {
+                            var storeClass = componentStores[injectionName];
+                            if (classes.indexOf(storeClass) === -1) {
+                                classes.push(storeClass);
+                            }
+                        });
+                        return classes;
                     }
                 }, {
                     key: 'dependencies',
                     get: function () {
                         var targetCls = this.targetCls;
-                        return [].concat(targetCls.dependencies || [], Annotation.getModuleNames(targetCls.components));
+                        return [].concat(targetCls.dependencies || [], Annotation.getModuleNames(targetCls.components), Annotation.getModuleNames(this.getComponentStoreClasses()));
                     }
                 }, {
                     key: 'template',
@@ -98,6 +126,11 @@ System.register(['angular', './annotation'], function (_export) {
                     key: 'events',
                     get: function () {
                         return this.targetCls.events || null;
+                    }
+                }, {
+                    key: 'componentStores',
+                    get: function () {
+                        return this.targetCls.componentStores || {};
                     }
                 }, {
                     key: 'module',
