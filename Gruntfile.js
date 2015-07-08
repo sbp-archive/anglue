@@ -43,10 +43,18 @@ module.exports = function(grunt) {
                     'src/**/*.js'
                 ],
                 tasks: ['babel']
+            },
+
+            test: {
+                files: [
+                    'dist/systemjs/**/*.js',
+                    'tests/**/*.js'
+                ],
+                tasks: ['karma']
             }
         },
 
-        'babel': {
+        babel: {
             options: {
                 sourceMap: true,
                 optional: ['spec.protoToAssign']
@@ -86,5 +94,6 @@ module.exports = function(grunt) {
 
     // Default task.
     grunt.registerTask('build', ['clean', 'babel']);
-    grunt.registerTask('default', ['dev']);
+    grunt.registerTask('test', ['clean', 'babel', 'karma']);
+    grunt.registerTask('default', ['build']);
 };

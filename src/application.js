@@ -23,6 +23,11 @@ export class Application extends Annotation {
                 this.dependencies
             );
 
+            const annotationNames = Annotation.getAnnotationNames(this.targetCls.stores);
+            const controllerDeps = annotationNames.concat([() => {}]);
+
+            this._module.controller('AnglueAppController', controllerDeps);
+
             this.configure(this._module);
         }
 

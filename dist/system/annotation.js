@@ -195,6 +195,42 @@ System.register([], function (_export) {
 
                         return names;
                     }
+                }, {
+                    key: 'getAnnotationNames',
+                    value: function getAnnotationNames() {
+                        var classes = arguments[0] === undefined ? [] : arguments[0];
+
+                        var names = [];
+                        var _iteratorNormalCompletion4 = true;
+                        var _didIteratorError4 = false;
+                        var _iteratorError4 = undefined;
+
+                        try {
+                            for (var _iterator4 = classes[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                                var cls = _step4.value;
+
+                                var annotation = cls.annotation;
+                                if (annotation) {
+                                    names.push(annotation.name);
+                                }
+                            }
+                        } catch (err) {
+                            _didIteratorError4 = true;
+                            _iteratorError4 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion4 && _iterator4['return']) {
+                                    _iterator4['return']();
+                                }
+                            } finally {
+                                if (_didIteratorError4) {
+                                    throw _iteratorError4;
+                                }
+                            }
+                        }
+
+                        return names;
+                    }
                 }]);
 
                 return Annotation;

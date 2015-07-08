@@ -3,6 +3,7 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
+    "es6-module-loader": "^0.17.3",
     "grunt": "~0.4.2",
     "grunt-babel": "^5.0.0",
     "grunt-contrib-clean": "^0.6.0",
@@ -11,11 +12,15 @@
     "grunt-karma": "^0.9.0",
     "grunt-processhtml": "^0.3.3",
     "grunt-release": "~0.6.0",
+    "jasmine-core": "^2.3.4",
     "karma": "^0.12.24",
     "karma-chrome-launcher": "^0.1.7",
     "karma-coverage": "^0.2.6",
-    "karma-jasmine": "^0.1.5",
-    "karma-phantomjs-launcher": "^0.1.4"
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-systemjs": "^0.6.0",
+    "phantomjs-polyfill": "0.0.1",
+    "systemjs": "^0.18.4"
   },
   "directories": {
     "lib": "src"

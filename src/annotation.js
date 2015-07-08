@@ -100,5 +100,16 @@ export class Annotation {
         }
         return names;
     }
+
+    static getAnnotationNames(classes = []) {
+        var names = [];
+        for (let cls of classes) {
+            let annotation = cls.annotation;
+            if (annotation) {
+                names.push(annotation.name);
+            }
+        }
+        return names;
+    }
 }
 export default Annotation;
