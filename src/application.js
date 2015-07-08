@@ -24,7 +24,7 @@ export class Application extends Annotation {
             this._module = angular.module(
                 this.name,
                 this.dependencies
-            ).controller('__AnglueApp__', controllerDeps);
+            ).run(controllerDeps);
 
             this.configure(this._module);
         }
