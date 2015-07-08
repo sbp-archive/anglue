@@ -195,8 +195,8 @@ define(['exports'], function (exports) {
                 return names;
             }
         }, {
-            key: 'getAnnotationNames',
-            value: function getAnnotationNames() {
+            key: 'getAnnotationServiceNames',
+            value: function getAnnotationServiceNames() {
                 var classes = arguments[0] === undefined ? [] : arguments[0];
 
                 var names = [];
@@ -210,7 +210,7 @@ define(['exports'], function (exports) {
 
                         var annotation = cls.annotation;
                         if (annotation) {
-                            names.push(annotation.name);
+                            names.push(annotation.serviceName);
                         }
                     }
                 } catch (err) {

@@ -101,12 +101,12 @@ export class Annotation {
         return names;
     }
 
-    static getAnnotationNames(classes = []) {
+    static getAnnotationServiceNames(classes = []) {
         var names = [];
         for (let cls of classes) {
             let annotation = cls.annotation;
             if (annotation) {
-                names.push(annotation.name);
+                names.push(annotation.serviceName);
             }
         }
         return names;

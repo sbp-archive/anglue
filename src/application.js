@@ -18,15 +18,13 @@ export class Application extends Annotation {
 
     get module() {
         if (!this._module) {
+            const annotationNames = Annotation.getAnnotationServiceNames(this.targetCls.stores);
+            const controllerDeps = annotationNames.concat([() => {}]);
+
             this._module = angular.module(
                 this.name,
                 this.dependencies
-            );
-
-            const annotationNames = Annotation.getAnnotationNames(this.targetCls.stores);
-            const controllerDeps = annotationNames.concat([() => {}]);
-
-            this._module.controller('AnglueAppController', controllerDeps);
+            ).controller('__AnglueApp__', controllerDeps);
 
             this.configure(this._module);
         }

@@ -44,12 +44,10 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
             key: 'module',
             get: function () {
                 if (!this._module) {
-                    this._module = _angular2.module(this.name, this.dependencies);
-
-                    var annotationNames = _Annotation2.getAnnotationNames(this.targetCls.stores);
+                    var annotationNames = _Annotation2.getAnnotationServiceNames(this.targetCls.stores);
                     var controllerDeps = annotationNames.concat([function () {}]);
 
-                    this._module.controller('AnglueAppController', controllerDeps);
+                    this._module = _angular2.module(this.name, this.dependencies).controller('__AnglueApp__', controllerDeps);
 
                     this.configure(this._module);
                 }

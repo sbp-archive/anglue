@@ -43,12 +43,10 @@ System.register(['angular', './annotation'], function (_export) {
                     key: 'module',
                     get: function () {
                         if (!this._module) {
-                            this._module = angular.module(this.name, this.dependencies);
-
-                            var annotationNames = Annotation.getAnnotationNames(this.targetCls.stores);
+                            var annotationNames = Annotation.getAnnotationServiceNames(this.targetCls.stores);
                             var controllerDeps = annotationNames.concat([function () {}]);
 
-                            this._module.controller('AnglueAppController', controllerDeps);
+                            this._module = angular.module(this.name, this.dependencies).controller('__AnglueApp__', controllerDeps);
 
                             this.configure(this._module);
                         }

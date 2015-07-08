@@ -196,8 +196,8 @@ System.register([], function (_export) {
                         return names;
                     }
                 }, {
-                    key: 'getAnnotationNames',
-                    value: function getAnnotationNames() {
+                    key: 'getAnnotationServiceNames',
+                    value: function getAnnotationServiceNames() {
                         var classes = arguments[0] === undefined ? [] : arguments[0];
 
                         var names = [];
@@ -211,7 +211,7 @@ System.register([], function (_export) {
 
                                 var annotation = cls.annotation;
                                 if (annotation) {
-                                    names.push(annotation.name);
+                                    names.push(annotation.serviceName);
                                 }
                             }
                         } catch (err) {
