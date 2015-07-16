@@ -22,12 +22,9 @@
   ],
   "dependencies": {
     "angular": "~1.4.2",
-    "luxyflux": "git@github.schubergphilis.com:frontend/luxyflux.git#*"
+    "luxyflux": "git@github.com:schubergphilis/luxyflux.git#*"
   },
   "devDependencies": {
     "requirejs": "~2.1.18"
-  },
-  "resolutions": {
-    "angular": "~1.4.2"
   }
 }
