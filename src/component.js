@@ -60,9 +60,11 @@ export class Component extends Annotation {
         return this.targetCls.events || null;
     }
 
-    get transformConfig() {
-        return this.targetCls.transformConfig || function(config) {
-            return config;
+    get getDirective() {
+        return this.targetCls.getDirective || function(config) {
+            return function() {
+                return config;
+            };
         };
     }
 
@@ -120,9 +122,7 @@ export class Component extends Annotation {
                 };
             }
 
-            this._module.directive(name, () => {
-                return this.transformConfig(directiveConfig);
-            });
+            this._module.directive(name, this.getDirective(directiveConfig));
 
             this.configure(this._module);
         }

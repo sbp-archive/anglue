@@ -100,17 +100,17 @@ System.register(['angular', './annotation'], function (_export) {
                         return this.targetCls.events || null;
                     }
                 }, {
-                    key: 'transformConfig',
+                    key: 'getDirective',
                     get: function () {
-                        return this.targetCls.transformConfig || function (config) {
-                            return config;
+                        return this.targetCls.getDirective || function (config) {
+                            return function () {
+                                return config;
+                            };
                         };
                     }
                 }, {
                     key: 'module',
                     get: function () {
-                        var _this = this;
-
                         if (!this._module) {
                             var name = this.name;
                             var template = this.template;
@@ -180,9 +180,7 @@ System.register(['angular', './annotation'], function (_export) {
                                 };
                             }
 
-                            this._module.directive(name, function () {
-                                return _this.transformConfig(directiveConfig);
-                            });
+                            this._module.directive(name, this.getDirective(directiveConfig));
 
                             this.configure(this._module);
                         }
