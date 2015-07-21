@@ -120,10 +120,9 @@ export class Component extends Annotation {
                 };
             }
 
-            var transformConfig = this.transformConfig;
-            this._module.directive(name, this.getInjectionTokens().concat([function() {
-                return transformConfig(directiveConfig, Array.from(arguments));
-            }]));
+            this._module.directive(name, () => {
+                return this.transformConfig(directiveConfig);
+            });
 
             this.configure(this._module);
         }
