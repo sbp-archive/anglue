@@ -101,8 +101,17 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
                 return this.targetCls.events || null;
             }
         }, {
+            key: 'transformConfig',
+            get: function () {
+                return this.targetCls.transformConfig || function (config) {
+                    return config;
+                };
+            }
+        }, {
             key: 'module',
             get: function () {
+                var _this = this;
+
                 if (!this._module) {
                     var name = this.name;
                     var template = this.template;
@@ -173,7 +182,7 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
                     }
 
                     this._module.directive(name, function () {
-                        return directiveConfig;
+                        return _this.transformConfig(directiveConfig);
                     });
 
                     this.configure(this._module);

@@ -60,6 +60,12 @@ export class Component extends Annotation {
         return this.targetCls.events || null;
     }
 
+    get transformConfig() {
+        return this.targetCls.transformConfig || function(config) {
+            return config;
+        };
+    }
+
     get module() {
         if (!this._module) {
             var name = this.name;
@@ -115,7 +121,7 @@ export class Component extends Annotation {
             }
 
             this._module.directive(name, () => {
-                return directiveConfig;
+                return this.transformConfig(directiveConfig);
             });
 
             this.configure(this._module);
