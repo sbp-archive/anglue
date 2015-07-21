@@ -109,8 +109,6 @@ System.register(['angular', './annotation'], function (_export) {
                 }, {
                     key: 'module',
                     get: function () {
-                        var _this = this;
-
                         if (!this._module) {
                             var name = this.name;
                             var template = this.template;
@@ -180,9 +178,10 @@ System.register(['angular', './annotation'], function (_export) {
                                 };
                             }
 
-                            this._module.directive(name, function () {
-                                return _this.transformConfig(directiveConfig);
-                            });
+                            var transformConfig = this.transformConfig;
+                            this._module.directive(name, this.getInjectionTokens().concat([function () {
+                                return transformConfig(directiveConfig, Array.from(arguments));
+                            }]));
 
                             this.configure(this._module);
                         }

@@ -110,8 +110,6 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
         }, {
             key: 'module',
             get: function () {
-                var _this = this;
-
                 if (!this._module) {
                     var name = this.name;
                     var template = this.template;
@@ -181,9 +179,10 @@ define(['exports', 'angular', './annotation'], function (exports, _angular, _ann
                         };
                     }
 
-                    this._module.directive(name, function () {
-                        return _this.transformConfig(directiveConfig);
-                    });
+                    var transformConfig = this.transformConfig;
+                    this._module.directive(name, this.getInjectionTokens().concat([function () {
+                        return transformConfig(directiveConfig, Array.from(arguments));
+                    }]));
 
                     this.configure(this._module);
                 }
