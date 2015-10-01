@@ -1,52 +1,25 @@
-import Application from './application';
-import Component from './component';
-import Store from './store';
-import Actions from './actions';
+import {ApplicationAnnotation} from './application';
+import {ComponentAnnotation} from './component';
+import {StoreAnnotation} from './store';
+import {ActionsAnnotation} from './actions';
 
-export {Component, Store, Actions};
+export class AnnotationsFactory {
+  getApplication(name, targetCls) {
+    return new ApplicationAnnotation(name, targetCls);
+  }
 
-export class AnnotationsCache {
-    constructor() {
-        this.applications = new Map();
-        this.components = new Map();
-        this.stores = new Map();
-        this.actions = new Map();
-    }
+  getComponent(name, targetCls) {
+    return new ComponentAnnotation(name, targetCls);
+  }
 
-    getApplication(name, targetCls) {
-        var application = this.applications.get(name);
-        if (!application) {
-            application = new Application(name, targetCls);
-            this.applications.set(name, application);
-        }
-        return application;
-    }
+  getStore(name, targetCls) {
+    return new StoreAnnotation(name, targetCls);
+  }
 
-    getComponent(name, targetCls) {
-        var component = this.components.get(name);
-        if (!component) {
-            component = new Component(name, targetCls);
-            this.components.set(name, component);
-        }
-        return component;
-    }
-
-    getStore(name, targetCls) {
-        var store = this.stores.get(name);
-        if (!store) {
-            store = new Store(name, targetCls);
-            this.stores.set(name, store);
-        }
-        return store;
-    }
-
-    getActions(name, targetCls) {
-        var actions = this.actions.get(name);
-        if (!actions) {
-            actions = new Actions(name, targetCls);
-            this.actions.set(name, actions);
-        }
-        return actions;
-    }
+  getActions(name, targetCls) {
+    return new ActionsAnnotation(name, targetCls);
+  }
 }
-export default new AnnotationsCache();
+
+export var Annotations = new AnnotationsFactory();
+export default Annotations;
