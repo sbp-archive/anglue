@@ -1,49 +1,117 @@
+/*eslint-env node, jasmine, protractor */
 // Karma configuration
-// Generated on Tue Oct 21 2014 20:57:02 GMT+0200 (CEST)
+// Generated on Fri Aug 28 2015 11:34:14 GMT+0200 (CEST)
+module.exports = function(config) {
+	config.set({
+		// base path that will be used to resolve all patterns (eg. files, exclude)
+		basePath: '../',
 
-module.exports = function (config) {
-    config.set({
-        basePath: '../',
+		// frameworks to use
+		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+		frameworks: [
+			'jasmine',
+			'requirejs'
+		],
 
-        plugins: ['karma-systemjs', 'karma-jasmine', 'karma-phantomjs-launcher'],
-        frameworks: ['systemjs', 'jasmine'],
+		// list of files / patterns to load in the browser
+		files: [
+			'node_modules/grunt-babel/node_modules/babel-core/browser-polyfill.min.js',
+			'tests/test-main.js',
+			{
+				pattern: 'bower_components/angular/angular.js',
+				included: false
+			},
+			{
+				pattern: 'bower_components/angular-mocks/angular-mocks.js',
+				included: false
+			},
+			{
+				pattern: 'bower_components/angular-ui-router/release/angular-ui-router.js',
+				included: false
+			},
+			{
+				pattern: 'bower_components/luxyflux/dist/amd/**/*.js',
+				included: false
+			},
+			{
+				pattern: 'src/**/*.js',
+				included: false
+			},
+			{
+				pattern: 'tests/**/*.js',
+				included: false
+			}
+		],
 
-        systemjs: {
-            // File patterns for your application code, dependencies, and test suites
-            files: [
-                'bower_components/angular/angular.js',
-                'bower_components/angular-mocks/angular-mocks.js',
-                'bower_components/luxyflux/dist/system/ng-luxyflux.js',
-                'dist/system/**/*.js',
-                'tests/spec/**/*.js'
-            ],
+		// list of files to exclude
+		exclude: [],
 
-            // SystemJS configuration specifically for tests, added after your config file.
-            // Good for adding test libraries and mock modules
-            config: {
-                baseURL: '',
-                paths: {
-                    'anglue/*': 'dist/system/*.js',
-                    'angular': 'bower_components/angular/angular.js',
-                    'babel': 'node_modules/grunt-babel/node_modules/babel-core/browser.js',
-                    'es6-module-loader': 'node_modules/es6-module-loader/dist/es6-module-loader.js',
-                    'systemjs': 'node_modules/systemjs/dist/system.js',
-                    'system-polyfills': 'node_modules/systemjs/dist/system-polyfills.js',
-                    'phantomjs-polyfill': 'node_modules/phantomjs-polyfill/bind-polyfill.js',
-                    'angular-mocks': 'bower_components/angular-mocks/angular-mocks.js'
-                },
-                transpiler: 'babel'
-            },
+		preprocessors: {
+			'tests/**/*.spec.js': ['babel'],
+			'src/**/*.js': ['babel', 'sourcemap', 'coverage']
+		},
 
-            // Specify the suffix used for test suite file names.  Defaults to .test.js, .spec.js, _test.js, and _spec.js
-            testFileSuffix: '.spec.js'
-        },
+		babelPreprocessor: {
+			options: {
+				sourceMap: 'inline',
+				blacklist: ['useStrict']
+			},
+			sourceFileName: function(file) {
+				return file.originalPath;
+			}
+		},
 
-        port: 9876,
-        colors: true,
-        logLevel: config.LOG_INFO,
-        autoWatch: false,
-        browsers: ['PhantomJS'],
-        singleRun: true
-    });
+		// test results reporter to use
+		// possible values: 'dots', 'progress'
+		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
+		reporters: [
+			'progress',
+			'coverage'
+		],
+
+		coverageReporter: {
+			// configure the reporter to use isparta for JavaScript coverage
+			// Only on { "karma-coverage": "douglasduteil/karma-coverage#next" }
+			instrumenters: {
+				isparta : require('isparta')
+			},
+			instrumenter: {
+				'src/**/*.js': 'isparta'
+			},
+			reporters: [
+				{
+					type: 'text-summary',
+				},
+				{
+					type: 'lcovonly',
+					dir: 'coverage/',
+					file: 'lcov.info'
+				}
+			]
+		},
+
+		// web server port
+		port: 9876,
+
+		// enable / disable colors in the output (reporters and logs)
+		colors: true,
+
+		// level of logging
+		// possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO
+		// || config.LOG_DEBUG
+		logLevel: config.LOG_INFO,
+
+		// enable / disable watching file and executing tests whenever any file changes
+		autoWatch: false,
+
+		// start these browsers
+		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+		browsers: [
+			'PhantomJS2'
+		],
+
+		// Continuous Integration mode
+		// if true, Karma captures browsers, runs the tests and exits
+		singleRun: true
+	});
 };

@@ -1,99 +1,79 @@
 /*global module:false*/
 module.exports = function(grunt) {
-    'use strict';
+	// Project configuration.
+	grunt.initConfig({
+		// Metadata.
+		pkg: grunt.file.readJSON('package.json'),
 
-    // Project configuration.
-    grunt.initConfig({
-        // Metadata.
-        pkg: grunt.file.readJSON('package.json'),
+		clean: {
+			build: './dist/*'
+		},
 
-        clean: {
-            build: './dist/*'
-        },
+		eslint: {
+			options: {
+				configFile: '.eslintrc'
+			},
+			local: {
+				src: [
+					'src/**/*.js'
+				]
+			}
+		},
 
-        jshint: {
-            options: {
-                force: true,
-                jshintrc: '.jshintrc'
-            },
-            lib: {
-                src: 'js/**/*.js'
-            },
-            gruntfile: {
-                src: 'Gruntfile.js'
-            }
-        },
+		release: {
+			options: {
+				file: 'bower.json',
+				npm: false
+			}
+		},
 
-        release: {
-            options: {
-                file: 'bower.json',
-                npm: false
-            }
-        },
+		karma: {
+			unit: {
+				configFile: 'tests/karma.conf.js'
+			}
+		},
 
-        karma: {
-            unit: {
-                configFile: './tests/karma.conf.js'
-            }
-        },
+		watch: {
+			run_tests: {
+				files: [
+					'tests/**/*.js',
+					'src/**/*.js'
+				],
+				tasks: [
+					'karma:unit'
+				]
+			}
+		},
 
-        watch: {
-            src: {
-                files: [
-                    'src/**/*.js'
-                ],
-                tasks: ['babel']
-            },
+		babel: {
+			build: {
+				files: [
+					{
+						expand: true,
+						cwd: 'src/',
+						src: [
+							'**/*.js'
+						],
+						dest: 'dist/amd/'
+					}
+				]
+			}
+		}
+	});
 
-            test: {
-                files: [
-                    'dist/systemjs/**/*.js',
-                    'tests/**/*.js'
-                ],
-                tasks: ['karma']
-            }
-        },
+	// These plugins provide necessary tasks.
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-release');
+	grunt.loadNpmTasks('grunt-karma');
+	grunt.loadNpmTasks('grunt-babel');
 
-        babel: {
-            options: {
-                sourceMap: true,
-                optional: ['spec.protoToAssign']
-            },
-            amd: {
-                options: {
-                    modules: 'amd'
-                },
-                files: [{
-                    expand: true,
-                    cwd: 'src/',
-                    src: ['**/*.js'],
-                    dest: 'dist/amd/'
-                }]
-            },
-            system: {
-                options: {
-                    modules: 'system'
-                },
-                files: [{
-                    expand: true,
-                    cwd: 'src/',
-                    src: ['**/*.js'],
-                    dest: 'dist/system/'
-                }]
-            }
-        }
-    });
-
-    // These plugins provide necessary tasks.
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-release');
-    grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-babel');
-
-    // Default task.
-    grunt.registerTask('build', ['clean', 'babel']);
-    grunt.registerTask('test', ['clean', 'babel', 'karma']);
-    grunt.registerTask('default', ['build']);
+	// Default task.
+	grunt.registerTask('build', [
+		'eslint',
+		'clean',
+		'babel'
+	]);
+	grunt.registerTask('default', ['build']);
 };
