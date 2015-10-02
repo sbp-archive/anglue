@@ -1,65 +1,67 @@
 import angular from 'angular';
-import Annotation from './annotation';
 
-export class Application extends Annotation {
-    get dependencies() {
-        var targetCls = this.targetCls;
-        var extraDependencies = ['luxyflux'];
-        if (targetCls.routes) {
-            extraDependencies.push('ui.router');
-        }
-        return extraDependencies.concat(
-            targetCls.dependencies || [],
-            Annotation.getModuleNames(targetCls.components),
-            Annotation.getModuleNames(targetCls.stores),
-            Annotation.getModuleNames(targetCls.actions)
-        );
-    }
+import {Annotation} from './annotation';
 
-    get module() {
-        if (!this._module) {
-            const annotationNames = Annotation.getAnnotationServiceNames(this.targetCls.stores);
-            const controllerDeps = annotationNames.concat([() => {}]);
+export class ApplicationAnnotation extends Annotation {
+	get dependencies() {
+		var targetCls = this.targetCls;
+		var extraDependencies = ['luxyflux'];
+		if (targetCls.routes) {
+			extraDependencies.push('ui.router');
+		}
+		return extraDependencies.concat(
+			targetCls.dependencies || [],
+			Annotation.getModuleNames(targetCls.components),
+			Annotation.getModuleNames(targetCls.stores),
+			Annotation.getModuleNames(targetCls.actions)
+		);
+	}
 
-            this._module = angular.module(
-                this.name,
-                this.dependencies
-            ).run(controllerDeps);
+	get module() {
+		if (!this._module) {
+			const annotationNames = Annotation.getAnnotationServiceNames(this.targetCls.stores);
+			const controllerDeps = annotationNames.concat([() => {}]);
 
-            this.configure(this._module);
-        }
+			this._module = angular.module(
+				this.name,
+				this.dependencies
+			).run(controllerDeps);
 
-        return this._module;
-    }
+			this.configure(this._module);
+		}
 
-    configure(angularModule) {
-        // The ApplicationDispatcher is the (singleton) dispatcher instance used
-        // in our entire application. Every ActionCreator in this app dispatches
-        // through this instance and all app stores are registered to it
-        angularModule.service('ApplicationDispatcher', [
-            'LuxyFluxDispatcher',
-            function(Dispatcher) {
-                return new Dispatcher('ApplicationDispatcher');
-            }
-        ]);
+		return this._module;
+	}
 
-        var routes = this.targetCls.routes;
-        if (routes) {
-            angularModule.config([
-                '$stateProvider',
-                '$urlRouterProvider',
-                function routerConfig($stateProvider, $urlRouterProvider) {
-                    if (routes.defaultRoute) {
-                        $urlRouterProvider.otherwise(routes.defaultRoute);
-                        delete routes.defaultRoute;
-                    }
+	configure(angularModule) {
+		// The ApplicationDispatcher is the (singleton) dispatcher instance used
+		// in our entire application. Every ActionCreator in this app dispatches
+		// through this instance and all app stores are registered to it
+		angularModule.service('ApplicationDispatcher', [
+			'LuxyFluxDispatcher',
+			function(Dispatcher) {
+				return new Dispatcher('ApplicationDispatcher');
+			}
+		]);
 
-                    Object.keys(routes).forEach((name) => {
-                        $stateProvider.state(name, routes[name]);
-                    });
-                }
-            ]);
-        }
-    }
+		var routes = this.targetCls.routes;
+		if (routes) {
+			angularModule.config([
+				'$stateProvider',
+				'$urlRouterProvider',
+				function routerConfig($stateProvider, $urlRouterProvider) {
+					if (routes.defaultRoute) {
+						$urlRouterProvider.otherwise(routes.defaultRoute);
+						delete routes.defaultRoute;
+					}
+
+					Object.keys(routes).forEach((name) => {
+						$stateProvider.state(name, routes[name]);
+					});
+				}
+			]);
+		}
+	}
 }
-export default Application;
+
+export default ApplicationAnnotation;

@@ -1,0 +1,53 @@
+{
+  "indent": {
+    "value": "\t"
+  },
+
+  "whiteSpace": {
+    "before": {
+      "PropertyName": 1,
+      "ModuleSpecifierClosingBrace": 0
+    },
+    "after": {
+      "ModuleSpecifierOpeningBrace": 0
+    }
+  },
+
+  "lineBreak": {
+    "before": {
+      "ArrayExpressionClosing": 1
+    },
+    "after": {
+      "ArrayExpressionOpening": 1,
+      "ArrayExpressionComma": 1
+    }
+  },
+
+  "plugins": [
+    "esformatter-braces",
+    "esformatter-collapse-objects",
+    "esformatter-jquery-chain",
+    "esformatter-quotes",
+    "esformatter-remove-trailing-commas",
+    "esformatter-semicolons"
+  ],
+
+  "collapseObjects": {
+    "ObjectExpression": {
+      "maxLineLength": 100,
+      "maxKeys": 2,
+      "maxDepth": 2,
+      "forbidden": [
+        "FunctionExpression"
+      ]
+    },
+    "ArrayExpression": {
+      "maxLineLength": 100,
+      "maxKeys": 2,
+      "maxDepth": 2,
+      "forbidden": [
+        "FunctionExpression"
+      ]
+    }
+  }
+}
