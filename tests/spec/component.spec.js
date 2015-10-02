@@ -2,7 +2,7 @@
  import angular from 'angular';
  import 'angular-mocks';
 
- import {Component, ComponentAnnotation} from 'anglue/anglue';
+ import {Component, ComponentAnnotation, Flag} from '../../src/component';
 
  describe('Components', () => {
  	@Component()
@@ -15,13 +15,18 @@
  		name: 'dependency',
  		dependencies: ['dependency']
  	})
- 	class WithDependenciesComponent {}
+
+	class WithDependenciesComponent {
+	}
 
  	let activateSpy = jasmine.createSpy();
  	@Component()
  	class ComplexComponent {
+		@Flag() something;
+
  		activate() {
  			activateSpy();
+			console.log(this.something);
  		}
  	}
 
@@ -70,19 +75,22 @@
  	});
 
  	describe('directive', () => {
+		let angular = window.angular;
+
  		angular.module('componentApp', [
  			ComplexComponent.annotation.module.name
  		]);
 
  		let $compile, $rootScope;
- 		beforeEach(module('componentApp'));
+		console.log('module', window.module);
+ 		beforeEach(window.module('componentApp'));
  		beforeEach(inject((_$compile_, _$rootScope_) => {
  			$compile = _$compile_;
  			$rootScope = _$rootScope_;
  		}));
 
  		it('should call the activate method', function() {
- 			$compile('<complex></complex>')($rootScope);
+ 			$compile('<complex something="true"></complex><complex something="false"></complex><complex></complex>')($rootScope);
  			$rootScope.$digest();
 
  			expect(activateSpy).toHaveBeenCalled();

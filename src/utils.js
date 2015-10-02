@@ -7,6 +7,8 @@ export function addStaticObjectMember(cls, propertyName, key, value) {
 		get: () => {
 			let newObject = currentGetter !== undefined ?
 				currentGetter.get() : {};
+			let angular = window.angular;
+			console.log('angular', window.angular);
 			let resolvedKey = angular.isFunction(key) ? key() : key;
 			newObject[resolvedKey] = value;
 			return newObject;

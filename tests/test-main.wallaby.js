@@ -5,6 +5,7 @@ requirejs.config({
     baseUrl: '/src',
 
     paths: {
+        'anglue': 'anglue',
         'luxyflux': '../bower_components/luxyflux/dist/amd',
         'angular': '../bower_components/angular/angular',
         'angular-mocks': '../bower_components/angular-mocks/angular-mocks',

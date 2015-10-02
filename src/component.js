@@ -27,6 +27,7 @@ export class ComponentAnnotation extends Annotation {
 				annotation.applyInjectionBindings(this, injected);
 				annotation.applyDecorators(this);
 
+				console.log(flags);
 				if (flags) {
 					Object.keys(flags).forEach((flag) => {
 						let flagBinding = `_${flag}Flag`;
@@ -98,6 +99,10 @@ export class ComponentAnnotation extends Annotation {
 			let bindings = this.bindings;
 			let events = this.events;
 
+			let angular = window.angular;
+
+			console.log(window.angular);
+
 			this._module = angular.module(
 				'components.' + name,
 				this.dependencies
@@ -163,8 +168,11 @@ export class ComponentAnnotation extends Annotation {
 
 export default ComponentAnnotation;
 
+
 export function Component(config) {
 	return (cls) => {
+		let angular = window.angular;
+		console.log(angular);
 		let isConfigObject = angular.isObject(config);
 		let componentName = isConfigObject ? config.name : config;
 		if (!componentName) {
