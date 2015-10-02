@@ -83,9 +83,8 @@ module.exports = function(config) {
 					type: 'text-summary',
 				},
 				{
-					type: 'lcovonly',
-					dir: 'coverage/',
-					file: 'lcov.info'
+					type: 'html',
+					dir: 'coverage/'
 				}
 			]
 		},
