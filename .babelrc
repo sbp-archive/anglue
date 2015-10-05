@@ -1,10 +1,10 @@
 {
-	"modules": "amd",
-	"sourceMap": true,
-	"optional": [
-		"spec.protoToAssign",
-		"es7.exportExtensions",
-		"es7.classProperties",
-		"es7.decorators"
-	]
+  "modules": "amd",
+  "sourceMap": true,
+  "optional": [
+    "spec.protoToAssign",
+    "es7.exportExtensions",
+    "es7.classProperties",
+    "es7.decorators"
+  ]
 }

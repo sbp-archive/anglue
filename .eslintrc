@@ -47,6 +47,7 @@
     "consistent-this": [0, "self"],
     "camelcase": [2, {"properties": "never"}],
     "key-spacing": 2,
+    "semi": 2,
 
     // best practices:
     "block-scoped-var": 2,

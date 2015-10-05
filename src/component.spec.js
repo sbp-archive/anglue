@@ -143,7 +143,7 @@ describe('Components', () => {
 
       it('should expose properties namespaced to the component template', () => {
         let el = compileTemplate('<complex></complex>', $compile, $rootScope);
-        expect(el.text()).toEqual('foobar')
+        expect(el.text()).toEqual('foobar');
       });
 
       it('should support specifying child components', () => {
@@ -153,7 +153,7 @@ describe('Components', () => {
         ctrl.showChild = true;
         $rootScope.$digest();
 
-        expect(el.text()).toEqual('foobar[child]')
+        expect(el.text()).toEqual('foobar[child]');
       });
     });
 
