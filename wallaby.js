@@ -1,7 +1,6 @@
 /*eslint-env node*/
+var babel = require('babel');
 module.exports = function(wallaby) {
-  var babel = require('babel');
-
   return {
     files: [
       {pattern: 'node_modules/requirejs/require.js', instrument: false},
