@@ -3,6 +3,7 @@ Anglue is a framework that enables you to leverage the full potential of ES6/7 w
 
 [![Build Status](https://travis-ci.org/schubergphilis/anglue.svg)](https://travis-ci.org/schubergphilis/anglue)
 [![Docs Coverage](https://doc.esdoc.org/github.com/schubergphilis/anglue/badge.svg)](https://doc.esdoc.org/github.com/schubergphilis/anglue/)
+[![devDependency Status](https://david-dm.org/schubergphilis/anglue/dev-status.svg)](https://david-dm.org/schubergphilis/anglue#info=devDependencies)
 
 ## Install & Setup
 

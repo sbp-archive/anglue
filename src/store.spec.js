@@ -3,7 +3,14 @@ import angular from 'angular';
 import 'angular-mocks';
 import 'luxyflux/ng-luxyflux';
 
-import {Store, StoreAnnotation, Inject, Handler, Handlers} from 'anglue/anglue';
+import {
+  Store,
+  StoreAnnotation,
+  Inject,
+  Handler,
+  Handlers,
+  EventEmitterBehavior
+} from 'anglue/anglue';
 
 describe('Stores', () => {
   describe('@Store() decorator', () => {
@@ -114,6 +121,11 @@ describe('Stores', () => {
 
     it('should register itself with the ApplicationDispatcher', () => {
       expect(appDispatcher.register).toHaveBeenCalledWith('store.complex', jasmine.any(Function));
+    });
+
+    it('should have the EventEmitter behavior', () => {
+      expect(store.eventEmitter).toEqual(jasmine.any(EventEmitterBehavior));
+      expect(store.emit).toBeDefined();
     });
   });
 });
