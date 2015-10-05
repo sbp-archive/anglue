@@ -6,7 +6,8 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     clean: {
-      build: './dist/*'
+      build: './dist/*',
+      coverage: './coverage/*'
     },
 
     eslint: {
@@ -33,8 +34,19 @@ module.exports = function(grunt) {
       }
     },
 
+    remapIstanbul: {
+      build: {
+        src: 'coverage/lcov.json',
+        options: {
+          reports: {
+            lcovonly: 'coverage/lcov-remapped.info'
+          }
+        }
+      }
+    },
+
     coveralls: {
-      src: 'coverage/lcov.info'
+      src: 'coverage/lcov-remapped.info'
     },
 
     babel: {
@@ -54,15 +66,18 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('remap-istanbul');
   grunt.file.expand('node_modules/grunt-*/tasks')
     .forEach(grunt.loadTasks);
 
   // Default task.
   grunt.registerTask('build', [
     'eslint',
-    'karma',
     'clean',
-    'babel'
+    'babel',
+    'karma',
+    'remapIstanbul'
   ]);
+
   grunt.registerTask('default', ['build']);
 };
