@@ -33,6 +33,7 @@ export class Annotation {
    * This method can be overridden by child classes to
    * configure the angular module after it is created
    * @param {module} module The created angular module
+   * @returns {undefined}
    */
   configure(/*module*/) {}
 
@@ -43,6 +44,7 @@ export class Annotation {
    * wants the bindings
    * @param  {Array} injected An array with the injected
    * instances that we will apply on the class instance
+   * @returns {undefined}
    */
   applyInjectionBindings(instance, injected) {
     var injections = this.injections;
@@ -57,8 +59,9 @@ export class Annotation {
   /**
    * This method decorates the created instance with all the
    * targetCls decorators
-   * @param  {Object} instance The created instance to be decorated
    * @deprecated
+   * @param  {Object} instance The created instance to be decorated
+   * @returns {undefined}
    */
   applyDecorators(instance) {
     var decorators = this.decorators;
@@ -71,8 +74,9 @@ export class Annotation {
 
   /**
    * This method decorates the class with all the targetCls decorators
-   * @param  {Object} targetCls The targetCls to be decorated
    * @deprecated
+   * @param  {Object} targetCls The targetCls to be decorated
+   * @returns {undefined}
    */
   applyClassDecorators(targetCls) {
     var decorators = this.decorators;

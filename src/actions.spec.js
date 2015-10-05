@@ -1,4 +1,5 @@
-/*eslint-env node, jasmine*//*global module, inject*/
+/*eslint-env node, jasmine*/
+/*global module, inject*/
 import angular from 'angular';
 import 'angular-mocks';
 import 'luxyflux/ng-luxyflux';
@@ -80,6 +81,7 @@ describe('Actions', () => {
     it('should add an action to the static class serviceActions getter', () => {
       @Actions() class AsyncActions {
         @AsyncAction() fooAction() {}
+
         @AsyncAction() barAction() {}
       }
       expect(AsyncActions.serviceActions)
@@ -102,14 +104,14 @@ describe('Actions', () => {
     let actions, $q, appDispatcher, $rootScope;
     let dispatcherDeferred, actionDeferred;
 
-    @Actions()
-    class ComplexActions {
+    @Actions() class ComplexActions {
       @Inject() $q;
 
-      @Action() fooAction() {};
+      @Action() fooAction() {}
+
       @Action('NAMED') barAction() {
         return 'bar';
-      };
+      }
 
       @AsyncAction() asyncFooAction() {
         return actionDeferred.promise;
@@ -126,11 +128,10 @@ describe('Actions', () => {
         ComplexActions.annotation.module.name
       ])
       .service('ApplicationDispatcher', [
-        function() {
+        function () {
           return new MockApplicationDispatcher();
         }
       ]);
-
 
     beforeEach(module('actionsApp'));
     beforeEach(inject((_ComplexActions_, _$q_, _$rootScope_, _ApplicationDispatcher_) => {

@@ -144,7 +144,7 @@ describe('Applications', () => {
         bar: 'foo'
       }
     })
-    class TestApplication {};
+    class TestApplication {}
 
     let mockStateProvider, mockUrlRouterProvider;
     beforeEach(() => {
