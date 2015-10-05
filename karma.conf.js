@@ -21,15 +21,16 @@ module.exports = function(config) {
       {pattern: 'bower_components/angular-mocks/angular-mocks.js', included: false},
       {pattern: 'bower_components/angular-ui-router/release/angular-ui-router.js', included: false},
       {pattern: 'bower_components/luxyflux/dist/amd/**/*.js', included: false},
-      {pattern: 'src/**/*.js', included: false}
+      {pattern: 'dist/amd/**/*.js', included: false},
+      {pattern: 'src/**/*.spec.js', included: false}
     ],
 
     // list of files to exclude
     exclude: [],
 
     preprocessors: {
-      'src/**/*.spec.js': ['babel'],
-      'src/**/!(*.spec).js': ['babel', 'coverage']
+      'dist/**/*.js': ['coverage', 'sourcemap'],
+      'src/**/*.spec.js': ['babel']
     },
 
     // test results reporter to use
@@ -42,10 +43,10 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [{
-        type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
+        type: 'json', // lcov or lcovonly are required for generating lcov.info files
         dir: 'coverage/',
         subdir: '.',
-        file: 'lcov.info'
+        file: 'lcov.json'
       }, {
         type: 'text-summary'
       }]
