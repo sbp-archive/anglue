@@ -7,7 +7,7 @@ cache:
     - bower_components
 
 install:
-  - npm install -g grunt
+  - npm install -g grunt-cli
   - npm install -g bower
   - npm install
   - bower install
