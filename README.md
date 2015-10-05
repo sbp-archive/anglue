@@ -1,7 +1,8 @@
 # Anglue
 Anglue is a framework that enables you to leverage the full potential of ES6/7 when writing Flux Angular 1.x applications. It's the glue that brings together all the different pieces and allows you to write applications in a consistent manner.
 
-![Docs Coverage](https://doc.esdoc.org/github.com/schubergphilis/anglue/badge.svg)
+[![Build Status](https://travis-ci.org/schubergphilis/anglue.svg)](https://travis-ci.org/schubergphilis/anglue)
+[![Docs Coverage](https://doc.esdoc.org/github.com/schubergphilis/anglue/badge.svg)](https://doc.esdoc.org/github.com/schubergphilis/anglue/)
 
 ## Install & Setup
 
