@@ -1,5 +1,5 @@
 language: node_js
-sudo: true
+sudo: false
 
 # cache:
 #   directories:
@@ -7,9 +7,9 @@ sudo: true
 #     - bower_components
 
 install:
+  - npm uninstall -g phantomjs
+  - npm install -g phantomjs2
   - npm install -g bower
-  - npm install
-  - bower install
 
 script:
   - grunt build
