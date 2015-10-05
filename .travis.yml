@@ -25,4 +25,5 @@ script:
   - grunt build
 
 after_success:
+  - grunt coveralls
   - rm -rf travis-phantomjs

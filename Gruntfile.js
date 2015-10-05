@@ -33,6 +33,10 @@ module.exports = function(grunt) {
       }
     },
 
+    coveralls: {
+      src: 'coverage/lcov.info'
+    },
+
     babel: {
       build: {
         files: [
@@ -41,7 +45,7 @@ module.exports = function(grunt) {
             cwd: 'src/',
             src: [
               '**/*.js',
-              '!**/*.spec.js',
+              '!**/*.spec.js'
             ],
             dest: 'dist/amd/'
           }
