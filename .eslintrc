@@ -1,0 +1,79 @@
+{
+  "ecmaFeatures": { "modules": true },
+  "parser": "babel-eslint",
+  "plugins": [
+    "babel"
+  ],
+  "env": {
+    "node": false,
+    "es6": true,
+    "amd": true,
+    "browser": true,
+    "jasmine": true
+  },
+  "rules": {
+    // errors
+    "no-debugger": 2,
+    "no-empty": 2,
+    "no-invalid-regexp": 2,
+    "radix": 2,
+    "no-warning-comments": 2,
+    "no-unused-expressions": 2,
+    "no-native-reassign": 2,
+    "no-fallthrough": 2,
+    "no-undef": 2,
+    "no-dupe-keys": 2,
+    "no-empty-character-class": 2,
+    "no-self-compare": 2,
+    "valid-typeof": 2,
+    "no-unused-vars": 2,
+    "handle-callback-err": 2,
+    "no-shadow-restricted-names": 2,
+    "no-console": 2,
+    "no-extra-parens": 2,
+    "quote-props": [2, "consistent-as-needed"],
+    "valid-jsdoc": [2, {
+        "requireReturn": false
+    }],
+    "eol-last": 2,
+    "no-use-before-define": [0],
+    "quotes": [2, "single"],
+
+    // stylistic errors
+    "no-spaced-func": 2,
+    "semi-spacing": 2,
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "comma-style": [2, "last"],
+    "consistent-this": [0, "self"],
+    "camelcase": [2, {"properties": "never"}],
+    "key-spacing": 2,
+
+    // best practices:
+    "block-scoped-var": 2,
+    "complexity": [2, 10],
+    "guard-for-in": 2,
+    "no-div-regex": 2,
+    "no-else-return": 2,
+    "no-eq-null": 2,
+    "no-floating-decimal": 2,
+    "no-param-reassign": 2,
+    "no-self-compare": 2,
+    "no-throw-literal": 2,
+    "no-void": 2,
+    "no-warning-comments": 2,
+    "wrap-iife": 2,
+    "strict": [2, "function"],
+    "no-catch-shadow": 2,
+    "default-case": 2,
+    "no-shadow": 2,
+
+    "no-underscore-dangle": 0,
+    "vars-on-top": 0,
+    "no-undefined": 0,
+    "func-names": 0,
+
+    // ES7 babel-eslint-plugin properties
+    "new-cap": 0,
+    "babel/new-cap": 2
+  }
+}

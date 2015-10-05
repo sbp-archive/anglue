@@ -21,10 +21,12 @@
     "README.md"
   ],
   "dependencies": {
-    "angular": "~1.4.2",
+    "angular": "~1.4.6",
+    "angular-ui-router": "~0.2.15",
     "luxyflux": "git@github.com:schubergphilis/luxyflux.git#*"
   },
   "devDependencies": {
+    "angular-mocks": "~1.4.7",
     "requirejs": "~2.1.18"
   }
 }
