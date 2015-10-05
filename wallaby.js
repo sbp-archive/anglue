@@ -28,7 +28,8 @@ module.exports = function(wallaby) {
     },
     env: {
       type: 'browser',
-      runner: 'node_modules/phantomjs2/bin/phantomjs'
-    }
-  }
+      runner: 'node_modules/karma-phantomjs2-launcher/node_modules/phantomjs2-ext/bin/phantomjs'
+    },
+    debug: true
+  };
 };
