@@ -100,7 +100,7 @@ export function Action(actionName) {
       let action = prepareActionName(cls, actionName, methodName);
       let originalReturn = originalMethod.apply(this, payload);
       let dispatchPromise = this.dispatch(action, ...payload);
-      return originalReturn !== undefined ? originalReturn : dispatchPromise;
+      return angular.isDefined(originalReturn) ? originalReturn : dispatchPromise;
     };
   };
 }

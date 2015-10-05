@@ -41,6 +41,8 @@ export class ApplicationAnnotation extends Annotation {
   }
 
   configure(angularModule) {
+    var routes = this.targetCls.routes;
+
     // The ApplicationDispatcher is the (singleton) dispatcher instance used
     // in our entire application. Every ActionCreator in this app dispatches
     // through this instance and all app stores are registered to it
@@ -51,7 +53,6 @@ export class ApplicationAnnotation extends Annotation {
       }
     ]);
 
-    var routes = this.targetCls.routes;
     if (routes) {
       angularModule.config([
         '$stateProvider',

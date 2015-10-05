@@ -1,91 +1,135 @@
-var _defaults = function (obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; };
+define(['exports', 'angular', './annotation', './annotations', './behaviors/event-emitter', './utils'], function (exports, _angular, _annotation, _annotations, _behaviorsEventEmitter, _utils) {
+  'use strict';
 
-define(['exports', 'angular', './annotation'], function (exports, _angular, _annotation) {
-    'use strict';
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  var _bind = Function.prototype.bind;
 
-    var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-    var _bind = Function.prototype.bind;
+  var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-    var _toConsumableArray = function (arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } };
+  exports.Store = Store;
+  exports.Handlers = Handlers;
+  exports.Handler = Handler;
 
-    var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-    var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+  function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-    var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+  function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
 
-    var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) _defaults(subClass, superClass); };
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-    Object.defineProperty(exports, '__esModule', {
-        value: true
-    });
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
-    var _angular2 = _interopRequire(_angular);
+  var _angular2 = _interopRequireDefault(_angular);
 
-    var _Annotation2 = _interopRequire(_annotation);
+  var StoreAnnotation = (function (_Annotation) {
+    _inherits(StoreAnnotation, _Annotation);
 
-    var Store = (function (_Annotation) {
-        function Store() {
-            _classCallCheck(this, Store);
+    function StoreAnnotation() {
+      _classCallCheck(this, StoreAnnotation);
 
-            if (_Annotation != null) {
-                _Annotation.apply(this, arguments);
-            }
+      _get(Object.getPrototypeOf(StoreAnnotation.prototype), 'constructor', this).apply(this, arguments);
+    }
+
+    _createClass(StoreAnnotation, [{
+      key: 'getInjectionTokens',
+      value: function getInjectionTokens() {
+        return ['LuxyFlux', 'LuxyFluxStore', 'ApplicationDispatcher'].concat(_get(Object.getPrototypeOf(StoreAnnotation.prototype), 'getInjectionTokens', this).call(this));
+      }
+    }, {
+      key: 'serviceName',
+      get: function get() {
+        var name = this.name;
+        return '' + name[0].toUpperCase() + name.slice(1) + 'Store';
+      }
+    }, {
+      key: 'factoryFn',
+      get: function get() {
+        var TargetCls = this.targetCls;
+        var annotation = this;
+
+        return function (LuxyFlux, LuxyFluxStore, ApplicationDispatcher) {
+          var injected = Array.from(arguments).slice(3);
+          var instance = new (_bind.apply(TargetCls, [null].concat(_toConsumableArray(injected))))();
+
+          annotation.applyInjectionBindings(instance, injected);
+          annotation.applyDecorators(instance);
+
+          return LuxyFlux.createStore({
+            name: 'store.' + annotation.name,
+            dispatcher: ApplicationDispatcher,
+            handlers: TargetCls.handlers,
+            decorate: instance
+          }, LuxyFluxStore);
+        };
+      }
+    }, {
+      key: 'module',
+      get: function get() {
+        if (!this._module) {
+          this._module = _angular2['default'].module('stores.' + this.name, this.dependencies);
+
+          this._module.factory(this.serviceName, this.getInjectionTokens().concat([this.factoryFn]));
+
+          this.configure(this._module);
         }
+        return this._module;
+      }
+    }]);
 
-        _inherits(Store, _Annotation);
+    return StoreAnnotation;
+  })(_annotation.Annotation);
 
-        _createClass(Store, [{
-            key: 'serviceName',
-            get: function () {
-                var name = this.name;
-                return name[0].toUpperCase() + name.slice(1) + 'Store';
-            }
-        }, {
-            key: 'getInjectionTokens',
-            value: function getInjectionTokens() {
-                return ['LuxyFlux', 'LuxyFluxStore', 'ApplicationDispatcher'].concat(_get(Object.getPrototypeOf(Store.prototype), 'getInjectionTokens', this).call(this));
-            }
-        }, {
-            key: 'factoryFn',
-            get: function () {
-                var TargetCls = this.targetCls;
-                var annotation = this;
+  exports.StoreAnnotation = StoreAnnotation;
 
-                return function (LuxyFlux, LuxyFluxStore, ApplicationDispatcher) {
-                    var injected = Array.from(arguments).slice(3);
-                    var instance = new (_bind.apply(TargetCls, [null].concat(_toConsumableArray(injected))))();
+  function Store(config) {
+    return function (cls) {
+      // Decorate a store with the EventEmitterBehavior
+      (0, _behaviorsEventEmitter.EventEmitter)()(cls);
 
-                    annotation.applyInjectionBindings(instance, injected);
-                    annotation.applyDecorators(instance);
+      var storeName = undefined;
+      var isConfigObject = _angular2['default'].isObject(config);
 
-                    return LuxyFlux.createStore({
-                        name: 'store.' + annotation.name,
-                        dispatcher: ApplicationDispatcher,
-                        handlers: TargetCls.handlers,
-                        decorate: instance
-                    }, LuxyFluxStore);
-                };
-            }
-        }, {
-            key: 'module',
-            get: function () {
-                if (!this._module) {
-                    this._module = _angular2.module('stores.' + this.name, this.dependencies);
+      if (isConfigObject && config.name) {
+        storeName = config.name;
+      } else if (_angular2['default'].isString(config)) {
+        storeName = config;
+      } else {
+        var clsName = cls.name.replace(/store$/i, '');
+        storeName = '' + clsName[0].toLowerCase() + clsName.slice(1);
+      }
 
-                    this._module.factory(this.serviceName, this.getInjectionTokens().concat([this.factoryFn]));
+      (0, _utils.addStaticGetter)(cls, 'annotation', function () {
+        return _annotations.Annotations.getStore(storeName, cls);
+      });
+    };
+  }
 
-                    this.configure(this._module);
-                }
-                return this._module;
-            }
-        }]);
+  function Handlers(handlers) {
+    return function (cls) {
+      Object.keys(handlers).forEach(function (actionName) {
+        var handlerName = handlers[actionName];
+        (0, _utils.addStaticGetterObjectMember)(cls, 'handlers', actionName, handlerName);
+      });
+    };
+  }
 
-        return Store;
-    })(_Annotation2);
+  function Handler(actionName) {
+    return function (cls, handlerName) {
+      var action = actionName;
+      if (!action) {
+        action = handlerName.replace(/^on([A-Z])/, function (match, first) {
+          return first.toLowerCase();
+        }).replace(/([A-Z])/g, '_$1').toUpperCase();
+      }
+      (0, _utils.addStaticGetterObjectMember)(cls.constructor, 'handlers', action, handlerName);
+    };
+  }
 
-    exports.Store = Store;
-    exports['default'] = Store;
+  exports['default'] = StoreAnnotation;
 });
 //# sourceMappingURL=store.js.map

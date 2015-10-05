@@ -60,9 +60,14 @@ export function addBehavior(cls, propertyName, BehaviorCls, methods = []) {
     let localName = parts[0].trim();
     let externalName = parts[1] ? parts[1].trim() : localName;
     Object.defineProperty(cls.prototype, localName, {
+
+      /*eslint-disable no-loop-func */
       value: function() {
         this[propertyName][externalName](...arguments);
       }
+
+      /*eslint-enable no-loop-func */
+
     });
   }
 }

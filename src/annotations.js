@@ -21,5 +21,5 @@ export class AnnotationsFactory {
   }
 }
 
-export var Annotations = new AnnotationsFactory();
+export const Annotations = new AnnotationsFactory();
 export default Annotations;

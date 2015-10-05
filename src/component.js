@@ -31,7 +31,7 @@ export class ComponentAnnotation extends Annotation {
           Object.keys(flags).forEach((flag) => {
             let flagBinding = `_${flag}Flag`;
             Object.defineProperty(this, flag, {
-              get: () => this[flagBinding] !== undefined ? this[flagBinding] !== 'false' : false
+              get: () => angular.isDefined(this[flagBinding]) ? this[flagBinding] !== 'false' : false
             });
           });
         }
@@ -41,7 +41,7 @@ export class ComponentAnnotation extends Annotation {
         }
 
         if (this.activate instanceof Function) {
-          this.activate.call(this);
+          this.activate();
         }
 
         this.fireComponentEvent = (event, locals) => {
@@ -49,8 +49,8 @@ export class ComponentAnnotation extends Annotation {
             Component.fireComponentEvent() has been deprecated in Anglue 1.x.
             Please use @Event() myEvent; in combination with this.myEvent.fire().
           `);
-          if (this._event_handlers && this._event_handlers[event]) {
-            this._event_handlers[event].call(this, locals);
+          if (this._eventHandlers && this._eventHandlers[event]) {
+            this._eventHandlers[event].call(this, locals);
           }
         };
       }
@@ -140,7 +140,7 @@ export class ComponentAnnotation extends Annotation {
       if (events) {
         directiveConfig.link = (scope, el, attr, ctrl) => {
           if (events) {
-            let eventHandlers = ctrl._event_handlers = {};
+            let eventHandlers = ctrl._eventHandlers = {};
             Object.keys(events).forEach((event) => {
               if (attr[event]) {
                 eventHandlers[events[event]] = (locals) => {
