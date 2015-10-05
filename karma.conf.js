@@ -28,15 +28,28 @@ module.exports = function(config) {
     exclude: [],
 
     preprocessors: {
-      'src/**/*.js': ['babel']
+      'src/**/*.spec.js': ['babel'],
+      'src/**/!(*.spec).js': ['babel', 'coverage']
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: [
-      'progress'
+      'dots',
+      'coverage'
     ],
+
+    coverageReporter: {
+      reporters: [{
+        type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
+        dir: 'coverage/',
+        subdir: '.',
+        file: 'lcov.info'
+      }, {
+        type: 'text-summary'
+      }]
+    },
 
     // web server port
     port: 9876,
