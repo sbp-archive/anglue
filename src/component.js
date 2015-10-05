@@ -32,7 +32,7 @@ export class ComponentAnnotation extends Annotation {
             let flagBinding = `_${flag}Flag`;
             Object.defineProperty(this, flag, {
               get: () => this[flagBinding] !== undefined ? this[flagBinding] !== 'false' : false
-            })
+            });
           });
         }
 
@@ -52,7 +52,7 @@ export class ComponentAnnotation extends Annotation {
           if (this._event_handlers && this._event_handlers[event]) {
             this._event_handlers[event].call(this, locals);
           }
-        }
+        };
       }
     }
 
@@ -248,7 +248,7 @@ export function Flag(config) {
     let propertyBinding = `_${propertyName}Flag`;
     let attributeBinding = `@${attribute}`;
     addStaticGetterObjectMember(cls.constructor, 'bindings', propertyBinding, attributeBinding);
-  }
+  };
 }
 
 export function Event() {
@@ -257,7 +257,7 @@ export function Event() {
     if (!descriptor.initializer) {
       descriptor.initializer = () => {
         return new ComponentEvent();
-      }
+      };
     }
     addStaticGetterObjectMember(cls.constructor, 'events', attribute, propertyName);
     addStaticGetterObjectMember(cls.constructor, 'bindings',

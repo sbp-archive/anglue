@@ -60,8 +60,7 @@ export class StoreAnnotation extends Annotation {
 
 export function Store(config) {
   return (cls) => {
-    // A store by default is an EventEmitter.
-    // We just reuse the EventEmitter decorator
+    // Decorate a store with the EventEmitterBehavior
     eventEmitterDecorator()(cls);
 
     let storeName;

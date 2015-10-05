@@ -10,33 +10,36 @@ export class EventEmitterBehavior extends Behavior {
   }
 
   addListener(event, handler) {
-    var events = this.events;
-    if (!events[event]) {
-      events[event] = new Set();
+    let events = this.events;
+    if (!events.has(event)) {
+      events.set(event, new Set());
     }
-    events[event].add(handler);
-
+    events.get(event).add(handler);
     return () => {
       this.removeListener(event, handler);
     };
   }
 
   removeListener(event, handler) {
-    var events = this.events;
-    if (!events[event]) {
+    let events = this.events;
+    let eventSet = events.get(event);
+    if (!eventSet || !eventSet.has(handler)) {
       return;
     }
-    events[event].delete(handler);
+    eventSet.delete(handler);
+    if (!eventSet.size) {
+      events.delete(event);
+    }
   }
 
   emit(event) {
-    var events = this.events;
-    if (!events[event]) {
+    let events = this.events;
+    if (!events.has(event)) {
       return;
     }
 
-    var args = Array.from(arguments).slice(1);
-    for (let handler of events[event]) {
+    let args = Array.from(arguments).slice(1);
+    for (let handler of events.get(event)) {
       handler(...args);
     }
   }

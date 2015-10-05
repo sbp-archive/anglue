@@ -92,7 +92,7 @@ describe('Stores', () => {
           return {
             register: jasmine.createSpy(),
             dispatch: jasmine.createSpy()
-          }
+          };
         }
       ]);
 
