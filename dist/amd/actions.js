@@ -46,7 +46,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
       key: 'serviceName',
       get: function get() {
         var name = this.name;
-        return name[0].toUpperCase() + name.slice(1) + 'Actions';
+        return '' + name[0].toUpperCase() + name.slice(1) + 'Actions';
       }
     }, {
       key: 'factoryFn',
@@ -129,7 +129,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
           payload[_key] = arguments[_key];
         }
 
-        var originalReturn = originalMethod.apply(this, payload);
+        var originalReturn = Reflect.apply(originalMethod, this, payload);
         var dispatchPromise = this.dispatch.apply(this, [action].concat(payload));
         return _angular2['default'].isDefined(originalReturn) ? originalReturn : dispatchPromise;
       };

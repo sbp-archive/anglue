@@ -10,7 +10,7 @@ export class EventEmitterBehavior extends Behavior {
   }
 
   addListener(event, handler) {
-    let events = this.events;
+    const events = this.events;
     if (!events.has(event)) {
       events.set(event, new Set());
     }
@@ -21,8 +21,8 @@ export class EventEmitterBehavior extends Behavior {
   }
 
   removeListener(event, handler) {
-    let events = this.events;
-    let eventSet = events.get(event);
+    const events = this.events;
+    const eventSet = events.get(event);
     if (!eventSet || !eventSet.has(handler)) {
       return;
     }
@@ -33,20 +33,20 @@ export class EventEmitterBehavior extends Behavior {
   }
 
   emit(event) {
-    let events = this.events;
+    const events = this.events;
     if (!events.has(event)) {
       return;
     }
 
-    let args = Array.from(arguments).slice(1);
-    for (let handler of events.get(event)) {
+    const args = Array.from(arguments).slice(1);
+    for (const handler of events.get(event)) {
       handler(...args);
     }
   }
 }
 
 export function EventEmitter() {
-  return (cls) => {
+  return cls => {
     addBehavior(cls, 'eventEmitter', EventEmitterBehavior, [
       'on:addListener',
       'off:removeListener',

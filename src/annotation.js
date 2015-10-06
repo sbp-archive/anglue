@@ -9,14 +9,15 @@ export class Annotation {
   }
 
   getInjectionTokens() {
-    var tokens = [];
-    var injections = this.injections;
-    Object.keys(injections).forEach((binding) => {
+    const tokens = [];
+    const injections = this.injections;
+    Object.keys(injections).forEach(binding => {
       tokens.push(injections[binding]);
     });
     return tokens;
   }
 
+  //noinspection InfiniteRecursionJS
   get injections() {
     return this.targetCls.injections || {};
   }
@@ -47,13 +48,13 @@ export class Annotation {
    * @returns {undefined}
    */
   applyInjectionBindings(instance, injected) {
-    var injections = this.injections;
+    const injections = this.injections;
 
     Object.keys(injections).forEach((binding, index) => {
-      Object.defineProperty(instance, binding, {value: injected[index]});
+      Reflect.defineProperty(instance, binding, {value: injected[index]});
     });
 
-    Object.defineProperty(instance, '_annotation', {value: this});
+    Reflect.defineProperty(instance, '_annotation', {value: this});
   }
 
   /**
@@ -64,8 +65,9 @@ export class Annotation {
    * @returns {undefined}
    */
   applyDecorators(instance) {
-    var decorators = this.decorators;
-    for (let decorator of decorators) {
+    const decorators = this.decorators;
+
+    for (const decorator of decorators) {
       if (decorator.decorate instanceof Function) {
         decorator.decorate(instance);
       }
@@ -79,8 +81,9 @@ export class Annotation {
    * @returns {undefined}
    */
   applyClassDecorators(targetCls) {
-    var decorators = this.decorators;
-    for (let decorator of decorators) {
+    const decorators = this.decorators;
+
+    for (const decorator of decorators) {
       if (decorator.decorateClass instanceof Function) {
         decorator.decorateClass(targetCls);
       }
@@ -93,24 +96,28 @@ export class Annotation {
    * @return {Array} The name of the angular modules for these classes
    */
   static getModuleNames(classes = []) {
-    var names = [];
-    for (let cls of classes) {
-      let annotation = cls.annotation;
+    const names = [];
+
+    for (const cls of classes) {
+      const annotation = cls.annotation;
       if (annotation) {
         names.push(annotation.module.name);
       }
     }
+
     return names;
   }
 
   static getAnnotationServiceNames(classes = []) {
-    var names = [];
-    for (let cls of classes) {
-      let annotation = cls.annotation;
+    const names = [];
+
+    for (const cls of classes) {
+      const annotation = cls.annotation;
       if (annotation) {
         names.push(annotation.serviceName);
       }
     }
+
     return names;
   }
 }

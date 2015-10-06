@@ -31,6 +31,8 @@ define(['exports'], function (exports) {
         });
         return tokens;
       }
+
+      //noinspection InfiniteRecursionJS
     }, {
       key: 'configure',
 
@@ -57,10 +59,10 @@ define(['exports'], function (exports) {
         var injections = this.injections;
 
         Object.keys(injections).forEach(function (binding, index) {
-          Object.defineProperty(instance, binding, { value: injected[index] });
+          Reflect.defineProperty(instance, binding, { value: injected[index] });
         });
 
-        Object.defineProperty(instance, '_annotation', { value: this });
+        Reflect.defineProperty(instance, '_annotation', { value: this });
       }
 
       /**
@@ -74,6 +76,7 @@ define(['exports'], function (exports) {
       key: 'applyDecorators',
       value: function applyDecorators(instance) {
         var decorators = this.decorators;
+
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -112,6 +115,7 @@ define(['exports'], function (exports) {
       key: 'applyClassDecorators',
       value: function applyClassDecorators(targetCls) {
         var decorators = this.decorators;
+
         var _iteratorNormalCompletion2 = true;
         var _didIteratorError2 = false;
         var _iteratorError2 = undefined;
@@ -166,6 +170,7 @@ define(['exports'], function (exports) {
         var classes = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
         var names = [];
+
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;
@@ -202,6 +207,7 @@ define(['exports'], function (exports) {
         var classes = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
         var names = [];
+
         var _iteratorNormalCompletion4 = true;
         var _didIteratorError4 = false;
         var _iteratorError4 = undefined;

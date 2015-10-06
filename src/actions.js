@@ -8,8 +8,8 @@ import {addStaticGetterObjectMember, addStaticGetter} from './utils';
 
 export class ActionsAnnotation extends Annotation {
   get serviceName() {
-    let name = this.name;
-    return name[0].toUpperCase() + name.slice(1) + 'Actions';
+    const name = this.name;
+    return `${name[0].toUpperCase()}${name.slice(1)}Actions`;
   }
 
   getInjectionTokens() {
@@ -21,12 +21,12 @@ export class ActionsAnnotation extends Annotation {
   }
 
   get factoryFn() {
-    let TargetCls = this.targetCls;
-    let annotation = this;
+    const TargetCls = this.targetCls;
+    const annotation = this;
 
     return function(LuxyFlux, LuxyFluxActionCreators, ApplicationDispatcher) {
-      let injected = Array.from(arguments).slice(3);
-      let instance = new TargetCls(...injected);
+      const injected = Array.from(arguments).slice(3);
+      const instance = new TargetCls(...injected);
 
       annotation.applyInjectionBindings(instance, injected);
       annotation.applyDecorators(instance);
@@ -42,7 +42,7 @@ export class ActionsAnnotation extends Annotation {
   get module() {
     if (!this._module) {
       this._module = angular.module(
-        'actions.' + this.name,
+        `actions.${this.name}`,
         this.dependencies
       );
 
@@ -59,20 +59,20 @@ export class ActionsAnnotation extends Annotation {
 
 // Decorators
 export function Actions(config) {
-  return (cls) => {
+  return cls => {
     let actionsName;
-    let isConfigObject = angular.isObject(config);
+    const isConfigObject = angular.isObject(config);
 
     if (isConfigObject && config.name) {
       actionsName = config.name;
     } else if (angular.isString(config)) {
       actionsName = config;
     } else {
-      let clsName = cls.name.replace(/actions$/i, '');
+      const clsName = cls.name.replace(/actions$/i, '');
       actionsName = `${clsName[0].toLowerCase()}${clsName.slice(1)}`;
     }
 
-    let namespace = isConfigObject && config.namespace !== undefined
+    const namespace = isConfigObject && config.namespace !== undefined
       ? config.namespace
       : actionsName;
 
@@ -95,11 +95,11 @@ export function AsyncAction(actionName) {
 
 export function Action(actionName) {
   return (cls, methodName, descriptor) => {
-    let originalMethod = descriptor.value;
+    const originalMethod = descriptor.value;
     descriptor.value = function(...payload) {
-      let action = prepareActionName(cls, actionName, methodName);
-      let originalReturn = originalMethod.apply(this, payload);
-      let dispatchPromise = this.dispatch(action, ...payload);
+      const action = prepareActionName(cls, actionName, methodName);
+      const originalReturn = Reflect.apply(originalMethod, this, payload);
+      const dispatchPromise = this.dispatch(action, ...payload);
       return angular.isDefined(originalReturn) ? originalReturn : dispatchPromise;
     };
   };
@@ -112,7 +112,7 @@ function prepareActionName(cls, actionName, methodName) {
   if (!preparedActionName) {
     preparedActionName = methodName.replace(/([A-Z])/g, '_$1');
   }
-  let actionNamespace = cls.constructor.actionNamespace;
+  const actionNamespace = cls.constructor.actionNamespace;
   if (actionNamespace) {
     preparedActionName = `${actionNamespace}_${preparedActionName}`;
   }

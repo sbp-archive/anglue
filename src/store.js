@@ -8,7 +8,7 @@ import {addStaticGetterObjectMember, addStaticGetter} from './utils';
 
 export class StoreAnnotation extends Annotation {
   get serviceName() {
-    var name = this.name;
+    const name = this.name;
     return `${name[0].toUpperCase()}${name.slice(1)}Store`;
   }
 
@@ -21,18 +21,18 @@ export class StoreAnnotation extends Annotation {
   }
 
   get factoryFn() {
-    var TargetCls = this.targetCls;
-    var annotation = this;
+    const TargetCls = this.targetCls;
+    const annotation = this;
 
     return function(LuxyFlux, LuxyFluxStore, ApplicationDispatcher) {
-      var injected = Array.from(arguments).slice(3);
-      var instance = new TargetCls(...injected);
+      const injected = Array.from(arguments).slice(3);
+      const instance = new TargetCls(...injected);
 
       annotation.applyInjectionBindings(instance, injected);
       annotation.applyDecorators(instance);
 
       return LuxyFlux.createStore({
-        name: 'store.' + annotation.name,
+        name: `store.${annotation.name}`,
         dispatcher: ApplicationDispatcher,
         handlers: TargetCls.handlers,
         decorate: instance
@@ -43,7 +43,7 @@ export class StoreAnnotation extends Annotation {
   get module() {
     if (!this._module) {
       this._module = angular.module(
-        'stores.' + this.name,
+        `stores.${this.name}`,
         this.dependencies
       );
 
@@ -59,19 +59,19 @@ export class StoreAnnotation extends Annotation {
 }
 
 export function Store(config) {
-  return (cls) => {
+  return cls => {
     // Decorate a store with the EventEmitterBehavior
     eventEmitterDecorator()(cls);
 
     let storeName;
-    let isConfigObject = angular.isObject(config);
+    const isConfigObject = angular.isObject(config);
 
     if (isConfigObject && config.name) {
       storeName = config.name;
     } else if (angular.isString(config)) {
       storeName = config;
     } else {
-      let clsName = cls.name.replace(/store$/i, '');
+      const clsName = cls.name.replace(/store$/i, '');
       storeName = `${clsName[0].toLowerCase()}${clsName.slice(1)}`;
     }
 
@@ -80,9 +80,9 @@ export function Store(config) {
 }
 
 export function Handlers(handlers) {
-  return (cls) => {
-    Object.keys(handlers).forEach((actionName) => {
-      let handlerName = handlers[actionName];
+  return cls => {
+    Object.keys(handlers).forEach(actionName => {
+      const handlerName = handlers[actionName];
       addStaticGetterObjectMember(cls, 'handlers', actionName, handlerName);
     });
   };

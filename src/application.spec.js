@@ -110,8 +110,8 @@ describe('Applications', () => {
     });
 
     it('should only inject and thus instantiate stores on app module run', () => {
-      let storeInitializeSpy = jasmine.createSpy();
-      let actionsInitializeSpy = jasmine.createSpy();
+      const storeInitializeSpy = jasmine.createSpy();
+      const actionsInitializeSpy = jasmine.createSpy();
 
       @Store() class TestStore {
         initialize = storeInitializeSpy;
