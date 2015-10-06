@@ -189,7 +189,7 @@ describe('Utils', () => {
     });
 
     it('should set a unique behavior instance for each instance of the class', () => {
-      let anotherCls = new TestCls();
+      const anotherCls = new TestCls();
       expect(anotherCls.test).toEqual(jasmine.any(BehaviorCls));
       expect(anotherCls.test).not.toBe(cls.test);
     });
@@ -219,14 +219,14 @@ describe('Utils', () => {
       }
     }
 
-    let annotation = new Annotation('foo', Foo);
+    const annotation = new Annotation('foo', Foo);
 
     it('should call the static decorateClass method on the decorator', () => {
       expect(Bar.decorateClass).toHaveBeenCalledWith(Foo);
     });
 
     it('should call the static decorate method passing the instance to be decorated', () => {
-      let foo = new Foo();
+      const foo = new Foo();
       annotation.applyDecorators(foo);
       expect(Bar.decorate).toHaveBeenCalledWith(foo);
     });

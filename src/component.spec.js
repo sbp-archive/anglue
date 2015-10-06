@@ -132,23 +132,23 @@ describe('Components', () => {
       });
 
       it('should not replace the view element by default', () => {
-        let el = compileTemplate('<complex></complex>', $compile, $rootScope);
+        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
         expect(el[0].tagName.toLowerCase()).toEqual('complex');
       });
 
       it('should replace the view element if replace is set to true on the view', () => {
-        let el = compileTemplate('<replace></replace>', $compile, $rootScope);
+        const el = compileTemplate('<replace></replace>', $compile, $rootScope);
         expect(el[0].tagName.toLowerCase()).toEqual('is-replaced');
       });
 
       it('should expose properties namespaced to the component template', () => {
-        let el = compileTemplate('<complex></complex>', $compile, $rootScope);
+        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
         expect(el.text()).toEqual('foobar');
       });
 
       it('should support specifying child components', () => {
-        let el = compileTemplate('<complex></complex>', $compile, $rootScope);
-        let ctrl = el.controller('complex');
+        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
+        const ctrl = el.controller('complex');
 
         ctrl.showChild = true;
         $rootScope.$digest();
@@ -177,7 +177,7 @@ describe('Components', () => {
       });
 
       it('should call the onDestroy method', () => {
-        let el = compileTemplate('<complex></complex>', $compile, $rootScope);
+        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
         $rootScope.$destroy();
         expect(el.controller('complex').onDestroy).toHaveBeenCalled();
       });
@@ -227,8 +227,8 @@ describe('Components', () => {
       });
 
       it('should update the flag value when the binding changes', () => {
-        let el = compileTemplate('<complex foo-flag="{{flagInput}}"></complex>', $compile, $rootScope);
-        let ctrl = el.controller('complex');
+        const el = compileTemplate('<complex foo-flag="{{flagInput}}"></complex>', $compile, $rootScope);
+        const ctrl = el.controller('complex');
 
         $rootScope.flagInput = false;
         $rootScope.$digest();
@@ -255,7 +255,7 @@ describe('Components', () => {
       });
 
       it('should call the expression when the event is fired and expose locals', () => {
-        let el = compileTemplate('<complex on-foo-event="callExpression($foo)"></complex>',
+        const el = compileTemplate('<complex on-foo-event="callExpression($foo)"></complex>',
           $compile, $rootScope);
 
         $rootScope.callExpression = jasmine.createSpy('callExpression');
@@ -264,7 +264,7 @@ describe('Components', () => {
       });
 
       it('should be backwards compatible and support fireComponentEvent() as well', () => {
-        let el = compileTemplate('<complex on-foo-event="callExpression($bar)"></complex>',
+        const el = compileTemplate('<complex on-foo-event="callExpression($bar)"></complex>',
           $compile, $rootScope);
 
         $rootScope.callExpression = jasmine.createSpy('backwardsCompatibleCallExpression');
@@ -310,10 +310,10 @@ describe('Components', () => {
         }));
       });
 
-      it('should make it a two-way binding by default in backwards compat bindings', () => {
-        let el = compileTemplate('<child is-compatible="foo.bar"></child>',
+      it('should make it a two-way binding by default in backwards compatibility bindings', () => {
+        const el = compileTemplate('<child is-compatible="foo.bar"></child>',
           $compile, $rootScope);
-        let ctrl = el.controller('child');
+        const ctrl = el.controller('child');
 
         $rootScope.foo = {bar: 'foo'};
         $rootScope.$digest();
@@ -331,7 +331,7 @@ describe('Components', () => {
 
 
 function compileTemplate(template, $compile, $rootScope) {
-  let el = angular.element(template.trim());
+  const el = angular.element(template.trim());
   $compile(el)($rootScope.$new());
   $rootScope.$digest();
   return el;

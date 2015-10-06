@@ -185,6 +185,31 @@
     "spaced-comment": 0,
     "wrap-regex": 2,
 
+    // ECMAScript 6
+    "arrow-parens": [2, "as-needed"],
+    "arrow-spacing": 2,
+    "constructor-super": 2,
+    "generator-star-spacing": 2,
+    "no-class-assign": 2,
+    "no-const-assign": 2,
+    "no-dupe-class-members": 2,
+    "no-this-before-super": 2,
+    "no-var": 2,
+    "object-shorthand": 2,
+    "prefer-const": 2,
+    "prefer-spread": 2,
+    "prefer-reflect": 2,
+    "prefer-template": 2,
+    "require-yield": 2,
+
+    // Legacy
+    "max-depth": [2, 5],
+    "max-len": [2, 160, 2],
+    "max-params": [2, 5],
+    "max-statements": [2, 25],
+    "no-bitwise": 2,
+    "no-plusplus": 2,
+
     // ES7 babel-eslint-plugin properties
     "new-cap": 0,
     "babel/new-cap": 2

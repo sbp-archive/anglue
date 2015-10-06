@@ -5,12 +5,12 @@ import angular from 'angular';
 // because some property decorators might rely on class decorator configs,
 // and property decorators are called before class decorators.
 export function addStaticGetterObjectMember(cls, propertyName, key, value) {
-  let currentPropertyDescriptor = Object.getOwnPropertyDescriptor(cls, propertyName);
-  Object.defineProperty(cls, propertyName, {
+  const currentPropertyDescriptor = Reflect.getOwnPropertyDescriptor(cls, propertyName);
+  Reflect.defineProperty(cls, propertyName, {
     configurable: true,
     get: () => {
-      let newObject = getCurrentDescriptorValue(currentPropertyDescriptor);
-      let resolvedKey = angular.isFunction(key) ? key() : key;
+      const newObject = getCurrentDescriptorValue(currentPropertyDescriptor);
+      const resolvedKey = angular.isFunction(key) ? key() : key;
       newObject[resolvedKey] = value;
       return newObject;
     }
@@ -20,8 +20,8 @@ export function addStaticGetterObjectMember(cls, propertyName, key, value) {
 export function mergeStaticGetterObject(cls, propertyName, values) {
   // Look at the explanation above addStaticGetterObjectMember to see
   // why we do this override asynchronously...
-  let currentPropertyDescriptor = Object.getOwnPropertyDescriptor(cls, propertyName);
-  Object.defineProperty(cls, propertyName, {
+  const currentPropertyDescriptor = Reflect.getOwnPropertyDescriptor(cls, propertyName);
+  Reflect.defineProperty(cls, propertyName, {
     configurable: true,
     get: () => Object.assign(getCurrentDescriptorValue(currentPropertyDescriptor), values)
   });
@@ -32,22 +32,22 @@ export function addStaticGetterArrayMember(cls, propertyName, value) {
 }
 
 export function mergeStaticGetterArray(cls, propertyName, values) {
-  let currentArray = cls[propertyName] || [];
-  let newArray = currentArray.concat(values);
-  Object.defineProperty(cls, propertyName, {
+  const currentArray = cls[propertyName] || [];
+  const newArray = currentArray.concat(values);
+  Reflect.defineProperty(cls, propertyName, {
     configurable: true,
     get: () => newArray
   });
 }
 
 export function addStaticGetter(cls, property, getter) {
-  Object.defineProperty(cls, property, {configurable: true, get: getter});
+  Reflect.defineProperty(cls, property, {configurable: true, get: getter});
 }
 
 export function addBehavior(cls, propertyName, BehaviorCls, methods = []) {
-  let internalProperty = `_${propertyName}`;
-  Object.defineProperty(cls.prototype, propertyName, {
-    get: function() {
+  const internalProperty = `_${propertyName}`;
+  Reflect.defineProperty(cls.prototype, propertyName, {
+    get() {
       if (!this[internalProperty]) {
         this[internalProperty] = new BehaviorCls(this);
       }
@@ -55,14 +55,14 @@ export function addBehavior(cls, propertyName, BehaviorCls, methods = []) {
     }
   });
 
-  for (let method of methods) {
-    let parts = method.split(':');
-    let localName = parts[0].trim();
-    let externalName = parts[1] ? parts[1].trim() : localName;
-    Object.defineProperty(cls.prototype, localName, {
+  for (const method of methods) {
+    const parts = method.split(':');
+    const localName = parts[0].trim();
+    const externalName = parts[1] ? parts[1].trim() : localName;
+    Reflect.defineProperty(cls.prototype, localName, {
 
       /*eslint-disable no-loop-func */
-      value: function() {
+      value() {
         this[propertyName][externalName](...arguments);
       }
 
@@ -84,8 +84,8 @@ export function Inject(injectionName) {
 }
 
 export function Decorators(decorators) {
-  return (cls) => {
-    for (let decorator of decorators) {
+  return cls => {
+    for (const decorator of decorators) {
       addStaticGetterArrayMember(cls, 'decorators', decorator);
     }
   };

@@ -8,8 +8,8 @@ describe('EventEmitter', () => {
     it('should define the EventEmitter API methods on the class', () => {
       @EventEmitter() class EmitterClass {}
 
-      let emitter = new EmitterClass();
-      let eventEmitterApi = [
+      const emitter = new EmitterClass();
+      const eventEmitterApi = [
         'eventEmitter',
         'on',
         'off',
@@ -41,14 +41,14 @@ describe('EventEmitter', () => {
       });
 
       it('should add the handler to the event Set', () => {
-        let handler = () => {};
+        const handler = () => {};
 
         emitterBehavior.addListener('foo', handler);
         expect(emitterBehavior.events.get('foo').has(handler)).toBe(true);
       });
 
       it('should return a method that can be used to remove the listener again', () => {
-        let handler = () => {};
+        const handler = () => {};
 
         spyOn(emitterBehavior, 'removeListener');
         emitterBehavior.addListener('foo', handler)();
@@ -58,8 +58,8 @@ describe('EventEmitter', () => {
 
     describe('removeListener()', () => {
       it('should remove the handler from the event Set', () => {
-        let fooHandler = () => {};
-        let barHandler = () => {};
+        const fooHandler = () => {};
+        const barHandler = () => {};
 
         emitterBehavior.addListener('event', fooHandler);
         emitterBehavior.addListener('event', barHandler);
@@ -69,7 +69,7 @@ describe('EventEmitter', () => {
       });
 
       it('should remove event Set from events when the last handler is removed', () => {
-        let fooHandler = () => {};
+        const fooHandler = () => {};
 
         emitterBehavior.addListener('event', fooHandler);
         emitterBehavior.removeListener('event', fooHandler);
@@ -78,14 +78,14 @@ describe('EventEmitter', () => {
       });
 
       it('should not break when trying to remove a listener that is not there in the set', () => {
-        let method = () => emitterBehavior.removeListener('event', null);
+        const method = () => emitterBehavior.removeListener('event', null);
         expect(method).not.toThrow();
       });
     });
 
     describe('emit()', () => {
       it('should call the handler with the correct arguments', () => {
-        let handlerSpy = jasmine.createSpy('handler');
+        const handlerSpy = jasmine.createSpy('handler');
 
         emitterBehavior.addListener('event', handlerSpy);
         emitterBehavior.emit('event', 'foo', 'bar');
@@ -94,7 +94,7 @@ describe('EventEmitter', () => {
       });
 
       it('should not break when trying to emit an event that has no listeners', () => {
-        let method = () => emitterBehavior.emit('event');
+        const method = () => emitterBehavior.emit('event');
         expect(method).not.toThrow();
       });
     });

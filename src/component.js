@@ -14,13 +14,13 @@ export class ComponentEvent {
 
 export class ComponentAnnotation extends Annotation {
   get controllerCls() {
-    let annotation = this;
-    let TargetCls = this.targetCls;
-    let flags = this.flags;
+    const annotation = this;
+    const TargetCls = this.targetCls;
+    const flags = this.flags;
 
     class ControllerCls extends TargetCls {
       constructor($scope, $log) {
-        let injected = Array.from(arguments).slice(2);
+        const injected = Array.from(arguments).slice(2);
 
         super(...injected);
 
@@ -28,9 +28,9 @@ export class ComponentAnnotation extends Annotation {
         annotation.applyDecorators(this);
 
         if (flags) {
-          Object.keys(flags).forEach((flag) => {
-            let flagBinding = `_${flag}Flag`;
-            Object.defineProperty(this, flag, {
+          Object.keys(flags).forEach(flag => {
+            const flagBinding = `_${flag}Flag`;
+            Reflect.defineProperty(this, flag, {
               get: () => angular.isDefined(this[flagBinding]) ? this[flagBinding] !== 'false' : false
             });
           });
@@ -50,7 +50,7 @@ export class ComponentAnnotation extends Annotation {
             Please use @Event() myEvent; in combination with this.myEvent.fire().
           `);
           if (this._eventHandlers && this._eventHandlers[event]) {
-            this._eventHandlers[event].call(this, locals);
+            Reflect.apply(this._eventHandlers[event], this, [locals]);
           }
         };
       }
@@ -64,7 +64,7 @@ export class ComponentAnnotation extends Annotation {
   }
 
   get dependencies() {
-    let targetCls = this.targetCls;
+    const targetCls = this.targetCls;
     return [].concat(
       targetCls.dependencies || [],
       Annotation.getModuleNames(targetCls.components)
@@ -87,6 +87,7 @@ export class ComponentAnnotation extends Annotation {
     return this.targetCls.flags || null;
   }
 
+  //noinspection InfiniteRecursionJS
   get getDirective() {
     return this.targetCls.getDirective || function(config) {
       return function() {
@@ -97,17 +98,17 @@ export class ComponentAnnotation extends Annotation {
 
   get module() {
     if (!this._module) {
-      let name = this.name;
-      let template = this.template;
-      let bindings = this.bindings;
-      let events = this.events;
+      const name = this.name;
+      const template = this.template;
+      const bindings = this.bindings;
+      const events = this.events;
 
       this._module = angular.module(
-        'components.' + name,
+        `components.${name}`,
         this.dependencies
       );
 
-      let directiveConfig = {
+      const directiveConfig = {
         restrict: 'EA',
         controllerAs: name,
         bindToController: true,
@@ -127,8 +128,8 @@ export class ComponentAnnotation extends Annotation {
       }
 
       if (bindings) {
-        let scope = directiveConfig.scope = {};
-        for (let binding of Object.keys(bindings)) {
+        const scope = directiveConfig.scope = {};
+        for (const binding of Object.keys(bindings)) {
           let attr = bindings[binding];
           if (!attr[0].match(/(&|=|@)/)) {
             attr = `=${attr}`;
@@ -140,13 +141,13 @@ export class ComponentAnnotation extends Annotation {
       if (events) {
         directiveConfig.link = (scope, el, attr, ctrl) => {
           if (events) {
-            let eventHandlers = ctrl._eventHandlers = {};
-            Object.keys(events).forEach((event) => {
+            const eventHandlers = ctrl._eventHandlers = {};
+            Object.keys(events).forEach(event => {
               if (attr[event]) {
-                eventHandlers[events[event]] = (locals) => {
+                eventHandlers[events[event]] = locals => {
                   scope.$parent.$eval(attr[event], locals);
                 };
-                let componentEventName = events[event];
+                const componentEventName = events[event];
                 if (ctrl[componentEventName] instanceof ComponentEvent) {
                   ctrl[componentEventName].expression = ctrl[`_${componentEventName}Expression`];
                 }
@@ -168,16 +169,16 @@ export class ComponentAnnotation extends Annotation {
 export default ComponentAnnotation;
 
 export function Component(config) {
-  return (cls) => {
+  return cls => {
     let componentName;
-    let isConfigObject = angular.isObject(config);
+    const isConfigObject = angular.isObject(config);
 
     if (isConfigObject && config.name) {
       componentName = config.name;
     } else if (angular.isString(config)) {
       componentName = config;
     } else {
-      let clsName = cls.name.replace(/component$/i, '');
+      const clsName = cls.name.replace(/component$/i, '');
       componentName = `${clsName[0].toLowerCase()}${clsName.slice(1)}`;
     }
 
@@ -189,7 +190,7 @@ export function Component(config) {
 }
 
 export function View(config) {
-  return (cls) => {
+  return cls => {
     if (config.template) {
       addStaticGetter(cls, 'template', () => ({
         inline: config.template,
@@ -209,7 +210,7 @@ export function View(config) {
 
 export function Binding(config) {
   return (cls, propertyName, descriptor) => {
-    let isConfigObject = angular.isObject(config);
+    const isConfigObject = angular.isObject(config);
     let attribute = propertyName;
 
     if (isConfigObject && config.attribute) {
@@ -242,18 +243,18 @@ export function Binding(config) {
 
 export function Flag(config) {
   return (cls, propertyName) => {
-    let attribute = config || propertyName;
+    const attribute = config || propertyName;
     addStaticGetterObjectMember(cls.constructor, 'flags', propertyName, attribute);
 
-    let propertyBinding = `_${propertyName}Flag`;
-    let attributeBinding = `@${attribute}`;
+    const propertyBinding = `_${propertyName}Flag`;
+    const attributeBinding = `@${attribute}`;
     addStaticGetterObjectMember(cls.constructor, 'bindings', propertyBinding, attributeBinding);
   };
 }
 
 export function Event() {
   return (cls, propertyName, descriptor) => {
-    let attribute = `on${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
+    const attribute = `on${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
     if (!descriptor.initializer) {
       descriptor.initializer = () => {
         return new ComponentEvent();

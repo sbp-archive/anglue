@@ -11,8 +11,8 @@ import {
 
 export class ApplicationAnnotation extends Annotation {
   get dependencies() {
-    var targetCls = this.targetCls;
-    var extraDependencies = ['luxyflux'];
+    const targetCls = this.targetCls;
+    const extraDependencies = ['luxyflux'];
     if (targetCls.routes) {
       extraDependencies.push('ui.router');
     }
@@ -26,13 +26,13 @@ export class ApplicationAnnotation extends Annotation {
 
   get module() {
     if (!this._module) {
-      let annotationNames = Annotation.getAnnotationServiceNames(this.targetCls.stores);
-      let controllerDeps = annotationNames.concat([() => {}]);
+      const annotationNames = Annotation.getAnnotationServiceNames(this.targetCls.stores);
+      const controllerDependencies = annotationNames.concat([() => {}]);
 
       this._module = angular.module(
         this.name,
         this.dependencies
-      ).run(controllerDeps);
+      ).run(controllerDependencies);
 
       this.configure(this._module);
     }
@@ -41,7 +41,7 @@ export class ApplicationAnnotation extends Annotation {
   }
 
   configure(angularModule) {
-    var routes = this.targetCls.routes;
+    const routes = this.targetCls.routes;
 
     // The ApplicationDispatcher is the (singleton) dispatcher instance used
     // in our entire application. Every ActionCreator in this app dispatches
@@ -60,10 +60,10 @@ export class ApplicationAnnotation extends Annotation {
         function routerConfig($stateProvider, $urlRouterProvider) {
           if (routes.defaultRoute) {
             $urlRouterProvider.otherwise(routes.defaultRoute);
-            delete routes.defaultRoute;
+            Reflect.deleteProperty(routes, 'defaultRoute');
           }
 
-          Object.keys(routes).forEach((name) => {
+          Object.keys(routes).forEach(name => {
             $stateProvider.state(name, routes[name]);
           });
         }
@@ -75,16 +75,16 @@ export class ApplicationAnnotation extends Annotation {
 export default ApplicationAnnotation;
 
 export function Application(config) {
-  return (cls) => {
+  return cls => {
     let applicationName;
-    let isConfigObject = angular.isObject(config);
+    const isConfigObject = angular.isObject(config);
 
     if (isConfigObject && config.name) {
       applicationName = config.name;
     } else if (angular.isString(config)) {
       applicationName = config;
     } else {
-      let clsName = cls.name.replace(/application$/i, '');
+      const clsName = cls.name.replace(/application$/i, '');
       applicationName = `${clsName[0].toLowerCase()}${clsName.slice(1)}`;
     }
 

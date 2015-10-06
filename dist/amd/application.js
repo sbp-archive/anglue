@@ -46,7 +46,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
           angularModule.config(['$stateProvider', '$urlRouterProvider', function routerConfig($stateProvider, $urlRouterProvider) {
             if (routes.defaultRoute) {
               $urlRouterProvider.otherwise(routes.defaultRoute);
-              delete routes.defaultRoute;
+              Reflect.deleteProperty(routes, 'defaultRoute');
             }
 
             Object.keys(routes).forEach(function (name) {
@@ -70,9 +70,9 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
       get: function get() {
         if (!this._module) {
           var annotationNames = _annotation.Annotation.getAnnotationServiceNames(this.targetCls.stores);
-          var controllerDeps = annotationNames.concat([function () {}]);
+          var controllerDependencies = annotationNames.concat([function () {}]);
 
-          this._module = _angular2['default'].module(this.name, this.dependencies).run(controllerDeps);
+          this._module = _angular2['default'].module(this.name, this.dependencies).run(controllerDependencies);
 
           this.configure(this._module);
         }

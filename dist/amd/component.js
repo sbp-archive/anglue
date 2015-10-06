@@ -83,7 +83,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
             if (flags) {
               Object.keys(flags).forEach(function (flag) {
                 var flagBinding = '_' + flag + 'Flag';
-                Object.defineProperty(_this, flag, {
+                Reflect.defineProperty(_this, flag, {
                   get: function get() {
                     return _angular2['default'].isDefined(_this[flagBinding]) ? _this[flagBinding] !== 'false' : false;
                   }
@@ -102,7 +102,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
             this.fireComponentEvent = function (event, locals) {
               $log.warn('\n            Component.fireComponentEvent() has been deprecated in Anglue 1.x.\n            Please use @Event() myEvent; in combination with this.myEvent.fire().\n          ');
               if (_this._eventHandlers && _this._eventHandlers[event]) {
-                _this._eventHandlers[event].call(_this, locals);
+                Reflect.apply(_this._eventHandlers[event], _this, [locals]);
               }
             };
           }
@@ -138,6 +138,8 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
       get: function get() {
         return this.targetCls.flags || null;
       }
+
+      //noinspection InfiniteRecursionJS
     }, {
       key: 'getDirective',
       get: function get() {
