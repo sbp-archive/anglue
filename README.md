@@ -22,6 +22,6 @@ A brief look at the basic pieces that you can glue together to create an applica
 ## Behaviors
 Some examples of more advanced class behaviors to help you with common applicatin scenarios.
 
-### CrudStore
+### EntityStore
 ### SortableStore
 ### CrudActions
