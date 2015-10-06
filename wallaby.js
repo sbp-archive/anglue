@@ -12,7 +12,8 @@ module.exports = function(wallaby) {
       {pattern: 'wallaby-main.js', instrument: false},
 
       // Source files
-      {pattern: 'src/**/!(*.spec).js', load: false}
+      {pattern: 'src/**/*.js', load: false},
+      '!src/**/*.spec.js'
     ],
     tests: [
       {pattern: 'src/**/*.spec.js', load: false}
