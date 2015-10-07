@@ -1,4 +1,5 @@
 /*eslint-env node, jasmine*//*global module, inject*/
+/*eslint-disable max-statements, max-params*/
 import angular from 'angular';
 import 'angular-mocks';
 import 'luxyflux/ng-luxyflux';
@@ -10,7 +11,7 @@ import {
   Handler
 } from 'anglue/anglue';
 
-describe('EventEmitter', () => {
+describe('EntityStore', () => {
   describe('EntityStoreBehavior', () => {
     let mockInstance, behavior;
     beforeEach(() => {
@@ -81,6 +82,11 @@ describe('EventEmitter', () => {
       it('should emit the changed event on the store on LOAD_COMPLETED', () => {
         behavior.onLoadCompleted(['bar']);
         expect(behavior.instance.emit).toHaveBeenCalledWith('changed', 'load', ['bar']);
+      });
+
+      it('should emit the error event on the store on LOAD_FAILED', () => {
+        behavior.onLoadFailed('foo error');
+        expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'load', 'foo error');
       });
 
       it('should reset the hasDetailSet', () => {
@@ -172,6 +178,11 @@ describe('EventEmitter', () => {
         expect(behavior.instance.emit).toHaveBeenCalledWith('changed', 'create', entity);
       });
 
+      it('should emit the error event on the store on CREATE_FAILED', () => {
+        behavior.onCreateFailed('foo error');
+        expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'create', 'foo error');
+      });
+
       it('should define a createPromise on CREATE_STARTED', () => {
         expect(behavior.createPromise).toEqual(mockInstance.$q.defer().promise);
       });
@@ -254,6 +265,11 @@ describe('EventEmitter', () => {
         expect(behavior.instance.emit).toHaveBeenCalledWith('changed', 'read', entity);
       });
 
+      it('should emit the error event on the store on READ_FAILED', () => {
+        behavior.onReadFailed('foo error');
+        expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'read', 'foo error');
+      });
+
       it('should define a readPromise on READ_STARTED', () => {
         expect(behavior.readPromise).toEqual(mockInstance.$q.defer().promise);
       });
@@ -332,6 +348,11 @@ describe('EventEmitter', () => {
         expect(behavior.instance.emit).toHaveBeenCalledWith('changed', 'update', entity);
       });
 
+      it('should emit the error event on the store on UPDATE_FAILED', () => {
+        behavior.onUpdateFailed('foo error');
+        expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'update', 'foo error');
+      });
+
       it('should define a updatePromise on UPDATE_STARTED', () => {
         expect(behavior.updatePromise).toEqual(mockInstance.$q.defer().promise);
       });
@@ -387,6 +408,11 @@ describe('EventEmitter', () => {
       it('should emit the changed event on DELETE_COMPLETED', () => {
         behavior.onDeleteCompleted({id: 1});
         expect(behavior.instance.emit).toHaveBeenCalledWith('changed', 'delete', entity);
+      });
+
+      it('should emit the error event on the store on DELETE_FAILED', () => {
+        behavior.onDeleteFailed('foo error');
+        expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'delete', 'foo error');
       });
 
       it('should define a deletePromise on DELETE_STARTED', () => {
@@ -484,10 +510,52 @@ describe('EventEmitter', () => {
   });
 
   describe('@EntityStore() decorator', () => {
-    it('should define the EntityStore API methods on the store', () => {
-      @EntityStore() class TestStore {}
-      const entityStore = new TestStore();
+    @Store() @EntityStore() class TestStore {}
+    @Store() @EntityStore({idProperty: 'test'}) class IdPropertyStore {}
+    @Store() @EntityStore({entity: 'custom'}) class CustomEntityStore {}
+    @Store() @EntityStore('custom') class CustomEntityStringStore {}
+    @Store() @EntityStore({actions: ['read', 'update']}) class ActionsStore {}
+    @Store() @EntityStore({collection: 'foo'}) class CollectionStore {}
 
+    let store, $q;
+    let idPropertyStore, customEntityStore, customEntityStringStore, actionsStore, collectionStore;
+    beforeEach(() => {
+      angular.module('test', [
+        'luxyflux',
+        TestStore.annotation.module.name,
+        IdPropertyStore.annotation.module.name,
+        CustomEntityStore.annotation.module.name,
+        CustomEntityStringStore.annotation.module.name,
+        ActionsStore.annotation.module.name,
+        CollectionStore.annotation.module.name
+      ]).service('ApplicationDispatcher', () => {
+        return {
+          register() {},
+          dispatch() {}
+        };
+      });
+
+      module('test');
+      inject((
+        _TestStore_,
+        _IdPropertyStore_,
+        _CustomEntityStore_,
+        _CustomEntityStringStore_,
+        _ActionsStore_,
+        _CollectionStore_,
+        _$q_
+      ) => {
+        store = _TestStore_;
+        idPropertyStore = _IdPropertyStore_;
+        customEntityStore = _CustomEntityStore_;
+        customEntityStringStore = _CustomEntityStringStore_;
+        actionsStore = _ActionsStore_;
+        collectionStore = _CollectionStore_;
+        $q = _$q_;
+      });
+    });
+
+    it('should define the EntityStore API methods on the store', () => {
       [
         'entityStore',
         'items',
@@ -527,78 +595,59 @@ describe('EventEmitter', () => {
         'onTestDeleteStarted',
         'onTestDeleteCompleted',
         'onTestDeleteFailed'
-      ].forEach(api => expect(entityStore[api]).toBeDefined());
+      ].forEach(api => expect(store[api]).toBeDefined());
+    });
+
+    it('should inject $q into the store', () => {
+      expect(store.$q).toBe($q);
     });
 
     it('should have an instance of EntityStoreBehavior as the behavior property', () => {
-      @EntityStore() class TestStore {}
-      const store = new TestStore();
       expect(store.entityStore).toEqual(jasmine.any(EntityStoreBehavior));
     });
 
     it('should use the class name to determine the crud entity by default', () => {
-      @EntityStore() class TestStore {}
-      const store = new TestStore();
       expect(store.entityStore.config.entity).toEqual('Test');
     });
 
     it('should use id as the default the entity id property', () => {
-      @EntityStore() class TestStore {}
-      const store = new TestStore();
       expect(store.entityStore.idProperty).toEqual('id');
     });
 
     it('should be possible to configure the entity id property', () => {
-      @EntityStore({idProperty: 'test'}) class TestStore {}
-      const store = new TestStore();
-      expect(store.entityStore.idProperty).toEqual('test');
+      expect(idPropertyStore.entityStore.idProperty).toEqual('test');
     });
 
     it('should be possible to configure the entity to manage', () => {
-      @EntityStore({entity: 'foo'}) class TestStore {}
-      const store = new TestStore();
-      expect(store.entityStore.config.entity).toEqual('Foo');
+      expect(customEntityStore.entityStore.config.entity).toEqual('Custom');
     });
 
     it('should be possible to pass the entity property as a string', () => {
-      @EntityStore('test') class TestStore {}
-      const store = new TestStore();
-      expect(store.entityStore.config.entity).toEqual('Test');
+      expect(customEntityStringStore.entityStore.config.entity).toEqual('Custom');
     });
 
     it('should create properly named handlers when configuring the entity', () => {
-      @EntityStore({entity: 'fooBar'}) class TestStore {}
-      const store = new TestStore();
-      expect(store.onFooBarLoadCompleted).toBeDefined();
+      expect(customEntityStore.onCustomLoadCompleted).toBeDefined();
     });
 
     it('should manage all actions by default', () => {
-      @EntityStore() class TestStore {}
-      const store = new TestStore();
       expect(store.entityStore.config.actions)
         .toEqual(['load', 'create', 'read', 'update', 'delete']);
     });
 
     it('should be possible to configure the actions the store manage', () => {
-      @EntityStore({actions: ['read', 'update']}) class TestStore {}
-      const store = new TestStore();
-      expect(store.entityStore.config.actions).toEqual(['read', 'update']);
+      expect(actionsStore.entityStore.config.actions).toEqual(['read', 'update']);
     });
 
     it('should use the items property to store entities in by default', () => {
-      @EntityStore() class TestStore {}
-      const store = new TestStore();
       expect(store.items).toEqual(jasmine.any(Array));
     });
 
     it('should be possible to configure the collection property the entities are stored in', () => {
-      @EntityStore({collection: 'foo'}) class TestStore {}
-      const store = new TestStore();
-      expect(store.foo).toEqual(jasmine.any(Array));
+      expect(collectionStore.foo).toEqual(jasmine.any(Array));
     });
 
     it('should add handlers for actions', () => {
-      @EntityStore() class TestStore {}
       expect(TestStore.handlers)
         .toEqual(jasmine.objectContaining({
           TEST_LOAD_STARTED: 'onTestLoadStarted',
@@ -620,8 +669,8 @@ describe('EventEmitter', () => {
     });
 
     it('should only add handlers for the chosen actions', () => {
-      @EntityStore({actions: ['read']}) class TestStore {}
-      expect(TestStore.handlers)
+      @EntityStore({actions: ['read']}) class CustomStore {}
+      expect(CustomStore.handlers)
         .not.toEqual(jasmine.objectContaining({
           TEST_LOAD_STARTED: 'onTestLoadStarted'
         }));
@@ -629,11 +678,10 @@ describe('EventEmitter', () => {
 
     it('should not override any handlers already defined on the store', () => {
       @Store()
-      @EntityStore() class TestStore {
+      @EntityStore() class CustomStore {
         @Handler('TEST_LOAD_FAILED') onCustomFailed() {}
       }
-
-      expect(TestStore.handlers).toEqual(jasmine.objectContaining({
+      expect(CustomStore.handlers).toEqual(jasmine.objectContaining({
         TEST_LOAD_FAILED: 'onCustomFailed'
       }));
     });
