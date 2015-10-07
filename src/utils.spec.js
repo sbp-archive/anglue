@@ -220,49 +220,51 @@ describe('Utils', () => {
     });
 
     it('should set an instance of the behavior as the chosen property on target class', () => {
-      addBehavior(TestCls, 'test', BehaviorCls);
+      addBehavior(TestCls, BehaviorCls, {property: 'test'});
       expect(cls.test).toEqual(jasmine.any(BehaviorCls));
     });
 
     it('should set a unique behavior instance for each instance of the class', () => {
-      addBehavior(TestCls, 'test', BehaviorCls);
+      addBehavior(TestCls, BehaviorCls, {property: 'test'});
       const anotherCls = new TestCls();
       expect(anotherCls.test).toEqual(jasmine.any(BehaviorCls));
       expect(anotherCls.test).not.toBe(cls.test);
     });
 
     it('should create working proxy methods on the prototype of the target cls', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['bar']);
+      addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['bar']});
       cls.bar();
       expect(methodSpy.calls.count()).toEqual(1);
     });
 
     it('should create working proxy getters on the prototype of the target cls', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['getter']);
+      addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['getter']});
       expect(cls.getter).toEqual('foo');
     });
 
     it('should create working proxy properties on the prototype of the target cls', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['stringProp', 'boolProp', 'numberProp']);
+      addBehavior(TestCls, BehaviorCls, {
+        property: 'foo',
+        proxy: ['stringProp', 'boolProp', 'numberProp']
+      });
       expect(cls.stringProp).toEqual('bar');
       expect(cls.boolProp).toEqual(false);
       expect(cls.numberProp).toEqual(1);
     });
 
     it('should allow you to create an alias for a method', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['on:bar']);
+      addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['on:bar']});
       cls.on();
       expect(methodSpy.calls.count()).toEqual(1);
     });
 
     it('should not override existing methods on the class', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, null, ['custom']);
+      addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['custom']});
       expect(cls.custom).toBe(customMethod);
     });
 
     it('should store the decorated instance on the behavior instance', () => {
-      const config = {foo: 'bar'};
-      addBehavior(TestCls, 'foo', BehaviorCls, config);
+      addBehavior(TestCls, BehaviorCls, {property: 'foo'});
       expect(cls.foo.instance).toBe(cls);
     });
   });
