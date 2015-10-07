@@ -47,12 +47,16 @@ export class EventEmitterBehavior extends Behavior {
 
 export function EventEmitter(config) {
   return cls => {
-    addBehavior(cls, 'eventEmitter', EventEmitterBehavior, config, [
-      'on:addListener',
-      'off:removeListener',
-      'addListener',
-      'removeListener',
-      'emit'
-    ]);
+    addBehavior(cls, EventEmitterBehavior, {
+      config,
+      property: 'eventEmitter',
+      proxy: [
+        'on:addListener',
+        'off:removeListener',
+        'addListener',
+        'removeListener',
+        'emit'
+      ]
+    });
   };
 }

@@ -284,27 +284,31 @@ export function EntityStore(config = {}) {
       handlerDecorate(cls.prototype, failedAction);
     }
 
-    addBehavior(cls, 'entityStore', EntityStoreBehavior, preparedConfig, [
-      `${preparedConfig.collection}:items`,
-      'isSet',
-      'isEmpty',
-      'isBusy',
+    addBehavior(cls, EntityStoreBehavior, {
+      property: 'entityStore',
+      config: preparedConfig,
+      proxy: [
+        `${preparedConfig.collection}:items`,
+        'isSet',
+        'isEmpty',
+        'isBusy',
 
-      'loadPromise',
-      'createPromise',
-      'readPromise',
-      'updatePromise',
-      'deletePromise',
+        'loadPromise',
+        'createPromise',
+        'readPromise',
+        'updatePromise',
+        'deletePromise',
 
-      'isLoading',
-      'isCreating',
-      'isReading',
-      'isUpdating',
-      'isDeleting',
+        'isLoading',
+        'isCreating',
+        'isReading',
+        'isUpdating',
+        'isDeleting',
 
-      'reset',
-      'hasDetails',
-      'getById'
-    ].concat(actionHandlers));
+        'reset',
+        'hasDetails',
+        'getById'
+      ].concat(actionHandlers)
+    });
   };
 }

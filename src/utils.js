@@ -50,9 +50,9 @@ export function addStaticGetter(cls, property, getter) {
   Reflect.defineProperty(cls, property, {configurable: true, get: getter});
 }
 
-export function addBehavior(cls, propertyName, BehaviorCls, config = {}, proxies = []) {
-  const internalProperty = `_${propertyName}`;
-  Reflect.defineProperty(cls.prototype, propertyName, {
+export function addBehavior(cls, BehaviorCls, {property, config, proxy}) {
+  const internalProperty = `_${property}`;
+  Reflect.defineProperty(cls.prototype, property, {
     get() {
       if (!this[internalProperty]) {
         this[internalProperty] = new BehaviorCls(this, config);
@@ -61,6 +61,12 @@ export function addBehavior(cls, propertyName, BehaviorCls, config = {}, proxies
     }
   });
 
+  if (proxy) {
+    addProxies(cls, BehaviorCls, property, proxy);
+  }
+}
+
+export function addProxies(cls, BehaviorCls, property, proxies) {
   for (const proxy of proxies) {
     const parts = proxy.split(':');
     const localName = parts[0].trim();
@@ -73,7 +79,7 @@ export function addBehavior(cls, propertyName, BehaviorCls, config = {}, proxies
 
         /*eslint-disable no-loop-func */
         get() {
-          return this[propertyName][externalName];
+          return this[property][externalName];
         }
 
         /*eslint-disable no-loop-func */
@@ -83,7 +89,7 @@ export function addBehavior(cls, propertyName, BehaviorCls, config = {}, proxies
 
         /*eslint-disable no-loop-func */
         value() {
-          this[propertyName][externalName](...arguments);
+          this[property][externalName](...arguments);
         }
 
         /*eslint-enable no-loop-func */
