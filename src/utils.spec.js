@@ -8,7 +8,8 @@ import {
   addBehavior,
   Inject,
   Decorators,
-  Annotation
+  Annotation,
+  Behavior
 } from 'anglue/anglue';
 
 describe('Utils', () => {
@@ -62,9 +63,18 @@ describe('Utils', () => {
           return {foo: 'bar'};
         }
       }
-
       addStaticGetterObjectMember(TestClass, 'test', 'bar', 'foo');
       expect(TestClass.test).toEqual({foo: 'bar', bar: 'foo'});
+    });
+
+    it('should allow you to choose not to override existing properties', () => {
+      class TestClass {
+        static get test() {
+          return {foo: 'bar'};
+        }
+      }
+      addStaticGetterObjectMember(TestClass, 'test', 'foo', 'override', false);
+      expect(TestClass.test).toEqual({foo: 'bar'});
     });
 
     it('should merge with current static property', () => {
@@ -97,6 +107,16 @@ describe('Utils', () => {
       }
       mergeStaticGetterObject(TestClass, 'test', {bar: 'foo'});
       expect(TestClass.test).toEqual({foo: 'bar', bar: 'foo'});
+    });
+
+    it('should allow you to choose not to override existing properties', () => {
+      class TestClass {
+        static get test() {
+          return {foo: 'bar'};
+        }
+      }
+      mergeStaticGetterObject(TestClass, 'test', {foo: 'override'}, false);
+      expect(TestClass.test).toEqual({foo: 'bar'});
     });
 
     it('should merge with current static property', () => {
@@ -169,41 +189,81 @@ describe('Utils', () => {
   });
 
   describe('addBehavior()', () => {
-    let cls, TestCls, BehaviorCls;
+    let cls, TestCls, BehaviorCls, methodSpy;
+    const customMethod = () => {};
 
     beforeEach(() => {
-      class BehaviorClass {
-        bar = jasmine.createSpy();
+      methodSpy = jasmine.createSpy('method');
+      class BehaviorClass extends Behavior {
+        bar() {
+          methodSpy();
+        }
+
+        custom() {}
+
+        stringProp = 'bar';
+        boolProp = false;
+        numberProp = 1;
+
+        get getter() {
+          return 'foo';
+        }
       }
-      class TestClass {}
+      class TestClass {
+        custom = customMethod;
+      }
 
       TestCls = TestClass;
       BehaviorCls = BehaviorClass;
 
-      addBehavior(TestClass, 'test', BehaviorCls, []);
       cls = new TestClass();
     });
 
     it('should set an instance of the behavior as the chosen property on target class', () => {
+      addBehavior(TestCls, 'test', BehaviorCls);
       expect(cls.test).toEqual(jasmine.any(BehaviorCls));
     });
 
     it('should set a unique behavior instance for each instance of the class', () => {
+      addBehavior(TestCls, 'test', BehaviorCls);
       const anotherCls = new TestCls();
       expect(anotherCls.test).toEqual(jasmine.any(BehaviorCls));
       expect(anotherCls.test).not.toBe(cls.test);
     });
 
     it('should create working proxy methods on the prototype of the target cls', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, ['bar']);
+      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['bar']);
       cls.bar();
-      expect(cls.foo.bar.calls.count()).toEqual(1);
+      expect(methodSpy.calls.count()).toEqual(1);
+    });
+
+    it('should create working proxy getters on the prototype of the target cls', () => {
+      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['getter']);
+      expect(cls.getter).toEqual('foo');
+    });
+
+    it('should create working proxy properties on the prototype of the target cls', () => {
+      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['stringProp', 'boolProp', 'numberProp']);
+      expect(cls.stringProp).toEqual('bar');
+      expect(cls.boolProp).toEqual(false);
+      expect(cls.numberProp).toEqual(1);
     });
 
     it('should allow you to create an alias for a method', () => {
-      addBehavior(TestCls, 'foo', BehaviorCls, ['on:bar']);
+      addBehavior(TestCls, 'foo', BehaviorCls, {}, ['on:bar']);
       cls.on();
-      expect(cls.foo.bar.calls.count()).toEqual(1);
+      expect(methodSpy.calls.count()).toEqual(1);
+    });
+
+    it('should not override existing methods on the class', () => {
+      addBehavior(TestCls, 'foo', BehaviorCls, null, ['custom']);
+      expect(cls.custom).toBe(customMethod);
+    });
+
+    it('should store the decorated instance on the behavior instance', () => {
+      const config = {foo: 'bar'};
+      addBehavior(TestCls, 'foo', BehaviorCls, config);
+      expect(cls.foo.instance).toBe(cls);
     });
   });
 

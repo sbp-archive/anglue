@@ -1,5 +1,6 @@
 export class Behavior {
-  constructor(instance) {
+  constructor(instance = null, config = {}) {
     this.instance = instance;
+    this.config = config;
   }
 }

@@ -88,7 +88,7 @@ export function Handlers(handlers) {
   };
 }
 
-export function Handler(actionName) {
+export function Handler(actionName, override = true) {
   return (cls, handlerName) => {
     let action = actionName;
     if (!action) {
@@ -96,7 +96,7 @@ export function Handler(actionName) {
         .replace(/^on([A-Z])/, (match, first) => first.toLowerCase())
         .replace(/([A-Z])/g, '_$1').toUpperCase();
     }
-    addStaticGetterObjectMember(cls.constructor, 'handlers', action, handlerName);
+    addStaticGetterObjectMember(cls.constructor, 'handlers', action, handlerName, override);
   };
 }
 

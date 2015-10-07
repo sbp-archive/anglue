@@ -29,9 +29,9 @@ export class ComponentAnnotation extends Annotation {
 
         if (flags) {
           Object.keys(flags).forEach(flag => {
-            const flagBinding = `_${flag}Flag`;
+            const property = `_${flag}Flag`;
             Reflect.defineProperty(this, flag, {
-              get: () => angular.isDefined(this[flagBinding]) ? this[flagBinding] !== 'false' : false
+              get: () => angular.isDefined(this[property]) ? this[property] !== 'false' : false
             });
           });
         }

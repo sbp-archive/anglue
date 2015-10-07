@@ -45,9 +45,9 @@ export class EventEmitterBehavior extends Behavior {
   }
 }
 
-export function EventEmitter() {
+export function EventEmitter(config) {
   return cls => {
-    addBehavior(cls, 'eventEmitter', EventEmitterBehavior, [
+    addBehavior(cls, 'eventEmitter', EventEmitterBehavior, config, [
       'on:addListener',
       'off:removeListener',
       'addListener',
