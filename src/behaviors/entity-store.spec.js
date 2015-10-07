@@ -8,17 +8,27 @@ import {
   Store,
   EntityStore,
   EntityStoreBehavior,
-  Handler
+  Handler,
+  TransformableCollection,
+  Annotations
 } from 'anglue/anglue';
 
 describe('EntityStore', () => {
+  // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
+  beforeEach(() => {
+    Annotations.clear();
+  });
+
   describe('EntityStoreBehavior', () => {
-    let mockInstance, behavior;
+    let mockInstance, behavior, refreshSpy;
     beforeEach(() => {
+      refreshSpy = jasmine.createSpy('refresh');
       module(angular.module('test', []).name);
       inject(_$q_ => {
         mockInstance = {
           $q: _$q_,
+          transformables: {items: {refresh: refreshSpy}},
+          items: {},
           emit: jasmine.createSpy()
         };
         behavior = new EntityStoreBehavior(mockInstance);
@@ -77,6 +87,11 @@ describe('EntityStore', () => {
         behavior.items = ['foo'];
         behavior.onLoadCompleted(['bar']);
         expect(behavior.items).toEqual(['bar']);
+      });
+
+      it('should refresh the items collection on LOAD_COMPLETED', () => {
+        behavior.onLoadCompleted(['bar']);
+        expect(refreshSpy).toHaveBeenCalled();
       });
 
       it('should emit the changed event on the store on LOAD_COMPLETED', () => {
@@ -178,6 +193,11 @@ describe('EntityStore', () => {
         expect(behavior.instance.emit).toHaveBeenCalledWith('changed', 'create', entity);
       });
 
+      it('should refresh the items collection on CREATE_COMPLETED', () => {
+        behavior.onCreateCompleted(entity);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+
       it('should emit the error event on the store on CREATE_FAILED', () => {
         behavior.onCreateFailed('foo error');
         expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'create', 'foo error');
@@ -270,6 +290,11 @@ describe('EntityStore', () => {
         expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'read', 'foo error');
       });
 
+      it('should refresh the items collection on READ_COMPLETED', () => {
+        behavior.onReadCompleted(entity);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+
       it('should define a readPromise on READ_STARTED', () => {
         expect(behavior.readPromise).toEqual(mockInstance.$q.defer().promise);
       });
@@ -353,6 +378,11 @@ describe('EntityStore', () => {
         expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'update', 'foo error');
       });
 
+      it('should refresh the items collection on UPDATE_COMPLETED', () => {
+        behavior.onUpdateCompleted(entity);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+
       it('should define a updatePromise on UPDATE_STARTED', () => {
         expect(behavior.updatePromise).toEqual(mockInstance.$q.defer().promise);
       });
@@ -413,6 +443,11 @@ describe('EntityStore', () => {
       it('should emit the error event on the store on DELETE_FAILED', () => {
         behavior.onDeleteFailed('foo error');
         expect(behavior.instance.emit).toHaveBeenCalledWith('error', 'delete', 'foo error');
+      });
+
+      it('should refresh the items collection on DELETE_COMPLETED', () => {
+        behavior.onDeleteCompleted(entity);
+        expect(refreshSpy).toHaveBeenCalled();
       });
 
       it('should define a deletePromise on DELETE_STARTED', () => {
@@ -600,6 +635,10 @@ describe('EntityStore', () => {
 
     it('should inject $q into the store', () => {
       expect(store.$q).toBe($q);
+    });
+
+    it('should make the collection transformable', () => {
+      expect(store.transformables.items).toEqual(jasmine.any(TransformableCollection));
     });
 
     it('should have an instance of EntityStoreBehavior as the behavior property', () => {

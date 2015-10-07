@@ -1,4 +1,5 @@
 export * from './annotation';
+export * from './annotations';
 export * from './utils';
 export * from './application';
 export * from './actions';

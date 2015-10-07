@@ -38,11 +38,15 @@ export function addStaticGetterArrayMember(cls, propertyName, value) {
 }
 
 export function mergeStaticGetterArray(cls, propertyName, values) {
-  const currentArray = cls[propertyName] || [];
-  const newArray = currentArray.concat(values);
+  const getterArray = cls[propertyName] || [];
+  for (const value of values) {
+    if (getterArray.indexOf(value) === -1) {
+      getterArray.push(value);
+    }
+  }
   Reflect.defineProperty(cls, propertyName, {
     configurable: true,
-    get: () => newArray
+    get: () => getterArray
   });
 }
 

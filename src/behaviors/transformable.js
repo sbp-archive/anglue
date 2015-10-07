@@ -59,6 +59,15 @@ export class TransformableCollection {
 
 export function Transformable() {
   return (cls, propertyName) => {
+    const transformableDescriptor = {
+      get() {
+        return this.transformables[propertyName].transformed;
+      },
+      set(data) {
+        this.transformables[propertyName].data = data;
+      }
+    };
+
     addStaticGetterArrayMember(cls.constructor, 'transformers', propertyName);
 
     if (!Reflect.getOwnPropertyDescriptor(cls, 'transformables')) {
@@ -75,13 +84,10 @@ export function Transformable() {
       });
     }
 
-    return {
-      get() {
-        return this.transformables[propertyName].transformed;
-      },
-      set(data) {
-        this.transformables[propertyName].data = data;
-      }
-    };
+    if (!Reflect.getOwnPropertyDescriptor(cls, propertyName)) {
+      Reflect.defineProperty(cls, propertyName, transformableDescriptor);
+    }
+
+    return transformableDescriptor;
   };
 }

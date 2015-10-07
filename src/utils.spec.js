@@ -171,6 +171,16 @@ describe('Utils', () => {
       expect(TestClass.test).toEqual(['foo', 'bar']);
     });
 
+    it('should ensure uniqueness', () => {
+      class TestClass {
+        static get test() {
+          return ['foo'];
+        }
+      }
+      mergeStaticGetterArray(TestClass, 'test', ['foo']);
+      expect(TestClass.test).toEqual(['foo']);
+    });
+
     it('should merge with current static property', () => {
       class TestClass {
         static test = ['foo'];

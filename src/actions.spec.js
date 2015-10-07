@@ -4,9 +4,21 @@ import angular from 'angular';
 import 'angular-mocks';
 import 'luxyflux/ng-luxyflux';
 
-import {Actions, AsyncAction, Action, ActionsAnnotation, Inject} from 'anglue/anglue';
+import {
+  Actions,
+  AsyncAction,
+  Action,
+  ActionsAnnotation,
+  Inject,
+  Annotations
+} from 'anglue/anglue';
 
 describe('Actions', () => {
+  // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
+  beforeEach(() => {
+    Annotations.clear();
+  });
+
   describe('@Actions() decorator', () => {
     it('should create a actions annotation', () => {
       @Actions() class SimpleActions {}
