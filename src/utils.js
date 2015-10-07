@@ -111,11 +111,15 @@ export function Decorators(decorators) {
   };
 }
 
-function getCurrentDescriptorValue(propertyDescriptor) {
+export function getCurrentDescriptorValue(propertyDescriptor) {
   if (propertyDescriptor === undefined) {
     return {};
   } else if (propertyDescriptor.get) {
     return propertyDescriptor.get();
   }
   return propertyDescriptor.value;
+}
+
+export function camelcase(name) {
+  return `${name[0].toUpperCase()}${name.slice(1)}`;
 }

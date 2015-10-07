@@ -1,7 +1,11 @@
 import angular from 'angular';
 import {Behavior} from './behavior';
-import {addBehavior} from '../utils';
 import {Handler as handlerDecorator} from '../store';
+import {
+  addBehavior,
+  camelcase,
+  Inject as injectDecorator
+} from '../utils';
 
 export class EntityStoreBehavior extends Behavior {
   isLoading = false;
@@ -21,11 +25,11 @@ export class EntityStoreBehavior extends Behavior {
   }
 
   reset() {
-    this.loadDeferred = null;
-    this.createDeferred = null;
-    this.readDeferred = null;
-    this.updateDeferred = null;
-    this.deleteDeferred = null;
+    this.loadDeferred = this.createNewDeferred();
+    this.createDeferred = this.createNewDeferred();
+    this.readDeferred = this.createNewDeferred();
+    this.updateDeferred = this.createNewDeferred();
+    this.deleteDeferred = this.createNewDeferred();
 
     this.isSet = false;
     this.items.splice(0, this.items.length);
@@ -37,31 +41,31 @@ export class EntityStoreBehavior extends Behavior {
   }
 
   get isBusy() {
-    return Boolean(this.loadPromise ||
-                   this.createPromise ||
-                   this.readPromise ||
-                   this.updatePromise ||
-                   this.deletePromise);
+    return Boolean(this.isLoading ||
+                   this.isCreating ||
+                   this.isReading ||
+                   this.isUpdating ||
+                   this.isDeleting);
   }
 
   get loadPromise() {
-    return this.loadDeferred && this.loadDeferred.promise;
+    return this.loadDeferred.promise;
   }
 
   get createPromise() {
-    return this.createDeferred && this.createDeferred.promise;
+    return this.createDeferred.promise;
   }
 
   get readPromise() {
-    return this.readDeferred && this.readDeferred.promise;
+    return this.readDeferred.promise;
   }
 
   get updatePromise() {
-    return this.updateDeferred && this.updateDeferred.promise;
+    return this.updateDeferred.promise;
   }
 
   get deletePromise() {
-    return this.deleteDeferred && this.deleteDeferred.promise;
+    return this.deleteDeferred.promise;
   }
 
   createNewDeferred() {
@@ -70,6 +74,10 @@ export class EntityStoreBehavior extends Behavior {
 
   onChanged() {
     this.instance.emit('changed', ...arguments);
+  }
+
+  onError() {
+    this.instance.emit('error', ...arguments);
   }
 
   getById(entityId) {
@@ -100,13 +108,14 @@ export class EntityStoreBehavior extends Behavior {
     this.onChanged('load', entities);
 
     this.loadDeferred.resolve(entities);
-    this.loadDeferred = null;
   }
 
   onLoadFailed(error) {
     this.isLoading = false;
+
+    this.onError('load', error);
+
     this.loadDeferred.reject(error);
-    this.loadDeferred = null;
   }
 
   onCreateStarted() {
@@ -132,13 +141,14 @@ export class EntityStoreBehavior extends Behavior {
     this.onChanged('create', currentEntity);
 
     this.createDeferred.resolve(currentEntity);
-    this.createDeferred = null;
   }
 
   onCreateFailed(error) {
     this.isCreating = false;
+
+    this.onError('create', error);
+
     this.createDeferred.reject(error);
-    this.createDeferred = null;
   }
 
   onReadStarted() {
@@ -164,13 +174,14 @@ export class EntityStoreBehavior extends Behavior {
     this.onChanged('read', currentEntity);
 
     this.readDeferred.resolve(entity);
-    this.readDeferred = null;
   }
 
   onReadFailed(error) {
     this.isReading = false;
+
+    this.onError('read', error);
+
     this.readDeferred.reject(error);
-    this.readDeferred = null;
   }
 
   onUpdateStarted() {
@@ -186,7 +197,6 @@ export class EntityStoreBehavior extends Behavior {
 
     if (!currentEntity) {
       this.updateDeferred.reject('Updated entity that is not in this store...', entity);
-      this.updateDeferred = null;
       return;
     }
 
@@ -196,13 +206,14 @@ export class EntityStoreBehavior extends Behavior {
     this.onChanged('update', currentEntity);
 
     this.updateDeferred.resolve(entity);
-    this.updateDeferred = null;
   }
 
   onUpdateFailed(error) {
     this.isUpdating = false;
+
+    this.onError('update', error);
+
     this.updateDeferred.reject(error);
-    this.updateDeferred = null;
   }
 
   onDeleteStarted() {
@@ -218,7 +229,6 @@ export class EntityStoreBehavior extends Behavior {
 
     if (!currentEntity) {
       this.deleteDeferred.reject('Deleting entity that is not in this store...', entity);
-      this.deleteDeferred = null;
       return;
     }
 
@@ -228,13 +238,14 @@ export class EntityStoreBehavior extends Behavior {
     this.onChanged('delete', currentEntity);
 
     this.deleteDeferred.resolve(entity);
-    this.deleteDeferred = null;
   }
 
   onDeleteFailed(error) {
     this.isDeleting = false;
+
+    this.onError('delete', error);
+
     this.deleteDeferred.reject(error);
-    this.deleteDeferred = null;
   }
 }
 
@@ -253,11 +264,12 @@ export function EntityStore(config = {}) {
     }, preparedConfig);
     preparedConfig.entity = camelcase(preparedConfig.entity);
 
+    injectDecorator()(cls.prototype, '$q');
+
     const actionHandlers = [];
     for (const action of preparedConfig.actions) {
       const actionName = camelcase(action);
       const entityAction = `on${preparedConfig.entity}${actionName}`;
-
       const startedAction = `${entityAction}Started`;
       const completedAction = `${entityAction}Completed`;
       const failedAction = `${entityAction}Failed`;
@@ -266,10 +278,10 @@ export function EntityStore(config = {}) {
       actionHandlers.push(`${completedAction}:on${actionName}Completed`);
       actionHandlers.push(`${failedAction}:on${actionName}Failed`);
 
-      const decorate = handlerDecorator(null, false);
-      decorate(cls.prototype, startedAction);
-      decorate(cls.prototype, completedAction);
-      decorate(cls.prototype, failedAction);
+      const handlerDecorate = handlerDecorator(null, false);
+      handlerDecorate(cls.prototype, startedAction);
+      handlerDecorate(cls.prototype, completedAction);
+      handlerDecorate(cls.prototype, failedAction);
     }
 
     addBehavior(cls, 'entityStore', EntityStoreBehavior, preparedConfig, [
@@ -295,8 +307,4 @@ export function EntityStore(config = {}) {
       'getById'
     ].concat(actionHandlers));
   };
-}
-
-function camelcase(name) {
-  return `${name[0].toUpperCase()}${name.slice(1)}`;
 }
