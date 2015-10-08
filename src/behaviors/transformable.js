@@ -21,7 +21,10 @@ export class TransformableCollection {
   }
 
   get data() {
-    return this._data || [];
+    if (!this._data) {
+      this._data = [];
+    }
+    return this._data;
   }
 
   addTransformer(transformer) {

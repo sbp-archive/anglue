@@ -15,7 +15,6 @@ export class EntityStoreBehavior extends Behavior {
   isUpdating = false;
   isDeleting = false;
   isSet = false;
-  items = [];
   hasDetailSet = new Set();
 
   constructor(instance, {idProperty, collection} = {}) {
@@ -34,16 +33,16 @@ export class EntityStoreBehavior extends Behavior {
     this.deleteDeferred = this.createNewDeferred();
 
     this.isSet = false;
-    this.items.splice(0, this.items.length);
+    this.items = [];
     this.hasDetailSet.clear();
   }
 
   get items() {
-    return this.instance.items;
+    return this.instance.transformables[this.collection].data;
   }
 
   set items(items) {
-    this.instance.items = items;
+    this.instance.transformables[this.collection].data = items;
   }
 
   get isEmpty() {

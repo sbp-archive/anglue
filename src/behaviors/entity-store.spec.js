@@ -27,8 +27,7 @@ describe('EntityStore', () => {
       inject(_$q_ => {
         mockInstance = {
           $q: _$q_,
-          transformables: {items: {refresh: refreshSpy}},
-          items: {},
+          transformables: {items: {refresh: refreshSpy, data: []}},
           emit: jasmine.createSpy()
         };
         behavior = new EntityStoreBehavior(mockInstance);
@@ -44,6 +43,16 @@ describe('EntityStore', () => {
         idProperty: 'fooId'
       });
       expect(behavior.idProperty).toEqual('fooId');
+    });
+
+    it('should write to the transformable data', () => {
+      expect(behavior.items).toBe(mockInstance.transformables.items.data);
+    });
+
+    it('should read from the transformable data', () => {
+      const newData = ['test'];
+      behavior.items = newData;
+      expect(mockInstance.transformables.items.data).toBe(newData);
     });
 
     it('should not be in isEmpty state if store has not successfully read/loaded once', () => {
