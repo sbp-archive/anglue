@@ -78,32 +78,37 @@ export function addProxies(cls, BehaviorCls, property, proxies) {
     // We don't want to override any methods that already exist in the prototype
     // of the target cls. If the method already exists, its the class author's
     // responsibility to call behavior methods.
+    /*eslint-disable no-loop-func */
     if (!Reflect.getOwnPropertyDescriptor(cls.prototype, localName)) {
       const externalName = parts[1] ? parts[1].trim() : localName;
       const descriptor = Reflect.getOwnPropertyDescriptor(BehaviorCls.prototype, externalName);
 
       // This should be a simple property
       if (angular.isUndefined(descriptor) || angular.isDefined(descriptor.get)) {
-        Reflect.defineProperty(cls.prototype, localName, {
-
-          /*eslint-disable no-loop-func */
+        const proxyDescriptor = {
           get() {
             return this[property][externalName];
           }
+        };
 
-          /*eslint-disable no-loop-func */
-        });
+        if (angular.isDefined(descriptor) && angular.isDefined(descriptor.set)) {
+          Object.assign(proxyDescriptor, {
+            set(value) {
+              this[property][externalName] = value;
+            }
+          });
+        }
+
+        Reflect.defineProperty(cls.prototype, localName, proxyDescriptor);
       } else if (angular.isDefined(descriptor.value)) {
         Reflect.defineProperty(cls.prototype, localName, {
-
-          /*eslint-disable no-loop-func */
           value() {
             return this[property][externalName](...arguments);
           }
-
-          /*eslint-enable no-loop-func */
         });
       }
+
+      /*eslint-enable no-loop-func */
     }
   }
 }

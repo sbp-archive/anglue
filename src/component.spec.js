@@ -116,14 +116,14 @@ describe('Components', () => {
       onDestroy = jasmine.createSpy('onDestroy');
     }
 
-    angular.module('componentApp', [
+    angular.module('componentsApp', [
       ComplexComponent.annotation.module.name,
       TemplateUrlComponent.annotation.module.name,
       ReplaceComponent.annotation.module.name
     ]);
 
     let $compile, $rootScope, $timeout;
-    beforeEach(module('componentApp'));
+    beforeEach(module('componentsApp'));
     beforeEach(inject((_$compile_, _$rootScope_, _$timeout_) => {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
