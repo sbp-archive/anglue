@@ -89,6 +89,10 @@ export function addProxies(cls, BehaviorCls, property, proxies) {
           /*eslint-disable no-loop-func */
           get() {
             return this[property][externalName];
+          },
+
+          set(value) {
+            this[property][externalName] = value;
           }
 
           /*eslint-disable no-loop-func */

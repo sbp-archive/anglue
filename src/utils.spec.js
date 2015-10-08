@@ -199,9 +199,11 @@ describe('Utils', () => {
   });
 
   describe('addBehavior()', () => {
-    let cls, TestCls, BehaviorCls, methodSpy;
+    let cls, TestCls, BehaviorCls, methodSpy, setterSpy;
     beforeEach(() => {
       methodSpy = jasmine.createSpy('method');
+      setterSpy = jasmine.createSpy('setter');
+
       class BehaviorClass extends Behavior {
         bar() {
           methodSpy();
@@ -215,6 +217,9 @@ describe('Utils', () => {
 
         get getter() {
           return 'foo';
+        }
+        set getter(value) {
+          setterSpy(value);
         }
       }
       class TestClass {
@@ -250,6 +255,12 @@ describe('Utils', () => {
     it('should create working proxy getters on the prototype of the target cls', () => {
       addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['getter']});
       expect(cls.getter).toEqual('foo');
+    });
+
+    it('should create working proxy setters on the prototype of the target cls', () => {
+      addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['getter']});
+      cls.getter = 'foo';
+      expect(setterSpy).toHaveBeenCalledWith('foo');
     });
 
     it('should create working proxy properties on the prototype of the target cls', () => {
