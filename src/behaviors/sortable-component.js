@@ -7,6 +7,7 @@ export class SortableComponentBehavior extends Behavior {
     super(...arguments);
 
     this.actions = actions;
+
     if (!this.actionsRef) {
       const className = Reflect.getPrototypeOf(instance).constructor.name;
       throw new Error(`SortableComponentBehavior: '${actions}' not found on ${className}`);
