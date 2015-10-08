@@ -1,6 +1,7 @@
 import angular from 'angular';
 import {Behavior} from './behavior';
 import {Handler as handlerDecorator} from '../store';
+import {Transformable as transformableDecorator} from './transformable';
 import {
   addBehavior,
   camelcase,
@@ -14,13 +15,13 @@ export class EntityStoreBehavior extends Behavior {
   isUpdating = false;
   isDeleting = false;
   isSet = false;
-  items = [];
   hasDetailSet = new Set();
 
-  constructor(instance, {idProperty} = {}) {
+  constructor(instance, {idProperty, collection} = {}) {
     super(...arguments);
 
     this.idProperty = idProperty || 'id';
+    this.collection = collection || 'items';
     this.reset();
   }
 
@@ -32,8 +33,16 @@ export class EntityStoreBehavior extends Behavior {
     this.deleteDeferred = this.createNewDeferred();
 
     this.isSet = false;
-    this.items.splice(0, this.items.length);
+    this.items = [];
     this.hasDetailSet.clear();
+  }
+
+  get items() {
+    return this.instance.transformables[this.collection].data;
+  }
+
+  set items(items) {
+    this.instance.transformables[this.collection].data = items;
   }
 
   get isEmpty() {
@@ -73,6 +82,7 @@ export class EntityStoreBehavior extends Behavior {
   }
 
   onChanged() {
+    this.instance.transformables[this.collection].refresh();
     this.instance.emit('changed', ...arguments);
   }
 
@@ -265,6 +275,7 @@ export function EntityStore(config = {}) {
     preparedConfig.entity = camelcase(preparedConfig.entity);
 
     injectDecorator()(cls.prototype, '$q');
+    transformableDecorator()(cls.prototype, preparedConfig.collection);
 
     const actionHandlers = [];
     for (const action of preparedConfig.actions) {
@@ -288,7 +299,6 @@ export function EntityStore(config = {}) {
       property: 'entityStore',
       config: preparedConfig,
       proxy: [
-        `${preparedConfig.collection}:items`,
         'isSet',
         'isEmpty',
         'isBusy',

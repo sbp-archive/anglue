@@ -38,7 +38,9 @@
     "no-sparse-arrays": 2,
     "no-unreachable": 2,
     "use-isnan": 2,
-    "valid-jsdoc": 2,
+    "valid-jsdoc": [2, {
+        "requireReturn": false
+    }],
     "valid-typeof": 2,
     "no-unexpected-multiline": 2,
 
@@ -124,7 +126,7 @@
     "no-process-exit": 2,
     "no-restricted-modules": 2,
     "no-sync": 2,
-    
+
     // stylistic
     "array-bracket-spacing": 2,
     "block-spacing": 2,

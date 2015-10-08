@@ -171,6 +171,16 @@ describe('Utils', () => {
       expect(TestClass.test).toEqual(['foo', 'bar']);
     });
 
+    it('should ensure uniqueness', () => {
+      class TestClass {
+        static get test() {
+          return ['foo'];
+        }
+      }
+      mergeStaticGetterArray(TestClass, 'test', ['foo']);
+      expect(TestClass.test).toEqual(['foo']);
+    });
+
     it('should merge with current static property', () => {
       class TestClass {
         static test = ['foo'];
@@ -190,8 +200,6 @@ describe('Utils', () => {
 
   describe('addBehavior()', () => {
     let cls, TestCls, BehaviorCls, methodSpy;
-    const customMethod = () => {};
-
     beforeEach(() => {
       methodSpy = jasmine.createSpy('method');
       class BehaviorClass extends Behavior {
@@ -210,7 +218,9 @@ describe('Utils', () => {
         }
       }
       class TestClass {
-        custom = customMethod;
+        custom() {
+          methodSpy();
+        }
       }
 
       TestCls = TestClass;
@@ -260,7 +270,8 @@ describe('Utils', () => {
 
     it('should not override existing methods on the class', () => {
       addBehavior(TestCls, BehaviorCls, {property: 'foo', proxy: ['custom']});
-      expect(cls.custom).toBe(customMethod);
+      cls.custom();
+      expect(methodSpy).toHaveBeenCalled();
     });
 
     it('should store the decorated instance on the behavior instance', () => {

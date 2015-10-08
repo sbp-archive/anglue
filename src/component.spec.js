@@ -10,10 +10,16 @@ import {
   Binding,
   Event,
   ComponentEvent,
-  View
+  View,
+  Annotations
 } from 'anglue/anglue';
 
 describe('Components', () => {
+  // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
+  beforeEach(() => {
+    Annotations.clear();
+  });
+
   describe('@Component() decorator', () => {
     it('should create a component annotation', () => {
       @Component() class SimpleComponent {}

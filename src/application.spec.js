@@ -9,10 +9,16 @@ import {
   ApplicationAnnotation,
   Store,
   Actions,
-  Component
+  Component,
+  Annotations
 } from 'anglue/anglue';
 
 describe('Applications', () => {
+  // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
+  beforeEach(() => {
+    Annotations.clear();
+  });
+
   describe('@Application() decorator', () => {
     it('should create a component annotation', () => {
       @Application() class TestApplication {}

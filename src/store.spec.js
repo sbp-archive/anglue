@@ -9,10 +9,16 @@ import {
   Inject,
   Handler,
   Handlers,
-  EventEmitterBehavior
+  EventEmitterBehavior,
+  Annotations
 } from 'anglue/anglue';
 
 describe('Stores', () => {
+  // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
+  beforeEach(() => {
+    Annotations.clear();
+  });
+
   describe('@Store() decorator', () => {
     it('should create a store annotation', () => {
       @Store() class SimpleStore {}

@@ -38,11 +38,15 @@ export function addStaticGetterArrayMember(cls, propertyName, value) {
 }
 
 export function mergeStaticGetterArray(cls, propertyName, values) {
-  const currentArray = cls[propertyName] || [];
-  const newArray = currentArray.concat(values);
+  const getterArray = cls[propertyName] || [];
+  for (const value of values) {
+    if (getterArray.indexOf(value) === -1) {
+      getterArray.push(value);
+    }
+  }
   Reflect.defineProperty(cls, propertyName, {
     configurable: true,
-    get: () => newArray
+    get: () => getterArray
   });
 }
 
@@ -70,30 +74,36 @@ export function addProxies(cls, BehaviorCls, property, proxies) {
   for (const proxy of proxies) {
     const parts = proxy.split(':');
     const localName = parts[0].trim();
-    const externalName = parts[1] ? parts[1].trim() : localName;
-    const descriptor = Reflect.getOwnPropertyDescriptor(BehaviorCls.prototype, externalName);
 
-    // This should be a simple property
-    if (angular.isUndefined(descriptor) || angular.isDefined(descriptor.get)) {
-      Reflect.defineProperty(cls.prototype, localName, {
+    // We don't want to override any methods that already exist in the prototype
+    // of the target cls. If the method already exists, its the class author's
+    // responsibility to call behavior methods.
+    if (!Reflect.getOwnPropertyDescriptor(cls.prototype, localName)) {
+      const externalName = parts[1] ? parts[1].trim() : localName;
+      const descriptor = Reflect.getOwnPropertyDescriptor(BehaviorCls.prototype, externalName);
 
-        /*eslint-disable no-loop-func */
-        get() {
-          return this[property][externalName];
-        }
+      // This should be a simple property
+      if (angular.isUndefined(descriptor) || angular.isDefined(descriptor.get)) {
+        Reflect.defineProperty(cls.prototype, localName, {
 
-        /*eslint-disable no-loop-func */
-      });
-    } else if (angular.isDefined(descriptor.value)) {
-      Reflect.defineProperty(cls.prototype, localName, {
+          /*eslint-disable no-loop-func */
+          get() {
+            return this[property][externalName];
+          }
 
-        /*eslint-disable no-loop-func */
-        value() {
-          this[property][externalName](...arguments);
-        }
+          /*eslint-disable no-loop-func */
+        });
+      } else if (angular.isDefined(descriptor.value)) {
+        Reflect.defineProperty(cls.prototype, localName, {
 
-        /*eslint-enable no-loop-func */
-      });
+          /*eslint-disable no-loop-func */
+          value() {
+            return this[property][externalName](...arguments);
+          }
+
+          /*eslint-enable no-loop-func */
+        });
+      }
     }
   }
 }
