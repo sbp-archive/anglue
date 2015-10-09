@@ -21,7 +21,7 @@ export class PaginatableComponentBehavior extends Behavior {
     }
 
     this.page = initialPage === undefined ? 1 : initialPage;
-    this.limit = initialLimit === undefined ? 20 : initialLimit;
+    this.limit = initialLimit === undefined ? 25 : initialLimit;
   }
 
   get actionsRef() {

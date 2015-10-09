@@ -108,8 +108,8 @@ describe('PaginatableComponent', () => {
     });
 
     it('should call limitChange method on the actionsRef when limit is changed', () => {
-      behavior.limit = 20;
-      expect(changeLimitSpy).toHaveBeenCalledWith(20);
+      behavior.limit = 25;
+      expect(changeLimitSpy).toHaveBeenCalledWith(25);
     });
 
     it('should not call limitChange method on the actionsRef when limit is the same', () => {
