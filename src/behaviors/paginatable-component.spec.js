@@ -1,7 +1,6 @@
-/*eslint-env node, jasmine*//*global module, inject*/
+/*eslint-env node, jasmine*//*global module*/
 /*eslint-disable max-statements, max-params*/
-import angular from 'angular';
-import 'angular-mocks';
+import {buildComponent} from 'anglue/anglue';
 
 import {
   Annotations,
@@ -144,8 +143,7 @@ describe('PaginatableComponent', () => {
     };
 
     @Component()
-    @PaginatableComponent()
-    class PaginatableTestComponent {
+    @PaginatableComponent() class PaginatableTestComponent {
       paginatableActions = mockActions;
       paginatableStore = mockStore;
     }
@@ -155,8 +153,7 @@ describe('PaginatableComponent', () => {
       entity: 'foo',
       initialPage: 3,
       initialLimit: 100
-    })
-    class PaginatableEntityConfiguredComponent {
+    }) class PaginatableEntityConfiguredComponent {
       fooActions = mockActions;
       fooStore = mockStore;
     }
@@ -165,91 +162,57 @@ describe('PaginatableComponent', () => {
     @PaginatableComponent({
       actions: 'customActions',
       store: 'customStore'
-    })
-    class PaginatableCustomConfiguredComponent {
+    }) class PaginatableCustomConfiguredComponent {
       customActions = mockActions;
       customStore = mockStore;
     }
 
     @Component()
-    @PaginatableComponent('foo')
-    class PaginatableStringConfiguredComponent {
+    @PaginatableComponent('foo') class PaginatableStringConfiguredComponent {
       fooActions = mockActions;
       fooStore = mockStore;
     }
 
-    angular.module('paginatableComponents', [
-      PaginatableTestComponent.annotation.module.name,
-      PaginatableEntityConfiguredComponent.annotation.module.name,
-      PaginatableCustomConfiguredComponent.annotation.module.name,
-      PaginatableStringConfiguredComponent.annotation.module.name
-    ]);
-
-    let $compile, $rootScope;
-    let autoConfiguredComponent;
-    let entityConfiguredComponent;
-    let customConfiguredComponent;
-    let stringConfiguredComponent;
-
-    beforeEach(module('paginatableComponents'));
-    beforeEach(inject((_$compile_, _$rootScope_) => {
-      $compile = _$compile_;
-      $rootScope = _$rootScope_;
-
-      autoConfiguredComponent = compileTemplate(
-        '<paginatable-test></paginatable-test>', $compile, $rootScope)
-        .controller('paginatableTest');
-      entityConfiguredComponent = compileTemplate(
-        '<paginatable-entity-configured></paginatable-entity-configured>', $compile, $rootScope)
-        .controller('paginatableEntityConfigured');
-      customConfiguredComponent = compileTemplate(
-        '<paginatable-custom-configured></paginatable-custom-configured>', $compile, $rootScope)
-        .controller('paginatableCustomConfigured');
-      stringConfiguredComponent = compileTemplate(
-        '<paginatable-string-configured></paginatable-string-configured>', $compile, $rootScope)
-        .controller('paginatableStringConfigured');
-    }));
-
     it('should define the PaginatableComponent API on the component', () => {
+      const autoConfiguredComponent = buildComponent(PaginatableTestComponent);
       [
         'pagination'
       ].forEach(api => expect(autoConfiguredComponent[api]).toBeDefined());
     });
 
     it('should have an instance of PaginatableComponentBehavior as the behavior property', () => {
+      const autoConfiguredComponent = buildComponent(PaginatableTestComponent);
       expect(autoConfiguredComponent.pagination).toEqual(jasmine.any(PaginatableComponentBehavior));
     });
 
     it('should use the first uppercased part of class name to determine the actions and store', () => {
+      const autoConfiguredComponent = buildComponent(PaginatableTestComponent);
       expect(autoConfiguredComponent.pagination.actions).toEqual('paginatableActions');
       expect(autoConfiguredComponent.pagination.store).toEqual('paginatableStore');
     });
 
     it('should be possible to pass the entity property as a string to determine actions and store', () => {
+      const stringConfiguredComponent = buildComponent(PaginatableStringConfiguredComponent);
       expect(stringConfiguredComponent.pagination.actions).toEqual('fooActions');
       expect(stringConfiguredComponent.pagination.store).toEqual('fooStore');
     });
 
     it('should be possible to configure an entity to determine the actions and store', () => {
+      const entityConfiguredComponent = buildComponent(PaginatableEntityConfiguredComponent);
       expect(entityConfiguredComponent.pagination.actions).toEqual('fooActions');
       expect(entityConfiguredComponent.pagination.store).toEqual('fooStore');
     });
 
     it('should be possible to pass the actions and store in the configuration', () => {
+      const customConfiguredComponent = buildComponent(PaginatableCustomConfiguredComponent);
       expect(customConfiguredComponent.pagination.actions).toEqual('customActions');
       expect(customConfiguredComponent.pagination.store).toEqual('customStore');
     });
 
     it('should be possible to configure initial page and limit', () => {
+      const entityConfiguredComponent = buildComponent(PaginatableEntityConfiguredComponent);
       expect(entityConfiguredComponent.pagination.config.initialPage).toEqual(3);
       expect(entityConfiguredComponent.pagination.config.initialLimit).toEqual(100);
     });
   });
 });
-
-function compileTemplate(template, $compile, $rootScope) {
-  const el = angular.element(template.trim());
-  $compile(el)($rootScope.$new());
-  $rootScope.$digest();
-  return el;
-}

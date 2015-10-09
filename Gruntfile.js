@@ -39,7 +39,9 @@ module.exports = function(grunt) {
         src: 'coverage/lcov.json',
         options: {
           reports: {
-            lcovonly: 'coverage/lcov-remapped.info'
+            'lcovonly': 'coverage/lcov-remapped.info',
+            'text-summary': null,
+            'html': 'coverage/html'
           }
         }
       }

@@ -15,6 +15,8 @@ define(['exports', 'angular'], function (exports, _angular) {
   exports.Decorators = Decorators;
   exports.getCurrentDescriptorValue = getCurrentDescriptorValue;
   exports.camelcase = camelcase;
+  exports.camelCaseToDashes = camelCaseToDashes;
+  exports.dashesToCamelCase = dashesToCamelCase;
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -239,6 +241,16 @@ define(['exports', 'angular'], function (exports, _angular) {
 
   function camelcase(name) {
     return '' + name[0].toUpperCase() + name.slice(1);
+  }
+
+  function camelCaseToDashes(name) {
+    return name.replace(/([a-z])([A-Z])/g, '$1-$2');
+  }
+
+  function dashesToCamelCase(name) {
+    return String(name).replace(/-([a-z])/g, function (part) {
+      return part[1].toUpperCase();
+    });
   }
 });
 //# sourceMappingURL=utils.js.map

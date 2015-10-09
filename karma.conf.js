@@ -47,8 +47,6 @@ module.exports = function(config) {
         dir: 'coverage/',
         subdir: '.',
         file: 'lcov.json'
-      }, {
-        type: 'text-summary'
       }]
     },
 
