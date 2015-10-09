@@ -9,38 +9,68 @@ define(['exports', './application', './component', './store', './actions'], func
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-  var AnnotationsFactory = (function () {
-    function AnnotationsFactory() {
-      _classCallCheck(this, AnnotationsFactory);
+  var AnnotationsCache = (function () {
+    function AnnotationsCache() {
+      _classCallCheck(this, AnnotationsCache);
+
+      this.clear();
     }
 
-    _createClass(AnnotationsFactory, [{
-      key: 'getApplication',
-      value: function getApplication(name, targetCls) {
-        return new _application.ApplicationAnnotation(name, targetCls);
-      }
-    }, {
-      key: 'getComponent',
-      value: function getComponent(name, targetCls) {
-        return new _component.ComponentAnnotation(name, targetCls);
-      }
-    }, {
-      key: 'getStore',
-      value: function getStore(name, targetCls) {
-        return new _store.StoreAnnotation(name, targetCls);
+    _createClass(AnnotationsCache, [{
+      key: 'clear',
+      value: function clear() {
+        this.actions = new Map();
+        this.applications = new Map();
+        this.components = new Map();
+        this.stores = new Map();
       }
     }, {
       key: 'getActions',
       value: function getActions(name, targetCls) {
-        return new _actions.ActionsAnnotation(name, targetCls);
+        var actions = this.actions.get(name);
+        if (!actions) {
+          actions = new _actions.ActionsAnnotation(name, targetCls);
+          this.actions.set(name, actions);
+        }
+        return actions;
+      }
+    }, {
+      key: 'getApplication',
+      value: function getApplication(name, targetCls) {
+        var application = this.applications.get(name);
+        if (!application) {
+          application = new _application.ApplicationAnnotation(name, targetCls);
+          this.applications.set(name, application);
+        }
+        return application;
+      }
+    }, {
+      key: 'getComponent',
+      value: function getComponent(name, targetCls) {
+        var component = this.components.get(name);
+        if (!component) {
+          component = new _component.ComponentAnnotation(name, targetCls);
+          this.components.set(name, component);
+        }
+        return component;
+      }
+    }, {
+      key: 'getStore',
+      value: function getStore(name, targetCls) {
+        var store = this.stores.get(name);
+        if (!store) {
+          store = new _store.StoreAnnotation(name, targetCls);
+          this.stores.set(name, store);
+        }
+        return store;
       }
     }]);
 
-    return AnnotationsFactory;
+    return AnnotationsCache;
   })();
 
-  exports.AnnotationsFactory = AnnotationsFactory;
-  var Annotations = new AnnotationsFactory();
+  exports.AnnotationsCache = AnnotationsCache;
+  var Annotations = new AnnotationsCache();
   exports.Annotations = Annotations;
   exports['default'] = Annotations;
 });

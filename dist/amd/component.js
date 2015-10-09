@@ -25,6 +25,10 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
 
   var _angular2 = _interopRequireDefault(_angular);
 
+  var COMPONENT_ENTITY_REGEX = /^([A-Z][a-z]*)/;
+
+  exports.COMPONENT_ENTITY_REGEX = COMPONENT_ENTITY_REGEX;
+
   var ComponentEvent = (function () {
     function ComponentEvent() {
       _classCallCheck(this, ComponentEvent);
@@ -82,10 +86,10 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
 
             if (flags) {
               Object.keys(flags).forEach(function (flag) {
-                var flagBinding = '_' + flag + 'Flag';
+                var property = '_' + flag + 'Flag';
                 Reflect.defineProperty(_this, flag, {
                   get: function get() {
-                    return _angular2['default'].isDefined(_this[flagBinding]) ? _this[flagBinding] !== 'false' : false;
+                    return _angular2['default'].isDefined(_this[property]) ? _this[property] !== 'false' : false;
                   }
                 });
               });

@@ -40,7 +40,6 @@ define(['exports'], function (exports) {
        * This method can be overridden by child classes to
        * configure the angular module after it is created
        * @param {module} module The created angular module
-       * @returns {undefined}
        */
       value: function configure() /*module*/{}
 
@@ -51,7 +50,6 @@ define(['exports'], function (exports) {
        * wants the bindings
        * @param  {Array} injected An array with the injected
        * instances that we will apply on the class instance
-       * @returns {undefined}
        */
     }, {
       key: 'applyInjectionBindings',
@@ -70,7 +68,6 @@ define(['exports'], function (exports) {
        * targetCls decorators
        * @deprecated
        * @param  {Object} instance The created instance to be decorated
-       * @returns {undefined}
        */
     }, {
       key: 'applyDecorators',
@@ -109,7 +106,6 @@ define(['exports'], function (exports) {
        * This method decorates the class with all the targetCls decorators
        * @deprecated
        * @param  {Object} targetCls The targetCls to be decorated
-       * @returns {undefined}
        */
     }, {
       key: 'applyClassDecorators',
