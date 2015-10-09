@@ -20,12 +20,8 @@ export class PaginatableComponentBehavior extends Behavior {
       throw new Error(`PaginatableComponentBehavior: storeRef '${store}' on ${className} is not paginatable`);
     }
 
-    if (initialPage) {
-      this.page = initialPage;
-    }
-    if (initialLimit) {
-      this.limit = initialLimit;
-    }
+    this.page = initialPage === undefined ? 1 : initialPage;
+    this.limit = initialLimit === undefined ? 25 : initialLimit;
   }
 
   get actionsRef() {

@@ -34,6 +34,12 @@ describe('Paginatable', () => {
             addTransformer: addSpy,
             removeTransformer: removeSpy,
             transformers: []
+          },
+          foo: {
+            refresh: refreshSpy,
+            addTransformer: addSpy,
+            removeTransformer: removeSpy,
+            transformers: []
           }
         }
       }
@@ -48,9 +54,10 @@ describe('Paginatable', () => {
     });
 
     it('should set default values for its config', () => {
+      behavior = new PaginatableStoreBehavior(mockInstance);
       expect(behavior.collection).toEqual('items');
       expect(behavior.state.page).toEqual(1);
-      expect(behavior.state.limit).toEqual(20);
+      expect(behavior.state.limit).toEqual(null);
     });
 
     it('should read the passed config', () => {
@@ -94,17 +101,17 @@ describe('Paginatable', () => {
     });
 
     describe('refresh()', () => {
-      it('should add the sort transformer if it was not active yet', () => {
+      it('should add the paginatable transformer if it was not active yet', () => {
+        behavior.state.limit = 10;
         behavior.refresh();
-
         expect(addSpy).toHaveBeenCalled();
         expect(refreshSpy).not.toHaveBeenCalled();
       });
 
-      it('should just refresh if there is an active sort transformer', () => {
+      it('should just refresh if there is an active paginatable transformer', () => {
         behavior.transformableCollection.transformers.push(behavior.transformer);
+        behavior.state.limit = 10;
         behavior.refresh();
-
         expect(addSpy).not.toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalled();
       });
@@ -113,7 +120,6 @@ describe('Paginatable', () => {
         behavior.transformableCollection.transformers.push(behavior.transformer);
         behavior.state.limit = null;
         behavior.refresh();
-
         expect(removeSpy).toHaveBeenCalled();
         expect(refreshSpy).not.toHaveBeenCalled();
       });

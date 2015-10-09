@@ -25,7 +25,9 @@ export class PaginatableStoreBehavior extends Behavior {
     super(...arguments);
 
     this.collection = collection || 'items';
-    this.state = new PaginationState(initialPage, initialLimit || 20);
+    this.state = new PaginationState(initialPage, initialLimit);
+
+    this.refresh();
   }
 
   get transformableCollection() {
