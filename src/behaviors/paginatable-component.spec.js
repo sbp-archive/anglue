@@ -26,8 +26,8 @@ describe('PaginatableComponent', () => {
       fooStore = {
         paginatableStore: true,
         paginationState: {
-          page: 2,
-          limit: 30,
+          page: null,
+          limit: null,
           total: 100
         }
       };
@@ -41,7 +41,9 @@ describe('PaginatableComponent', () => {
       mockInstance = new MockComponent();
       behavior = new PaginatableComponentBehavior(mockInstance, {
         actions: 'fooActions',
-        store: 'fooStore'
+        store: 'fooStore',
+        initialPage: null,
+        initialLimit: null
       });
     });
 
@@ -87,6 +89,8 @@ describe('PaginatableComponent', () => {
     });
 
     it('should be possible to get the current pagination info', () => {
+      mockInstance.fooStore.paginationState.page = 2;
+      mockInstance.fooStore.paginationState.limit = 30;
       expect(behavior.page).toEqual(2);
       expect(behavior.limit).toEqual(30);
       expect(behavior.total).toEqual(100);
@@ -98,16 +102,18 @@ describe('PaginatableComponent', () => {
     });
 
     it('should not call pageChange method on the actionsRef when page is the same', () => {
+      mockInstance.fooStore.paginationState.page = 2;
       behavior.page = 2;
       expect(changePageSpy).not.toHaveBeenCalled();
     });
 
-    it('should call limitChange method on the actionsRef when page is changed', () => {
+    it('should call limitChange method on the actionsRef when limit is changed', () => {
       behavior.limit = 20;
       expect(changeLimitSpy).toHaveBeenCalledWith(20);
     });
 
-    it('should not call limitChange method on the actionsRef when page is the same', () => {
+    it('should not call limitChange method on the actionsRef when limit is the same', () => {
+      mockInstance.fooStore.paginationState.limit = 30;
       behavior.limit = 30;
       expect(changeLimitSpy).not.toHaveBeenCalled();
     });
@@ -125,11 +131,23 @@ describe('PaginatableComponent', () => {
   });
 
   describe('@PaginatableComponent() decorator', () => {
+    const mockActions = {
+      pageChange() {},
+      limitChange() {}
+    };
+    const mockStore = {
+      paginatableStore: true,
+      paginationState: {
+        page: 2,
+        limit: 10
+      }
+    };
+
     @Component()
     @PaginatableComponent()
     class PaginatableTestComponent {
-      paginatableActions = {};
-      paginatableStore = {paginatableStore: true};
+      paginatableActions = mockActions;
+      paginatableStore = mockStore;
     }
 
     @Component()
@@ -139,17 +157,8 @@ describe('PaginatableComponent', () => {
       initialLimit: 100
     })
     class PaginatableEntityConfiguredComponent {
-      fooActions = {
-        pageChange() {},
-        limitChange() {}
-      };
-      fooStore = {
-        paginatableStore: true,
-        paginationState: {
-          page: 2,
-          limit: 10
-        }
-      };
+      fooActions = mockActions;
+      fooStore = mockStore;
     }
 
     @Component()
@@ -158,15 +167,15 @@ describe('PaginatableComponent', () => {
       store: 'customStore'
     })
     class PaginatableCustomConfiguredComponent {
-      customActions = {};
-      customStore = {paginatableStore: true}
+      customActions = mockActions;
+      customStore = mockStore;
     }
 
     @Component()
     @PaginatableComponent('foo')
     class PaginatableStringConfiguredComponent {
-      fooActions = {};
-      fooStore = {paginatableStore: true}
+      fooActions = mockActions;
+      fooStore = mockStore;
     }
 
     angular.module('paginatableComponents', [
