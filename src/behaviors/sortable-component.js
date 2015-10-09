@@ -1,6 +1,7 @@
 import angular from 'angular';
 import {Behavior} from './behavior';
 import {addBehavior} from '../utils';
+import {COMPONENT_ENTITY_REGEX} from '../component';
 
 export class SortableComponentBehavior extends Behavior {
   constructor(instance, {actions, initial} = {}) {
@@ -36,8 +37,6 @@ export class SortableComponentBehavior extends Behavior {
   }
 }
 
-const ENTITY_REGEX = /^([A-Z][a-z]*)/;
-
 export function SortableComponent(config = {}) {
   return cls => {
     let preparedConfig = config;
@@ -46,7 +45,7 @@ export function SortableComponent(config = {}) {
     }
 
     if (!preparedConfig.entity) {
-      preparedConfig.entity = ENTITY_REGEX.exec(cls.name)[0];
+      preparedConfig.entity = cls.name.match(COMPONENT_ENTITY_REGEX)[1].toLowerCase();
     }
     if (!preparedConfig.actions) {
       preparedConfig.actions = `${preparedConfig.entity.toLowerCase()}Actions`;
