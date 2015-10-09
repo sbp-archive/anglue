@@ -5,6 +5,8 @@ import {Annotations} from './annotations';
 
 import {addStaticGetterObjectMember, addStaticGetter} from './utils';
 
+export const COMPONENT_ENTITY_REGEX = /^([A-Z][a-z]*)/;
+
 export class ComponentEvent {
   expression = null;
   fire(locals) {
