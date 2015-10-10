@@ -144,3 +144,11 @@ export function getCurrentDescriptorValue(propertyDescriptor) {
 export function camelcase(name) {
   return `${name[0].toUpperCase()}${name.slice(1)}`;
 }
+
+export function camelCaseToDashes (name) {
+  return name.replace(/([a-z])([A-Z])/g, '$1-$2');
+}
+
+export function dashesToCamelCase (name) {
+  return String(name).replace(/-([a-z])/g, part => part[1].toUpperCase());
+}

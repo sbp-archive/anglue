@@ -1,4 +1,4 @@
-define(['exports', './annotation', './annotations', './utils', './application', './actions', './component', './store', './behaviors'], function (exports, _annotation, _annotations, _utils, _application, _actions, _component, _store, _behaviors) {
+define(['exports', './annotation', './annotations', './utils', './application', './actions', './component', './store', './behaviors', './test-helpers'], function (exports, _annotation, _annotations, _utils, _application, _actions, _component, _store, _behaviors, _testHelpers) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
@@ -24,5 +24,7 @@ define(['exports', './annotation', './annotations', './utils', './application', 
   _defaults(exports, _interopExportWildcard(_store, _defaults));
 
   _defaults(exports, _interopExportWildcard(_behaviors, _defaults));
+
+  _defaults(exports, _interopExportWildcard(_testHelpers, _defaults));
 });
 //# sourceMappingURL=anglue.js.map
