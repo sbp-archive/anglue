@@ -11,7 +11,8 @@ import {
   Event,
   ComponentEvent,
   View,
-  Annotations
+  Annotations,
+  buildComponent
 } from 'anglue/anglue';
 
 describe('Components', () => {
@@ -68,7 +69,7 @@ describe('Components', () => {
 
   describe('directive', () => {
     @Component()
-    @View({templateUrl: '/someUrl.html'})
+    @View({templateUrl: '/some-template.html'})
     class TemplateUrlComponent {}
 
     @Component()
@@ -116,48 +117,35 @@ describe('Components', () => {
       onDestroy = jasmine.createSpy('onDestroy');
     }
 
-    angular.module('componentsApp', [
-      ComplexComponent.annotation.module.name,
-      TemplateUrlComponent.annotation.module.name,
-      ReplaceComponent.annotation.module.name
-    ]);
-
-    let $compile, $rootScope, $timeout;
-    beforeEach(module('componentsApp'));
-    beforeEach(inject((_$compile_, _$rootScope_, _$timeout_) => {
-      $compile = _$compile_;
-      $rootScope = _$rootScope_;
-      $timeout = _$timeout_;
-    }));
-
     describe('View', () => {
       it('should set the components static template getter url property', () => {
+        angular.module('TestTemplateUrlComponent', [TemplateUrlComponent.annotation.module.name]);
         expect(TemplateUrlComponent.template).toEqual(jasmine.objectContaining({
-          url: '/someUrl.html'
+          url: '/some-template.html'
         }));
       });
 
       it('should not replace the view element by default', () => {
-        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
+        const el = buildComponent(ComplexComponent)._element;
         expect(el[0].tagName.toLowerCase()).toEqual('complex');
       });
 
       it('should replace the view element if replace is set to true on the view', () => {
-        const el = compileTemplate('<replace></replace>', $compile, $rootScope);
+        const el = buildComponent(ReplaceComponent)._element;
         expect(el[0].tagName.toLowerCase()).toEqual('is-replaced');
       });
 
       it('should expose properties namespaced to the component template', () => {
-        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
+        const el = buildComponent(ComplexComponent)._element;
         expect(el.text()).toEqual('foobar');
       });
 
       it('should support specifying child components', () => {
-        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
-        const ctrl = el.controller('complex');
+        const ctrl = buildComponent(ComplexComponent);
+        const el = ctrl._element;
 
         ctrl.showChild = true;
-        $rootScope.$digest();
+        ctrl.rootDigest();
 
         expect(el.text()).toEqual('foobar[child]');
       });
@@ -165,27 +153,24 @@ describe('Components', () => {
 
     describe('Lifecycle', () => {
       it('should create an instance of our class as the directives controller', () => {
-        expect(compileTemplate('<complex></complex>', $compile, $rootScope)
-          .controller('complex'))
-          .toEqual(jasmine.any(ComplexComponent));
+        expect(buildComponent(ComplexComponent)).toEqual(jasmine.any(ComplexComponent));
       });
 
       it('should call the activate method', () => {
-        expect(compileTemplate('<complex></complex>', $compile, $rootScope)
-          .controller('complex').activate)
-          .toHaveBeenCalled();
+        expect(buildComponent(ComplexComponent).activate).toHaveBeenCalled();
       });
 
       it('should inject into the component', () => {
-        expect(compileTemplate('<complex></complex>', $compile, $rootScope)
-          .controller('complex').$timeout)
-          .toBe($timeout);
+        expect(buildComponent(ComplexComponent).$timeout).toBeDefined();
       });
 
       it('should call the onDestroy method', () => {
-        const el = compileTemplate('<complex></complex>', $compile, $rootScope);
-        $rootScope.$destroy();
-        expect(el.controller('complex').onDestroy).toHaveBeenCalled();
+        const ctrl = buildComponent(ComplexComponent);
+
+        inject($rootScope => {
+          $rootScope.$destroy();
+          expect(ctrl.onDestroy).toHaveBeenCalled();
+        });
       });
     });
 
@@ -209,40 +194,33 @@ describe('Components', () => {
       });
 
       it('should set a flag to false if its not defined', () => {
-        expect(compileTemplate('<complex></complex>', $compile, $rootScope)
-          .controller('complex').fooFlag)
-          .toEqual(false);
+        expect(buildComponent(ComplexComponent).fooFlag).toEqual(false);
       });
 
       it('should set a flag to false if set to the string false', () => {
-        expect(compileTemplate('<complex foo-flag="false"></complex>', $compile, $rootScope)
-          .controller('complex').fooFlag)
-          .toEqual(false);
+        expect(buildComponent(ComplexComponent, 'foo-flag="false"').fooFlag).toEqual(false);
       });
 
       it('should set a flag to true if its defined', () => {
-        expect(compileTemplate('<complex foo-flag></complex>', $compile, $rootScope)
-          .controller('complex').fooFlag)
-          .toEqual(true);
+        expect(buildComponent(ComplexComponent, 'foo-flag').fooFlag).toEqual(true);
       });
 
       it('should set renamed flags properly', () => {
-        expect(compileTemplate('<complex renamed-flag></complex>', $compile, $rootScope)
-          .controller('complex').barFlag)
-          .toEqual(true);
+        expect(buildComponent(ComplexComponent, 'renamed-flag').barFlag).toEqual(true);
       });
 
       it('should update the flag value when the binding changes', () => {
-        const el = compileTemplate('<complex foo-flag="{{flagInput}}"></complex>', $compile, $rootScope);
-        const ctrl = el.controller('complex');
+        const ctrl = buildComponent(ComplexComponent, 'foo-flag="{{flagInput}}"');
 
-        $rootScope.flagInput = false;
-        $rootScope.$digest();
-        expect(ctrl.fooFlag).toBe(false);
+        inject($rootScope => {
+          $rootScope.flagInput = false;
+          $rootScope.$digest();
+          expect(ctrl.fooFlag).toBe(false);
 
-        $rootScope.flagInput = true;
-        $rootScope.$digest();
-        expect(ctrl.fooFlag).toBe(true);
+          $rootScope.flagInput = true;
+          $rootScope.$digest();
+          expect(ctrl.fooFlag).toBe(true);
+        });
       });
     });
 
@@ -255,27 +233,27 @@ describe('Components', () => {
       });
 
       it('should create a ComponentEvent instance as the property', () => {
-        expect(compileTemplate('<complex></complex>', $compile, $rootScope)
-          .controller('complex').fooEvent)
-          .toEqual(jasmine.any(ComponentEvent));
+        expect(buildComponent(ComplexComponent).fooEvent).toEqual(jasmine.any(ComponentEvent));
       });
 
       it('should call the expression when the event is fired and expose locals', () => {
-        const el = compileTemplate('<complex on-foo-event="callExpression($foo)"></complex>',
-          $compile, $rootScope);
+        const ctrl = buildComponent(ComplexComponent, 'on-foo-event="callExpression($foo)"');
 
-        $rootScope.callExpression = jasmine.createSpy('callExpression');
-        el.controller('complex').fooEvent.fire({$foo: 'foo'});
-        expect($rootScope.callExpression).toHaveBeenCalledWith('foo');
+        inject($rootScope => {
+          $rootScope.callExpression = jasmine.createSpy('callExpression');
+          ctrl.fooEvent.fire({$foo: 'foo'});
+          expect($rootScope.callExpression).toHaveBeenCalledWith('foo');
+        });
       });
 
       it('should be backwards compatible and support fireComponentEvent() as well', () => {
-        const el = compileTemplate('<complex on-foo-event="callExpression($bar)"></complex>',
-          $compile, $rootScope);
+        const ctrl = buildComponent(ComplexComponent, 'on-foo-event="callExpression($bar)"');
 
-        $rootScope.callExpression = jasmine.createSpy('backwardsCompatibleCallExpression');
-        el.controller('complex').fireComponentEvent('fooEvent', {$bar: 'bar'});
-        expect($rootScope.callExpression).toHaveBeenCalledWith('bar');
+        inject($rootScope => {
+          $rootScope.callExpression = jasmine.createSpy('backwardsCompatibleCallExpression');
+          ctrl.fireComponentEvent('fooEvent', {$bar: 'bar'});
+          expect($rootScope.callExpression).toHaveBeenCalledWith('bar');
+        });
       });
     });
 
@@ -317,28 +295,20 @@ describe('Components', () => {
       });
 
       it('should make it a two-way binding by default in backwards compatibility bindings', () => {
-        const el = compileTemplate('<child is-compatible="foo.bar"></child>',
-          $compile, $rootScope);
-        const ctrl = el.controller('child');
+        const ctrl = buildComponent(ChildComponent, 'is-compatible="foo.bar"');
 
-        $rootScope.foo = {bar: 'foo'};
-        $rootScope.$digest();
+        inject($rootScope => {
+          $rootScope.foo = {bar: 'foo'};
+          $rootScope.$digest();
 
-        expect(ctrl.isCompatible).toEqual('foo');
+          expect(ctrl.isCompatible).toEqual('foo');
 
-        ctrl.isCompatible = 'bar';
-        $rootScope.$digest();
+          ctrl.isCompatible = 'bar';
+          $rootScope.$digest();
 
-        expect($rootScope.foo.bar).toEqual('bar');
+          expect($rootScope.foo.bar).toEqual('bar');
+        });
       });
     });
   });
 });
-
-
-function compileTemplate(template, $compile, $rootScope) {
-  const el = angular.element(template.trim());
-  $compile(el)($rootScope.$new());
-  $rootScope.$digest();
-  return el;
-}
