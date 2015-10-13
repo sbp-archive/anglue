@@ -1,6 +1,6 @@
 /*eslint-env node, jasmine*//*global module*/
 /*eslint-disable max-statements, max-params*/
-import {buildComponent} from 'anglue/anglue';
+import {buildComponent} from 'anglue/test-helpers';
 
 import {
   Annotations,

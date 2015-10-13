@@ -6,4 +6,3 @@ export * from './actions';
 export * from './component';
 export * from './store';
 export * from './behaviors';
-export * from './test-helpers';
