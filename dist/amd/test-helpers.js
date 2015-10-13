@@ -10,18 +10,22 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+  function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
   var _angular2 = _interopRequireDefault(_angular);
 
   var counter = 0;
 
   function buildModuleForComponent(ComponentClass) {
+    var dependencies = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
     if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
       throw new Error('ComponentClass is not annotated: ' + ComponentClass.name);
     }
 
     counter += 1;
     var componentName = 'TestedComponents' + counter;
-    return _angular2['default'].module(componentName, [ComponentClass.annotation.module.name]);
+    return _angular2['default'].module(componentName, [ComponentClass.annotation.module.name].concat(_toConsumableArray(dependencies)));
   }
 
   function injectComponentUsingModule(moduleName, ComponentClass) {
@@ -54,8 +58,9 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
 
   function buildComponent(ComponentClass) {
     var attributesString = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+    var dependencies = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
-    var module = buildModuleForComponent(ComponentClass);
+    var module = buildModuleForComponent(ComponentClass, dependencies);
     return injectComponentUsingModule(module.name, ComponentClass, attributesString);
   }
 
