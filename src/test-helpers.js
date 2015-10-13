@@ -4,14 +4,14 @@ import {camelCaseToDashes, dashesToCamelCase} from './utils';
 
 let counter = 0;
 
-export function buildModuleForComponent(ComponentClass) {
+export function buildModuleForComponent(ComponentClass, dependencies = []) {
   if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
     throw new Error(`ComponentClass is not annotated: ${ComponentClass.name}`);
   }
 
   counter += 1;
   const componentName = `TestedComponents${counter}`;
-  return angular.module(componentName, [ComponentClass.annotation.module.name]);
+  return angular.module(componentName, [ComponentClass.annotation.module.name, ...dependencies]);
 }
 
 export function injectComponentUsingModule(moduleName, ComponentClass, attributesString = '') {
@@ -39,8 +39,8 @@ export function injectComponentUsingModule(moduleName, ComponentClass, attribute
   return controller;
 }
 
-export function buildComponent(ComponentClass, attributesString = '') {
-  const module = buildModuleForComponent(ComponentClass);
+export function buildComponent(ComponentClass, attributesString = '', dependencies = []) {
+  const module = buildModuleForComponent(ComponentClass, dependencies);
   return injectComponentUsingModule(module.name, ComponentClass, attributesString);
 }
 
