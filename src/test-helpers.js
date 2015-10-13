@@ -4,7 +4,17 @@ import {camelCaseToDashes, dashesToCamelCase} from './utils';
 
 let counter = 0;
 
-export function buildComponent(ComponentClass, attributesString = '') {
+export function buildModuleForComponent(ComponentClass) {
+  if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
+    throw new Error(`ComponentClass is not annotated: ${ComponentClass.name}`);
+  }
+
+  counter += 1;
+  const componentName = `TestedComponents${counter}`;
+  return angular.module(componentName, [ComponentClass.annotation.module.name]);
+}
+
+export function injectComponentUsingModule(moduleName, ComponentClass, attributesString = '') {
   if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
     throw new Error(`ComponentClass is not annotated: ${ComponentClass.name}`);
   }
@@ -15,14 +25,10 @@ export function buildComponent(ComponentClass, attributesString = '') {
   const template = `<${tagName}${space}${attributesString}></${tagName}>`;
   const elProperty = dashesToCamelCase(tagName);
 
-  counter += 1;
-  const componentName = `TestedComponents${counter}`;
-
-  angular.module(componentName, [ComponentClass.annotation.module.name]);
 
   let controller = null;
 
-  angular.mock.module(componentName);
+  angular.mock.module(moduleName);
   angular.mock.inject((_$compile_, _$rootScope_) => {
     const compiledTemplate = compileTemplate(template, _$compile_, _$rootScope_);
     controller = compiledTemplate.controller(elProperty);
@@ -31,6 +37,11 @@ export function buildComponent(ComponentClass, attributesString = '') {
   });
 
   return controller;
+}
+
+export function buildComponent(ComponentClass, attributesString = '') {
+  const module = buildModuleForComponent(ComponentClass);
+  return injectComponentUsingModule(module.name, ComponentClass, attributesString);
 }
 
 function compileTemplate(template, $compile, $rootScope) {
