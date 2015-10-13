@@ -12,6 +12,7 @@ import {
   ComponentEvent,
   View,
   Annotations,
+  StoreListener,
   buildComponent
 } from 'anglue/anglue';
 
@@ -253,6 +254,66 @@ describe('Components', () => {
           $rootScope.callExpression = jasmine.createSpy('backwardsCompatibleCallExpression');
           ctrl.fireComponentEvent('fooEvent', {$bar: 'bar'});
           expect($rootScope.callExpression).toHaveBeenCalledWith('bar');
+        });
+      });
+    });
+
+    describe('StoreListeners', () => {
+      it('should determine and set static storeListener values', () => {
+        class AutoStoreListenerComponent {
+          @StoreListener() onFooStoreChanged() {}
+        }
+
+        expect(AutoStoreListenerComponent.storeListeners)
+        .toEqual({'fooStore:changed': 'onFooStoreChanged'});
+      });
+
+      it('should be possible to pass the listener descriptor', () => {
+        class AutoStoreListenerComponent {
+          @StoreListener('barStore:error') onFooStoreChanged() {}
+        }
+
+        expect(AutoStoreListenerComponent.storeListeners)
+        .toEqual({'barStore:error': 'onFooStoreChanged'});
+      });
+
+      it('should throw when passsing an invalid descriptor', () => {
+        expect(() => {
+          /*eslint-disable no-unused-vars*/
+          class AutoStoreListenerComponent {
+            @StoreListener('barStoreerror') onFooStoreChanged() {}
+          }
+          /*eslint-enable no-unused-vars*/
+        }).toThrowError(
+            `An event for StoreListener should be provided in the form of 'store:event'. barStoreerror does not conform to this`);
+      });
+
+      it('should register a listener with the store', () => {
+        @Component()
+        class ListenerComponent {
+          fooStore = {addListener: jasmine.createSpy()};
+          @StoreListener() onFooStoreChanged() {}
+        }
+        expect(buildComponent(ListenerComponent).fooStore.addListener)
+          .toHaveBeenCalledWith('changed', jasmine.any(Function));
+      });
+
+      it('should call the removal listener on onDestroy', () => {
+        const removeListenerSpy = jasmine.createSpy();
+
+        @Component()
+        class DestroyListenerComponent {
+          fooStore = {
+            addListener: () => removeListenerSpy
+          };
+          @StoreListener() onFooStoreChanged() {}
+        }
+
+        buildComponent(DestroyListenerComponent);
+
+        inject($rootScope => {
+          $rootScope.$destroy();
+          expect(removeListenerSpy).toHaveBeenCalled();
         });
       });
     });
