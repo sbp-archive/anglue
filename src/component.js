@@ -18,7 +18,7 @@ export class ComponentAnnotation extends Annotation {
   get controllerCls() {
     const annotation = this;
     const TargetCls = this.targetCls;
-    const flags = this.flags;
+    const storeListeners = this.storeListeners;
 
     class ControllerCls extends TargetCls {
       constructor($scope, $log) {
@@ -28,18 +28,18 @@ export class ComponentAnnotation extends Annotation {
 
         annotation.applyInjectionBindings(this, injected);
         annotation.applyDecorators(this);
+        annotation.applyFlags(this);
+        annotation.applyStoreListeners(this);
 
-        if (flags) {
-          Object.keys(flags).forEach(flag => {
-            const property = `_${flag}Flag`;
-            Reflect.defineProperty(this, flag, {
-              get: () => angular.isDefined(this[property]) ? this[property] !== 'false' : false
-            });
+        if (storeListeners || this.onDestroy instanceof Function) {
+          $scope.$on('$destroy', () => {
+            if (this._storeListeners) {
+              this._storeListeners.forEach(listener => listener());
+            }
+            if (this.onDestroy instanceof Function) {
+              this.onDestroy();
+            }
           });
-        }
-
-        if (this.onDestroy instanceof Function) {
-          $scope.$on('$destroy', this.onDestroy.bind(this));
         }
 
         if (this.activate instanceof Function) {
@@ -59,6 +59,37 @@ export class ComponentAnnotation extends Annotation {
     }
 
     return ControllerCls;
+  }
+
+  applyFlags(instance) {
+    const flags = this.flags;
+    if (flags) {
+      Object.keys(flags).forEach(flag => {
+        const property = `_${flag}Flag`;
+        Reflect.defineProperty(instance, flag, {
+          get() {
+            return angular.isDefined(this[property]) ? this[property] !== 'false' : false;
+          }
+        });
+      });
+    }
+  }
+
+  applyStoreListeners(instance) {
+    const storeListeners = this.storeListeners;
+    if (storeListeners) {
+      instance._storeListeners = instance._storeListeners || [];
+
+      Object.keys(storeListeners).forEach(listener => {
+        const handler = storeListeners[listener];
+        const parts = listener.split(':');
+        const store = parts[0];
+        const event = parts[1];
+
+        instance._storeListeners.push(
+          instance[store].addListener(event, instance[handler].bind(instance)));
+      });
+    }
   }
 
   getInjectionTokens() {
@@ -83,6 +114,10 @@ export class ComponentAnnotation extends Annotation {
 
   get events() {
     return this.targetCls.events || null;
+  }
+
+  get storeListeners() {
+    return this.targetCls.storeListeners || null;
   }
 
   get flags() {
@@ -265,5 +300,25 @@ export function Event() {
     addStaticGetterObjectMember(cls.constructor, 'events', attribute, propertyName);
     addStaticGetterObjectMember(cls.constructor, 'bindings',
       `_${propertyName}Expression`, `&${attribute}`);
+  };
+}
+
+const STORE_LISTENER_REGEX = /^on([A-Z])([\w]+Store)([A-Z])(.*)$/;
+
+export function StoreListener(listenerDescriptor) {
+  return (cls, handlerName) => {
+    let descriptor;
+    if (listenerDescriptor) {
+      if (listenerDescriptor.split(':').length !== 2) {
+        throw new Error(
+          `An event for StoreListener should be provided in the form of 'store:event'. ${listenerDescriptor} does not conform to this`);
+      }
+      descriptor = listenerDescriptor;
+    } else {
+      descriptor = handlerName.replace(STORE_LISTENER_REGEX,
+          (match, _1, _2, _3, _4) => `${_1.toLowerCase()}${_2}:${_3.toLowerCase()}${_4}`);
+    }
+
+    addStaticGetterObjectMember(cls.constructor, 'storeListeners', descriptor, handlerName);
   };
 }
