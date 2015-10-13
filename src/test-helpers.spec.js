@@ -1,5 +1,5 @@
 /*eslint-env node, jasmine*/
-import {buildComponent, injectComponentUsingModule} from 'anglue/anglue';
+import {buildComponent, injectComponentUsingModule} from 'anglue/test-helpers';
 
 describe('Test helpers', () => {
   describe('buildComponent', () => {

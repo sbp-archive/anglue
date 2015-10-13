@@ -12,9 +12,10 @@ import {
   ComponentEvent,
   View,
   Annotations,
-  StoreListener,
-  buildComponent
+  StoreListener
 } from 'anglue/anglue';
+
+import {buildComponent} from 'anglue/test-helpers';
 
 describe('Components', () => {
   // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
