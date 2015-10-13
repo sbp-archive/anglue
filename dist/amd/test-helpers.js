@@ -4,6 +4,8 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+  exports.buildModuleForComponent = buildModuleForComponent;
+  exports.injectComponentUsingModule = injectComponentUsingModule;
   exports.buildComponent = buildComponent;
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -12,8 +14,18 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
 
   var counter = 0;
 
-  function buildComponent(ComponentClass) {
-    var attributesString = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+  function buildModuleForComponent(ComponentClass) {
+    if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
+      throw new Error('ComponentClass is not annotated: ' + ComponentClass.name);
+    }
+
+    counter += 1;
+    var componentName = 'TestedComponents' + counter;
+    return _angular2['default'].module(componentName, [ComponentClass.annotation.module.name]);
+  }
+
+  function injectComponentUsingModule(moduleName, ComponentClass) {
+    var attributesString = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
 
     if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
       throw new Error('ComponentClass is not annotated: ' + ComponentClass.name);
@@ -25,14 +37,9 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
     var template = '<' + tagName + space + attributesString + '></' + tagName + '>';
     var elProperty = (0, _utils.dashesToCamelCase)(tagName);
 
-    counter += 1;
-    var componentName = 'TestedComponents' + counter;
-
-    _angular2['default'].module(componentName, [ComponentClass.annotation.module.name]);
-
     var controller = null;
 
-    _angular2['default'].mock.module(componentName);
+    _angular2['default'].mock.module(moduleName);
     _angular2['default'].mock.inject(function (_$compile_, _$rootScope_) {
       var compiledTemplate = compileTemplate(template, _$compile_, _$rootScope_);
       controller = compiledTemplate.controller(elProperty);
@@ -43,6 +50,13 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
     });
 
     return controller;
+  }
+
+  function buildComponent(ComponentClass) {
+    var attributesString = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+
+    var module = buildModuleForComponent(ComponentClass);
+    return injectComponentUsingModule(module.name, ComponentClass, attributesString);
   }
 
   function compileTemplate(template, $compile, $rootScope) {

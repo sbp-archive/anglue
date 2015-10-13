@@ -14,6 +14,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
   exports.Binding = Binding;
   exports.Flag = Flag;
   exports.Event = Event;
+  exports.StoreListener = StoreListener;
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -58,6 +59,38 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
     }
 
     _createClass(ComponentAnnotation, [{
+      key: 'applyFlags',
+      value: function applyFlags(instance) {
+        var flags = this.flags;
+        if (flags) {
+          Object.keys(flags).forEach(function (flag) {
+            var property = '_' + flag + 'Flag';
+            Reflect.defineProperty(instance, flag, {
+              get: function get() {
+                return _angular2['default'].isDefined(this[property]) ? this[property] !== 'false' : false;
+              }
+            });
+          });
+        }
+      }
+    }, {
+      key: 'applyStoreListeners',
+      value: function applyStoreListeners(instance) {
+        var storeListeners = this.storeListeners;
+        if (storeListeners) {
+          instance._storeListeners = instance._storeListeners || [];
+
+          Object.keys(storeListeners).forEach(function (listener) {
+            var handler = storeListeners[listener];
+            var parts = listener.split(':');
+            var store = parts[0];
+            var event = parts[1];
+
+            instance._storeListeners.push(instance[store].addListener(event, instance[handler].bind(instance)));
+          });
+        }
+      }
+    }, {
       key: 'getInjectionTokens',
       value: function getInjectionTokens() {
         return ['$scope', '$log'].concat(_get(Object.getPrototypeOf(ComponentAnnotation.prototype), 'getInjectionTokens', this).call(this));
@@ -67,7 +100,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
       get: function get() {
         var annotation = this;
         var TargetCls = this.targetCls;
-        var flags = this.flags;
+        var storeListeners = this.storeListeners;
 
         var ControllerCls = (function (_TargetCls) {
           _inherits(ControllerCls, _TargetCls);
@@ -83,20 +116,20 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
 
             annotation.applyInjectionBindings(this, injected);
             annotation.applyDecorators(this);
+            annotation.applyFlags(this);
+            annotation.applyStoreListeners(this);
 
-            if (flags) {
-              Object.keys(flags).forEach(function (flag) {
-                var property = '_' + flag + 'Flag';
-                Reflect.defineProperty(_this, flag, {
-                  get: function get() {
-                    return _angular2['default'].isDefined(_this[property]) ? _this[property] !== 'false' : false;
-                  }
-                });
+            if (storeListeners || this.onDestroy instanceof Function) {
+              $scope.$on('$destroy', function () {
+                if (_this._storeListeners) {
+                  _this._storeListeners.forEach(function (listener) {
+                    return listener();
+                  });
+                }
+                if (_this.onDestroy instanceof Function) {
+                  _this.onDestroy();
+                }
               });
-            }
-
-            if (this.onDestroy instanceof Function) {
-              $scope.$on('$destroy', this.onDestroy.bind(this));
             }
 
             if (this.activate instanceof Function) {
@@ -136,6 +169,11 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
       key: 'events',
       get: function get() {
         return this.targetCls.events || null;
+      }
+    }, {
+      key: 'storeListeners',
+      get: function get() {
+        return this.targetCls.storeListeners || null;
       }
     }, {
       key: 'flags',
@@ -367,6 +405,26 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
       }
       (0, _utils.addStaticGetterObjectMember)(cls.constructor, 'events', attribute, propertyName);
       (0, _utils.addStaticGetterObjectMember)(cls.constructor, 'bindings', '_' + propertyName + 'Expression', '&' + attribute);
+    };
+  }
+
+  var STORE_LISTENER_REGEX = /^on([A-Z])([\w]+Store)([A-Z])(.*)$/;
+
+  function StoreListener(listenerDescriptor) {
+    return function (cls, handlerName) {
+      var descriptor = undefined;
+      if (listenerDescriptor) {
+        if (listenerDescriptor.split(':').length !== 2) {
+          throw new Error('An event for StoreListener should be provided in the form of \'store:event\'. ' + listenerDescriptor + ' does not conform to this');
+        }
+        descriptor = listenerDescriptor;
+      } else {
+        descriptor = handlerName.replace(STORE_LISTENER_REGEX, function (match, _1, _2, _3, _4) {
+          return '' + _1.toLowerCase() + _2 + ':' + _3.toLowerCase() + _4;
+        });
+      }
+
+      (0, _utils.addStaticGetterObjectMember)(cls.constructor, 'storeListeners', descriptor, handlerName);
     };
   }
 });
