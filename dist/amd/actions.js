@@ -59,6 +59,7 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
           var instance = new (_bind.apply(TargetCls, [null].concat(_toConsumableArray(injected))))();
 
           annotation.applyInjectionBindings(instance, injected);
+          annotation.applyBehaviors(instance);
           annotation.applyDecorators(instance);
 
           return LuxyFlux.createActions({

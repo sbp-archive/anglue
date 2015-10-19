@@ -115,8 +115,9 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
             _get(Object.getPrototypeOf(ControllerCls.prototype), 'constructor', this).apply(this, injected);
 
             annotation.applyInjectionBindings(this, injected);
-            annotation.applyDecorators(this);
             annotation.applyFlags(this);
+            annotation.applyBehaviors(this);
+            annotation.applyDecorators(this);
             annotation.applyStoreListeners(this);
 
             if (storeListeners || this.onDestroy instanceof Function) {
