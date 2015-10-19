@@ -57,6 +57,7 @@ define(['exports', 'angular', './annotation', './annotations', './behaviors/even
           var instance = new (_bind.apply(TargetCls, [null].concat(_toConsumableArray(injected))))();
 
           annotation.applyInjectionBindings(instance, injected);
+          annotation.applyBehaviors(instance);
           annotation.applyDecorators(instance);
 
           return LuxyFlux.createStore({

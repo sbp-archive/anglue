@@ -102,6 +102,15 @@ define(['exports'], function (exports) {
         }
       }
 
+      // We apply the behaviors of the class by just referencing the getters
+    }, {
+      key: 'applyBehaviors',
+      value: function applyBehaviors(instance) {
+        this.behaviors.forEach(function (behavior) {
+          return instance[behavior];
+        });
+      }
+
       /**
        * This method decorates the class with all the targetCls decorators
        * @deprecated
@@ -154,6 +163,11 @@ define(['exports'], function (exports) {
       key: 'decorators',
       get: function get() {
         return this.targetCls.decorators || [];
+      }
+    }, {
+      key: 'behaviors',
+      get: function get() {
+        return this.targetCls.behaviors || [];
       }
     }, {
       key: 'dependencies',
