@@ -26,6 +26,10 @@ export class Annotation {
     return this.targetCls.decorators || [];
   }
 
+  get behaviors() {
+    return this.targetCls.behaviors || [];
+  }
+
   get dependencies() {
     return this.targetCls.dependencies || [];
   }
@@ -69,6 +73,11 @@ export class Annotation {
         decorator.decorate(instance);
       }
     }
+  }
+
+  // We apply the behaviors of the class by just referencing the getters
+  applyBehaviors(instance) {
+    this.behaviors.forEach(behavior => instance[behavior]);
   }
 
   /**

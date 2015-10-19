@@ -27,8 +27,9 @@ export class ComponentAnnotation extends Annotation {
         super(...injected);
 
         annotation.applyInjectionBindings(this, injected);
-        annotation.applyDecorators(this);
         annotation.applyFlags(this);
+        annotation.applyBehaviors(this);
+        annotation.applyDecorators(this);
         annotation.applyStoreListeners(this);
 
         if (storeListeners || this.onDestroy instanceof Function) {
