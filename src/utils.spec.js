@@ -234,6 +234,11 @@ describe('Utils', () => {
       cls = new TestClass();
     });
 
+    it('should store the behavior property statically on the class', () => {
+      addBehavior(TestCls, BehaviorCls, {property: 'test'});
+      expect(TestCls.behaviors).toEqual(['test']);
+    });
+
     it('should set an instance of the behavior as the chosen property on target class', () => {
       addBehavior(TestCls, BehaviorCls, {property: 'test'});
       expect(cls.test).toEqual(jasmine.any(BehaviorCls));

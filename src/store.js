@@ -29,6 +29,7 @@ export class StoreAnnotation extends Annotation {
       const instance = new TargetCls(...injected);
 
       annotation.applyInjectionBindings(instance, injected);
+      annotation.applyBehaviors(instance);
       annotation.applyDecorators(instance);
 
       return LuxyFlux.createStore({

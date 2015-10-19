@@ -68,6 +68,10 @@ export function addBehavior(cls, BehaviorCls, {property, config, proxy}) {
   if (proxy) {
     addProxies(cls, BehaviorCls, property, proxy);
   }
+
+  // We store the behavior property somewhere on the class so that we can
+  // instantiate all the behaviors in the constructor of the class
+  addStaticGetterArrayMember(cls, 'behaviors', property);
 }
 
 export function addProxies(cls, BehaviorCls, property, proxies) {
