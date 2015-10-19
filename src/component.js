@@ -227,7 +227,7 @@ export function Component(config) {
   };
 }
 
-export function View(config) {
+export function View(config = {}) {
   return cls => {
     if (config.template) {
       addStaticGetter(cls, 'template', () => ({
