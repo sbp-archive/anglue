@@ -220,9 +220,14 @@ export function Component(config) {
       componentName = `${clsName[0].toLowerCase()}${clsName.slice(1)}`;
     }
 
-    if (isConfigObject && config.dependencies) {
-      addStaticGetter(cls, 'dependencies', () => config.dependencies);
+    if (isConfigObject) {
+      if (config.dependencies) {
+        addStaticGetter(cls, 'dependencies', () => config.dependencies);
+      }
+
+      new View(config)(cls);
     }
+
     addStaticGetter(cls, 'annotation', () => Annotations.getComponent(componentName, cls));
   };
 }
