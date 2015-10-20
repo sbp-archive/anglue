@@ -146,6 +146,9 @@ describe('Applications', () => {
     @Application({
       routes: {
         defaultRoute: '/test',
+        redirects: {
+          '/from': '/to'
+        },
         foo: 'bar',
         bar: 'foo'
       }
@@ -160,6 +163,7 @@ describe('Applications', () => {
 
         spyOn($stateProvider, 'state');
         spyOn($urlRouterProvider, 'otherwise');
+        spyOn($urlRouterProvider, 'when');
       });
       module(TestApplication.annotation.module.name);
       inject();
@@ -167,6 +171,10 @@ describe('Applications', () => {
 
     it('should set the default route on the $urlRouterProvider', () => {
       expect(mockUrlRouterProvider.otherwise).toHaveBeenCalledWith('/test');
+    });
+
+    it('should configure redirects on the $urlRouterProvider', () => {
+      expect(mockUrlRouterProvider.when).toHaveBeenCalledWith('/from', '/to');
     });
 
     it('should define routes on the $stateProvider', () => {

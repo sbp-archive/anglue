@@ -49,6 +49,13 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
               Reflect.deleteProperty(routes, 'defaultRoute');
             }
 
+            if (routes.redirects) {
+              Object.keys(routes.redirects).forEach(function (fromRoute) {
+                $urlRouterProvider.when(fromRoute, routes.redirects[fromRoute]);
+              });
+              Reflect.deleteProperty(routes, 'redirects');
+            }
+
             Object.keys(routes).forEach(function (name) {
               $stateProvider.state(name, routes[name]);
             });
