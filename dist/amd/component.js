@@ -316,11 +316,16 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
         componentName = '' + clsName[0].toLowerCase() + clsName.slice(1);
       }
 
-      if (isConfigObject && config.dependencies) {
-        (0, _utils.addStaticGetter)(cls, 'dependencies', function () {
-          return config.dependencies;
-        });
+      if (isConfigObject) {
+        if (config.dependencies) {
+          (0, _utils.addStaticGetter)(cls, 'dependencies', function () {
+            return config.dependencies;
+          });
+        }
+
+        new View(config)(cls);
       }
+
       (0, _utils.addStaticGetter)(cls, 'annotation', function () {
         return _annotations.Annotations.getComponent(componentName, cls);
       });
