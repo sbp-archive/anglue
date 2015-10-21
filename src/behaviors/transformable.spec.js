@@ -37,56 +37,32 @@ describe('Transformables', () => {
     });
 
     describe('addTransformer()', () => {
-      it('should append the transformer to the transformers list', () => {
-        collection.addTransformer(filterTransformer);
-        collection.addTransformer(sortTransformer);
-        expect(collection.transformers).toEqual([filterTransformer, sortTransformer]);
-      });
-
-      it('should refresh the current data with the new transformer', () => {
-        collection.addTransformer(sortTransformer);
-        expect(collection.transformed).toEqual(['bar', 'foo', 'zzz']);
-      });
-    });
-
-    describe('insertTransformer()', () => {
       it('should insert the transformer into the transformers list', () => {
         collection.transformers = [filterTransformer];
-        collection.insertTransformer(sortTransformer);
+        collection.addTransformer(sortTransformer);
         expect(collection.transformers).toEqual([filterTransformer, sortTransformer]);
       });
 
       it('should refresh the current data with the new transformer', () => {
         collection.transformers = [filterTransformer];
-        collection.insertTransformer(sortTransformer);
+        collection.addTransformer(sortTransformer);
         expect(collection.transformed).toEqual(['bar', 'foo']);
       });
 
       it('should order transformers by weight', () => {
 
         collection.transformers = [filterTransformer];
-        collection.insertTransformer(sortTransformer);
+        collection.addTransformer(sortTransformer);
 
-        const wheelieTransformer = new Transformer('wheelie', items => {
-          return items;
-        }, 50);
+        const wheelieTransformer = new Transformer('wheelie', items => items, 50);
+        const bumblebeeTransformer = new Transformer('bumblebee', items => items, 125);
+        const megatronTransformer = new Transformer('megatron', items => items, 150);
+        const optimusTransformer = new Transformer('optimus', items => items, 155);
 
-        const bumblebeeTransformer = new Transformer('bumblebee', items => {
-          return items;
-        }, 125);
-
-        const megatronTransformer = new Transformer('megatron', items => {
-          return items;
-        }, 150);
-
-        const optimusTransformer = new Transformer('optimus', items => {
-          return items;
-        }, 155);
-
-        collection.insertTransformer(megatronTransformer);
-        collection.insertTransformer(bumblebeeTransformer);
-        collection.insertTransformer(wheelieTransformer);
-        collection.insertTransformer(optimusTransformer);
+        collection.addTransformer(megatronTransformer);
+        collection.addTransformer(bumblebeeTransformer);
+        collection.addTransformer(wheelieTransformer);
+        collection.addTransformer(optimusTransformer);
 
         expect(collection.transformers[0]).toEqual(wheelieTransformer);
         expect(collection.transformers[1]).toEqual(filterTransformer);

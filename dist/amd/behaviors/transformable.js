@@ -45,11 +45,6 @@ define(['exports', '../utils'], function (exports, _utils) {
     _createClass(TransformableCollection, [{
       key: 'addTransformer',
       value: function addTransformer(transformer) {
-        this.insertTransformer(transformer);
-      }
-    }, {
-      key: 'insertTransformer',
-      value: function insertTransformer(transformer) {
         if (this.transformers.indexOf(transformer) === -1) {
           this.transformers.push(transformer);
 

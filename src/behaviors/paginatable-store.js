@@ -25,6 +25,8 @@ export class PaginatableStoreBehavior extends Behavior {
     super(...arguments);
 
     this.collection = collection || 'items';
+    this.transformerWeight = 75;
+
     this.state = new PaginationState(initialPage, initialLimit);
 
     this.refresh();
@@ -49,7 +51,7 @@ export class PaginatableStoreBehavior extends Behavior {
         const end = Math.min(state.total, start + limit);
 
         return items.slice(start, end);
-      });
+      }, this.transformerWeight);
     }
 
     return this._transformer;

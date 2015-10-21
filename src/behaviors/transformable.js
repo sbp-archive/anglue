@@ -29,10 +29,6 @@ export class TransformableCollection {
   }
 
   addTransformer(transformer) {
-    this.insertTransformer(transformer);
-  }
-
-  insertTransformer(transformer) {
     if (this.transformers.indexOf(transformer) === -1) {
       this.transformers.push(transformer);
 

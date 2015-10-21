@@ -18,6 +18,7 @@ export class SortableStoreBehavior extends Behavior {
     super(...arguments);
 
     this.collection = collection || 'items';
+    this.transformerWeight = 50;
   }
 
   get $filter() {
@@ -30,7 +31,7 @@ export class SortableStoreBehavior extends Behavior {
 
   get transformer() {
     if (!this._transformer) {
-      this._transformer = new Transformer('sortableStore', items => items);
+      this._transformer = new Transformer('sortableStore', items => items, this.transformerWeight);
     }
     return this._transformer;
   }
