@@ -1,9 +1,10 @@
 import {addStaticGetterArrayMember} from '../utils';
 
 export class Transformer {
-  constructor(name, fn) {
+  constructor(name, fn, weight = 100) {
     this.name = name;
     this.fn = fn;
+    this.weight = weight;
   }
 
   exec(value) {
@@ -28,12 +29,22 @@ export class TransformableCollection {
   }
 
   addTransformer(transformer) {
-    this.insertTransformer(this.transformers.length, transformer);
+    this.insertTransformer(transformer);
   }
 
-  insertTransformer(index, transformer) {
+  insertTransformer(transformer) {
     if (this.transformers.indexOf(transformer) === -1) {
-      this.transformers.splice(index, 0, transformer);
+      this.transformers.push(transformer);
+
+      this.transformers.sort((transA, transB) => {
+        if (transA.weight > transB.weight) {
+          return 1;
+        } else if (transA.weight < transB.weight) {
+          return -1;
+        }
+        return 0;
+      });
+
       this.refresh();
     }
   }

@@ -52,14 +52,48 @@ describe('Transformables', () => {
     describe('insertTransformer()', () => {
       it('should insert the transformer into the transformers list', () => {
         collection.transformers = [filterTransformer];
-        collection.insertTransformer(0, sortTransformer);
-        expect(collection.transformers).toEqual([sortTransformer, filterTransformer]);
+        collection.insertTransformer(sortTransformer);
+        expect(collection.transformers).toEqual([filterTransformer, sortTransformer]);
       });
 
       it('should refresh the current data with the new transformer', () => {
         collection.transformers = [filterTransformer];
-        collection.insertTransformer(0, sortTransformer);
+        collection.insertTransformer(sortTransformer);
         expect(collection.transformed).toEqual(['bar', 'foo']);
+      });
+
+      it('should order transformers by weight', () => {
+
+        collection.transformers = [filterTransformer];
+        collection.insertTransformer(sortTransformer);
+
+        const wheelieTransformer = new Transformer('wheelie', items => {
+          return items;
+        }, 50);
+
+        const bumblebeeTransformer = new Transformer('bumblebee', items => {
+          return items;
+        }, 125);
+
+        const megatronTransformer = new Transformer('megatron', items => {
+          return items;
+        }, 150);
+
+        const optimusTransformer = new Transformer('optimus', items => {
+          return items;
+        }, 155);
+
+        collection.insertTransformer(megatronTransformer);
+        collection.insertTransformer(bumblebeeTransformer);
+        collection.insertTransformer(wheelieTransformer);
+        collection.insertTransformer(optimusTransformer);
+
+        expect(collection.transformers[0]).toEqual(wheelieTransformer);
+        expect(collection.transformers[1]).toEqual(filterTransformer);
+        expect(collection.transformers[2]).toEqual(sortTransformer);
+        expect(collection.transformers[3]).toEqual(bumblebeeTransformer);
+        expect(collection.transformers[4]).toEqual(megatronTransformer);
+        expect(collection.transformers[5]).toEqual(optimusTransformer);
       });
     });
 
