@@ -28,72 +28,25 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
       var collection = _ref.collection;
+      var transformerWeight = _ref.transformerWeight;
 
       _classCallCheck(this, FilterableStoreBehavior);
 
       _get(Object.getPrototypeOf(FilterableStoreBehavior.prototype), 'constructor', this).apply(this, arguments);
 
       this.collection = collection || 'items';
-      this.transformerWeight = 25;
+      this.transformerWeight = transformerWeight || 25;
       this.filters = new Map();
     }
 
     _createClass(FilterableStoreBehavior, [{
       key: 'onFilterChange',
-      value: function onFilterChange(filterName, filter) {
+      value: function onFilterChange(filterName, expression, comparator) {
         var _this = this;
 
-        if (Reflect.apply(Object.prototype.toString, filter) === '[object String]') {
-          this.filters.set(filterName, function (items) {
-            return _this.$filter('filter')(items, filter);
-          });
-        } else {
-          this.filters.set(filterName, function (items) {
-            return items.filter(function (item) {
-
-              var exclude = filter.exclude;
-              var filterProperty = filter.property;
-              var filterValues = filter.value;
-              var value = item[filterProperty];
-
-              if (filterValues) {
-                if (!Array.isArray(filterValues)) {
-                  filterValues = [filterValues];
-                }
-
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                  for (var _iterator = filterValues[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var filterValue = _step.value;
-
-                    if (value === filterValue) {
-                      return !exclude;
-                    }
-                  }
-                } catch (err) {
-                  _didIteratorError = true;
-                  _iteratorError = err;
-                } finally {
-                  try {
-                    if (!_iteratorNormalCompletion && _iterator['return']) {
-                      _iterator['return']();
-                    }
-                  } finally {
-                    if (_didIteratorError) {
-                      throw _iteratorError;
-                    }
-                  }
-                }
-              }
-
-              return Boolean(exclude);
-            });
-          });
-        }
-
+        this.filters.set(filterName, function (items) {
+          return _this.$filter('filter')(items, expression, comparator);
+        });
         this.doFilter();
       }
     }, {
@@ -123,27 +76,27 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         transformer.fn = function (items) {
           var filtered = items.slice();
 
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
 
           try {
-            for (var _iterator2 = _this2.filters.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var filterFn = _step2.value;
+            for (var _iterator = _this2.filters.values()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var filterFn = _step.value;
 
               filtered = filterFn(filtered);
             }
           } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _didIteratorError = true;
+            _iteratorError = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                _iterator2['return']();
+              if (!_iteratorNormalCompletion && _iterator['return']) {
+                _iterator['return']();
               }
             } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
+              if (_didIteratorError) {
+                throw _iteratorError;
               }
             }
           }

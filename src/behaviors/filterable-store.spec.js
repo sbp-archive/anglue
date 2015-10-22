@@ -71,19 +71,15 @@ describe('FilterableStore', () => {
     describe('onFilterChange()', () => {
       it('Should be able to filter on property values', () => {
         behavior.onFilterChange('nameFilter', {
-          property: 'name',
-          value: 'Optimus',
-          exclude: false
+          name: 'Optimus'
         });
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
         expect(filtered).toEqual([{name: 'Optimus'}]);
       });
 
-      it('Should be able to invert filter with exclude', () => {
+      it('Should be able to invert filter with !', () => {
         behavior.onFilterChange('nameFilter', {
-          property: 'name',
-          value: 'Optimus',
-          exclude: true
+          name: '!Optimus'
         });
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
         expect(filtered).toEqual([{name: 'Bumblebee'}]);
@@ -133,9 +129,7 @@ describe('FilterableStore', () => {
       it('Applying both a filter and search should work', () => {
         behavior.onSearchChange('Optimus');
         behavior.onFilterChange('nameFilter', {
-          property: 'name',
-          value: 'Bumblebee',
-          exclude: true
+          name: '!Bumblebee'
         });
 
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}, {name: 'Foobar'}]);

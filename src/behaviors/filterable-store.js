@@ -14,11 +14,11 @@ import {
 } from '../utils';
 
 export class FilterableStoreBehavior extends Behavior {
-  constructor(instance, {collection} = {}) {
+  constructor(instance, {collection, transformerWeight} = {}) {
     super(...arguments);
 
     this.collection = collection || 'items';
-    this.transformerWeight = 25;
+    this.transformerWeight = transformerWeight || 25;
     this.filters = new Map();
   }
 
@@ -37,37 +37,10 @@ export class FilterableStoreBehavior extends Behavior {
     return this._transformer;
   }
 
-  onFilterChange(filterName, filter) {
-    if (Reflect.apply(Object.prototype.toString, filter) === '[object String]') {
-      this.filters.set(filterName, items => {
-        return this.$filter('filter')(items, filter);
-      });
-    } else {
-      this.filters.set(filterName, items => {
-        return items.filter(item => {
-
-          const exclude = filter.exclude;
-          const filterProperty = filter.property;
-          let filterValues = filter.value;
-          const value = item[filterProperty];
-
-          if (filterValues) {
-            if (!Array.isArray(filterValues)) {
-              filterValues = [filterValues];
-            }
-
-            for (const filterValue of filterValues) {
-              if (value === filterValue) {
-                return !exclude;
-              }
-            }
-          }
-
-          return Boolean(exclude);
-        });
-      });
-    }
-
+  onFilterChange(filterName, expression, comparator) {
+    this.filters.set(filterName, items => {
+      return this.$filter('filter')(items, expression, comparator);
+    });
     this.doFilter();
   }
 
