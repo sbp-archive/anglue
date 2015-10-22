@@ -14,11 +14,11 @@ import {
 } from '../utils';
 
 export class SortableStoreBehavior extends Behavior {
-  constructor(instance, {collection} = {}) {
+  constructor(instance, {collection, transformerWeight} = {}) {
     super(...arguments);
 
     this.collection = collection || 'items';
-    this.transformerWeight = 50;
+    this.transformerWeight = transformerWeight || 50;
   }
 
   get $filter() {

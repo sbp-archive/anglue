@@ -21,11 +21,11 @@ export class PaginationState {
 }
 
 export class PaginatableStoreBehavior extends Behavior {
-  constructor(instance, {collection, initialPage, initialLimit} = {}) {
+  constructor(instance, {collection, initialPage, initialLimit, transformerWeight} = {}) {
     super(...arguments);
 
     this.collection = collection || 'items';
-    this.transformerWeight = 75;
+    this.transformerWeight = transformerWeight || 75;
 
     this.state = new PaginationState(initialPage, initialLimit);
 

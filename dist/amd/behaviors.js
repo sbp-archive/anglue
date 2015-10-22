@@ -1,4 +1,4 @@
-define(['exports', './behaviors/behavior', './behaviors/event-emitter', './behaviors/entity-store', './behaviors/sortable-store', './behaviors/sortable-component', './behaviors/paginatable-store', './behaviors/paginatable-component', './behaviors/transformable'], function (exports, _behaviorsBehavior, _behaviorsEventEmitter, _behaviorsEntityStore, _behaviorsSortableStore, _behaviorsSortableComponent, _behaviorsPaginatableStore, _behaviorsPaginatableComponent, _behaviorsTransformable) {
+define(['exports', './behaviors/behavior', './behaviors/event-emitter', './behaviors/entity-store', './behaviors/filterable-store', './behaviors/sortable-store', './behaviors/sortable-component', './behaviors/paginatable-store', './behaviors/paginatable-component', './behaviors/transformable'], function (exports, _behaviorsBehavior, _behaviorsEventEmitter, _behaviorsEntityStore, _behaviorsFilterableStore, _behaviorsSortableStore, _behaviorsSortableComponent, _behaviorsPaginatableStore, _behaviorsPaginatableComponent, _behaviorsTransformable) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
@@ -14,6 +14,8 @@ define(['exports', './behaviors/behavior', './behaviors/event-emitter', './behav
   _defaults(exports, _interopExportWildcard(_behaviorsEventEmitter, _defaults));
 
   _defaults(exports, _interopExportWildcard(_behaviorsEntityStore, _defaults));
+
+  _defaults(exports, _interopExportWildcard(_behaviorsFilterableStore, _defaults));
 
   _defaults(exports, _interopExportWildcard(_behaviorsSortableStore, _defaults));
 

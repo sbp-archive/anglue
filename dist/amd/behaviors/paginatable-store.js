@@ -44,12 +44,15 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       var collection = _ref.collection;
       var initialPage = _ref.initialPage;
       var initialLimit = _ref.initialLimit;
+      var transformerWeight = _ref.transformerWeight;
 
       _classCallCheck(this, PaginatableStoreBehavior);
 
       _get(Object.getPrototypeOf(PaginatableStoreBehavior.prototype), 'constructor', this).apply(this, arguments);
 
       this.collection = collection || 'items';
+      this.transformerWeight = transformerWeight || 75;
+
       this.state = new PaginationState(initialPage, initialLimit);
 
       this.refresh();
@@ -112,7 +115,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
               var end = Math.min(state.total, start + limit);
 
               return items.slice(start, end);
-            });
+            }, _this.transformerWeight);
           })();
         }
 

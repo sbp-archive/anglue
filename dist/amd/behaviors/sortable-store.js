@@ -28,12 +28,14 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
       var collection = _ref.collection;
+      var transformerWeight = _ref.transformerWeight;
 
       _classCallCheck(this, SortableStoreBehavior);
 
       _get(Object.getPrototypeOf(SortableStoreBehavior.prototype), 'constructor', this).apply(this, arguments);
 
       this.collection = collection || 'items';
+      this.transformerWeight = transformerWeight || 50;
     }
 
     _createClass(SortableStoreBehavior, [{
@@ -106,7 +108,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         if (!this._transformer) {
           this._transformer = new _transformable.Transformer('sortableStore', function (items) {
             return items;
-          });
+          }, this.transformerWeight);
         }
         return this._transformer;
       }
