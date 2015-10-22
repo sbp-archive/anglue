@@ -96,9 +96,7 @@ describe('FilterableStore', () => {
     describe('onFilterClear', () => {
       it('When clearing a filter items should return to original state', () => {
         behavior.onFilterChange('nameFilter', {
-          property: 'name',
-          value: 'Optimus',
-          exclude: true
+          name: 'Optimus'
         });
         behavior.onFilterClear('nameFilter');
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
@@ -175,11 +173,13 @@ describe('FilterableStore', () => {
       });
     });
 
-    it('should define the EntityStore API methods on the store', () => {
+    it('should define the FilterableStore API methods on the store', () => {
       [
         'filterableStore',
         'onTestFilterChange',
-        'onTestFilterClear'
+        'onTestFilterClear',
+        'onTestSearchChange',
+        'onTestSearchClear'
       ].forEach(api => expect(store[api]).toBeDefined());
     });
 
