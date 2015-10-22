@@ -13,10 +13,13 @@ define(['exports', '../utils'], function (exports, _utils) {
 
   var Transformer = (function () {
     function Transformer(name, fn) {
+      var weight = arguments.length <= 2 || arguments[2] === undefined ? 100 : arguments[2];
+
       _classCallCheck(this, Transformer);
 
       this.name = name;
       this.fn = fn;
+      this.weight = weight;
     }
 
     _createClass(Transformer, [{
@@ -42,13 +45,18 @@ define(['exports', '../utils'], function (exports, _utils) {
     _createClass(TransformableCollection, [{
       key: 'addTransformer',
       value: function addTransformer(transformer) {
-        this.insertTransformer(this.transformers.length, transformer);
-      }
-    }, {
-      key: 'insertTransformer',
-      value: function insertTransformer(index, transformer) {
         if (this.transformers.indexOf(transformer) === -1) {
-          this.transformers.splice(index, 0, transformer);
+          this.transformers.push(transformer);
+
+          this.transformers.sort(function (transA, transB) {
+            if (transA.weight > transB.weight) {
+              return 1;
+            } else if (transA.weight < transB.weight) {
+              return -1;
+            }
+            return 0;
+          });
+
           this.refresh();
         }
       }
