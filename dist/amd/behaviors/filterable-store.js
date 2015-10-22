@@ -34,6 +34,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       _get(Object.getPrototypeOf(FilterableStoreBehavior.prototype), 'constructor', this).apply(this, arguments);
 
       this.collection = collection || 'items';
+      this.transformerWeight = 25;
       this.filters = new Map();
     }
 
@@ -172,7 +173,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         if (!this._transformer) {
           this._transformer = new _transformable.Transformer('filterableStore', function (items) {
             return items;
-          });
+          }, this.transformerWeight);
         }
         return this._transformer;
       }

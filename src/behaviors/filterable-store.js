@@ -18,6 +18,7 @@ export class FilterableStoreBehavior extends Behavior {
     super(...arguments);
 
     this.collection = collection || 'items';
+    this.transformerWeight = 25;
     this.filters = new Map();
   }
 
@@ -31,7 +32,7 @@ export class FilterableStoreBehavior extends Behavior {
 
   get transformer() {
     if (!this._transformer) {
-      this._transformer = new Transformer('filterableStore', items => items);
+      this._transformer = new Transformer('filterableStore', items => items, this.transformerWeight);
     }
     return this._transformer;
   }
