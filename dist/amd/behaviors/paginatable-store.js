@@ -75,6 +75,11 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         }
       }
     }, {
+      key: 'onFilterChange',
+      value: function onFilterChange() {
+        this.onPageChange(1);
+      }
+    }, {
       key: 'onPageChange',
       value: function onPageChange(page) {
         if (this.state.page !== page) {
@@ -144,8 +149,19 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
 
       var pageChangeHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'PageChange';
       var limitChangeHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'LimitChange';
+
+      var filterChangeHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'FilterChange';
+      var filterClearHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'FilterClear';
+      var searchChangeHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'SearchChange';
+      var searchClearHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'SearchClear';
+
       (0, _store.Handler)(null, false)(cls.prototype, pageChangeHandlerName);
       (0, _store.Handler)(null, false)(cls.prototype, limitChangeHandlerName);
+
+      (0, _store.Handler)(null, false)(cls.prototype, filterChangeHandlerName);
+      (0, _store.Handler)(null, false)(cls.prototype, filterClearHandlerName);
+      (0, _store.Handler)(null, false)(cls.prototype, searchChangeHandlerName);
+      (0, _store.Handler)(null, false)(cls.prototype, searchClearHandlerName);
 
       (0, _utils.addBehavior)(cls, PaginatableStoreBehavior, {
         property: 'paginatableStore',

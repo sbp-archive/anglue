@@ -168,6 +168,14 @@ describe('Paginatable', () => {
         expect(behavior.refresh).not.toHaveBeenCalled();
       });
     });
+
+    describe('onFilterChange()', () => {
+      it('should reset pagination', () => {
+        behavior.state.page = 2;
+        behavior.onFilterChange();
+        expect(behavior.state.page).toEqual(1);
+      });
+    });
   });
 
   describe('@PaginatableStore() decorator', () => {
@@ -274,7 +282,11 @@ describe('Paginatable', () => {
       expect(PaginatableFooStore.handlers)
         .toEqual(jasmine.objectContaining({
           PAGINATABLE_FOO_PAGE_CHANGE: 'onPaginatableFooPageChange',
-          PAGINATABLE_FOO_LIMIT_CHANGE: 'onPaginatableFooLimitChange'
+          PAGINATABLE_FOO_LIMIT_CHANGE: 'onPaginatableFooLimitChange',
+          PAGINATABLE_FOO_FILTER_CHANGE: 'onPaginatableFooFilterChange',
+          PAGINATABLE_FOO_FILTER_CLEAR: 'onPaginatableFooFilterClear',
+          PAGINATABLE_FOO_SEARCH_CHANGE: 'onPaginatableFooSearchChange',
+          PAGINATABLE_FOO_SEARCH_CLEAR: 'onPaginatableFooSearchClear'
         }));
     });
   });
