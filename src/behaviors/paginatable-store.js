@@ -72,6 +72,10 @@ export class PaginatableStoreBehavior extends Behavior {
     }
   }
 
+  onFilterChange() {
+    this.onPageChange(1);
+  }
+
   onPageChange(page) {
     if (this.state.page !== page) {
       this.state.page = Math.max(0, page);
@@ -103,8 +107,19 @@ export function PaginatableStore(config) {
 
     const pageChangeHandlerName = `on${camelcase(preparedConfig.entity)}PageChange`;
     const limitChangeHandlerName = `on${camelcase(preparedConfig.entity)}LimitChange`;
+
+    const filterChangeHandlerName = `on${camelcase(preparedConfig.entity)}FilterChange`;
+    const filterClearHandlerName = `on${camelcase(preparedConfig.entity)}FilterClear`;
+    const searchChangeHandlerName = `on${camelcase(preparedConfig.entity)}SearchChange`;
+    const searchClearHandlerName = `on${camelcase(preparedConfig.entity)}SearchClear`;
+
     handlerDecorator(null, false)(cls.prototype, pageChangeHandlerName);
     handlerDecorator(null, false)(cls.prototype, limitChangeHandlerName);
+
+    handlerDecorator(null, false)(cls.prototype, filterChangeHandlerName);
+    handlerDecorator(null, false)(cls.prototype, filterClearHandlerName);
+    handlerDecorator(null, false)(cls.prototype, searchChangeHandlerName);
+    handlerDecorator(null, false)(cls.prototype, searchClearHandlerName);
 
     addBehavior(cls, PaginatableStoreBehavior, {
       property: 'paginatableStore',
