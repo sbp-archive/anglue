@@ -5,6 +5,7 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
     value: true
   });
   exports.buildModuleForComponent = buildModuleForComponent;
+  exports.registerModule = registerModule;
   exports.injectComponentUsingModule = injectComponentUsingModule;
   exports.buildComponent = buildComponent;
 
@@ -28,6 +29,10 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
     return _angular2['default'].module(componentName, [ComponentClass.annotation.module.name].concat(_toConsumableArray(dependencies)));
   }
 
+  function registerModule(moduleName) {
+    _angular2['default'].mock.module(moduleName);
+  }
+
   function injectComponentUsingModule(moduleName, ComponentClass) {
     var attributesString = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
 
@@ -43,7 +48,6 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
 
     var controller = null;
 
-    _angular2['default'].mock.module(moduleName);
     _angular2['default'].mock.inject(function (_$compile_, _$rootScope_) {
       var compiledTemplate = compileTemplate(template, _$compile_, _$rootScope_);
       controller = compiledTemplate.controller(elProperty);
@@ -61,6 +65,7 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
     var dependencies = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
     var module = buildModuleForComponent(ComponentClass, dependencies);
+    registerModule(module.name);
     return injectComponentUsingModule(module.name, ComponentClass, attributesString);
   }
 

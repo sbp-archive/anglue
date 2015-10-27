@@ -14,6 +14,10 @@ export function buildModuleForComponent(ComponentClass, dependencies = []) {
   return angular.module(componentName, [ComponentClass.annotation.module.name, ...dependencies]);
 }
 
+export function registerModule(moduleName) {
+  angular.mock.module(moduleName);
+}
+
 export function injectComponentUsingModule(moduleName, ComponentClass, attributesString = '') {
   if (!ComponentClass.annotation || !ComponentClass.annotation.module || !ComponentClass.annotation.module.name) {
     throw new Error(`ComponentClass is not annotated: ${ComponentClass.name}`);
@@ -28,7 +32,6 @@ export function injectComponentUsingModule(moduleName, ComponentClass, attribute
 
   let controller = null;
 
-  angular.mock.module(moduleName);
   angular.mock.inject((_$compile_, _$rootScope_) => {
     const compiledTemplate = compileTemplate(template, _$compile_, _$rootScope_);
     controller = compiledTemplate.controller(elProperty);
@@ -41,6 +44,7 @@ export function injectComponentUsingModule(moduleName, ComponentClass, attribute
 
 export function buildComponent(ComponentClass, attributesString = '', dependencies = []) {
   const module = buildModuleForComponent(ComponentClass, dependencies);
+  registerModule(module.name);
   return injectComponentUsingModule(module.name, ComponentClass, attributesString);
 }
 
