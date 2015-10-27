@@ -26,7 +26,7 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
 
     counter += 1;
     var componentName = 'TestedComponents' + counter;
-    return _angular2['default'].module(componentName, [ComponentClass.annotation.module.name].concat(_toConsumableArray(dependencies)));
+    return _angular2['default'].module(componentName, [ComponentClass.annotation.module.name, 'ngMockE2E'].concat(_toConsumableArray(dependencies)));
   }
 
   function registerModule(moduleName) {
@@ -48,7 +48,8 @@ define(['exports', 'angular', 'angular-mocks', './utils'], function (exports, _a
 
     var controller = null;
 
-    _angular2['default'].mock.inject(function (_$compile_, _$rootScope_) {
+    _angular2['default'].mock.inject(function (_$compile_, _$rootScope_, $httpBackend) {
+      $httpBackend.whenGET(/\.html$/).passThrough();
       var compiledTemplate = compileTemplate(template, _$compile_, _$rootScope_);
       controller = compiledTemplate.controller(elProperty);
       controller._element = compiledTemplate;
