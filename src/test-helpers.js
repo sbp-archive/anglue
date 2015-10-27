@@ -11,7 +11,7 @@ export function buildModuleForComponent(ComponentClass, dependencies = []) {
 
   counter += 1;
   const componentName = `TestedComponents${counter}`;
-  return angular.module(componentName, [ComponentClass.annotation.module.name, ...dependencies]);
+  return angular.module(componentName, [ComponentClass.annotation.module.name, 'ngMockE2E', ...dependencies]);
 }
 
 export function registerModule(moduleName) {
@@ -32,7 +32,8 @@ export function injectComponentUsingModule(moduleName, ComponentClass, attribute
 
   let controller = null;
 
-  angular.mock.inject((_$compile_, _$rootScope_) => {
+  angular.mock.inject((_$compile_, _$rootScope_, $httpBackend) => {
+    $httpBackend.whenGET(/\.html$/).passThrough();
     const compiledTemplate = compileTemplate(template, _$compile_, _$rootScope_);
     controller = compiledTemplate.controller(elProperty);
     controller._element = compiledTemplate;
