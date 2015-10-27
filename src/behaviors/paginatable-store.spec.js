@@ -133,38 +133,38 @@ describe('Paginatable', () => {
       });
     });
 
-    describe('onPageChange()', () => {
+    describe('onChangePage()', () => {
       it('should update the internal page property', () => {
-        behavior.onPageChange(2);
+        behavior.onChangePage(2);
         expect(behavior.state.page).toEqual(2);
       });
 
       it('should call the internal refresh method if the page is changed', () => {
-        behavior.onPageChange(2);
+        behavior.onChangePage(2);
         expect(behavior.refresh).toHaveBeenCalled();
       });
 
       it('should not do anything if the page is the same as it was', () => {
         behavior.state.page = 2;
-        behavior.onPageChange(2);
+        behavior.onChangePage(2);
         expect(behavior.refresh).not.toHaveBeenCalled();
       });
     });
 
-    describe('onLimitChange()', () => {
+    describe('onChangeLimit()', () => {
       it('should update the internal limit property', () => {
-        behavior.onLimitChange(2);
+        behavior.onChangeLimit(2);
         expect(behavior.state.limit).toEqual(2);
       });
 
       it('should call the internal refresh method if the limit is changed', () => {
-        behavior.onLimitChange(2);
+        behavior.onChangeLimit(2);
         expect(behavior.refresh).toHaveBeenCalled();
       });
 
       it('should not do anything if the limit is the same as it was', () => {
         behavior.state.limit = 2;
-        behavior.onLimitChange(2);
+        behavior.onChangeLimit(2);
         expect(behavior.refresh).not.toHaveBeenCalled();
       });
     });
@@ -226,8 +226,8 @@ describe('Paginatable', () => {
     it('should define the EntityStore API methods on the paginatableStore', () => {
       [
         'paginatableStore',
-        'onPaginatableFooPageChange',
-        'onPaginatableFooLimitChange',
+        'onPaginatableFooChangePage',
+        'onPaginatableFooChangeLimit',
         'paginationState'
       ].forEach(api => expect(paginatableStore[api]).toBeDefined());
     });
@@ -253,8 +253,8 @@ describe('Paginatable', () => {
     });
 
     it('should create properly named handlers when configuring the entity', () => {
-      expect(customPaginatableStore.onCustomPageChange).toBeDefined();
-      expect(customPaginatableStore.onCustomLimitChange).toBeDefined();
+      expect(customPaginatableStore.onCustomChangePage).toBeDefined();
+      expect(customPaginatableStore.onCustomChangeLimit).toBeDefined();
     });
 
     it('should pass on initial state', () => {
@@ -273,8 +273,8 @@ describe('Paginatable', () => {
     it('should add handlers for actions', () => {
       expect(PaginatableFooStore.handlers)
         .toEqual(jasmine.objectContaining({
-          PAGINATABLE_FOO_PAGE_CHANGE: 'onPaginatableFooPageChange',
-          PAGINATABLE_FOO_LIMIT_CHANGE: 'onPaginatableFooLimitChange'
+          PAGINATABLE_FOO_CHANGE_PAGE: 'onPaginatableFooChangePage',
+          PAGINATABLE_FOO_CHANGE_LIMIT: 'onPaginatableFooChangeLimit'
         }));
     });
   });

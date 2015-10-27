@@ -39,7 +39,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
     }
 
     _createClass(SortableStoreBehavior, [{
-      key: 'onSortChange',
+      key: 'onChangeSort',
 
       /**
        * This is a handler proxy for the Store. It get's called with the payload of
@@ -64,7 +64,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
        *    - `Array`: An array of string predicates. The first predicate in the array
        *      is used for sorting, but when two items are equivalent, the next predicate is used.
        */
-      value: function onSortChange() {
+      value: function onChangeSort() {
         var _this = this;
 
         var expression = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
@@ -88,8 +88,8 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         }
       }
     }, {
-      key: 'onSortClear',
-      value: function onSortClear() {
+      key: 'onClearSort',
+      value: function onClearSort() {
         this.transformableCollection.removeTransformer(this.transformer);
       }
     }, {
@@ -135,15 +135,15 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       (0, _utils.Inject)()(cls.prototype, '$filter');
       (0, _transformable.Transformable)()(cls.prototype, preparedConfig.collection);
 
-      var changeHandlerName = 'on' + preparedConfig.entity + 'SortChange';
-      var clearHandlerName = 'on' + preparedConfig.entity + 'SortClear';
+      var changeHandlerName = 'on' + preparedConfig.entity + 'ChangeSort';
+      var clearHandlerName = 'on' + preparedConfig.entity + 'ClearSort';
       (0, _store.Handler)(null, false)(cls.prototype, changeHandlerName);
       (0, _store.Handler)(null, false)(cls.prototype, clearHandlerName);
 
       (0, _utils.addBehavior)(cls, SortableStoreBehavior, {
         property: 'sortableStore',
         config: preparedConfig,
-        proxy: [changeHandlerName + ':onSortChange', clearHandlerName + ':onSortClear']
+        proxy: [changeHandlerName + ':onChangeSort', clearHandlerName + ':onClearSort']
       });
     };
   }

@@ -68,24 +68,24 @@ describe('SortableStore', () => {
       });
     });
 
-    describe('onSortChange()', () => {
+    describe('onChangeSort()', () => {
       it('should create working sorter fns on the transformer', () => {
         const transformer = behavior.transformer;
-        behavior.onSortChange(false);
+        behavior.onChangeSort(false);
         expect(transformer.exec(['bar', 'foo', 'bar'])).toEqual(['bar', 'bar', 'foo']);
 
-        behavior.onSortChange(true);
+        behavior.onChangeSort(true);
         expect(transformer.exec(['bar', 'foo', 'bar'])).toEqual(['foo', 'bar', 'bar']);
 
-        behavior.onSortChange('name');
+        behavior.onChangeSort('name');
         expect(transformer.exec([{name: 'foo'}, {name: 'bar'}]))
           .toEqual([{name: 'bar'}, {name: 'foo'}]);
 
-        behavior.onSortChange('-name');
+        behavior.onChangeSort('-name');
         expect(transformer.exec([{name: 'bar'}, {name: 'foo'}]))
           .toEqual([{name: 'foo'}, {name: 'bar'}]);
 
-        behavior.onSortChange(['name', 'age']);
+        behavior.onChangeSort(['name', 'age']);
         expect(transformer.exec([
           {name: 'foo', age: 10},
           {name: 'bar', age: 30},
@@ -98,22 +98,22 @@ describe('SortableStore', () => {
       });
 
       it('should add the sort transformer if it was not active yet', () => {
-        behavior.onSortChange('name');
+        behavior.onChangeSort('name');
         expect(addSpy).toHaveBeenCalled();
         expect(refreshSpy).not.toHaveBeenCalled();
       });
 
       it('should just refresh if there is an active sort transformer', () => {
         behavior.transformableCollection.transformers.push(behavior.transformer);
-        behavior.onSortChange('name');
+        behavior.onChangeSort('name');
         expect(addSpy).not.toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalled();
       });
     });
 
-    describe('onSortClear()', () => {
+    describe('onClearSort()', () => {
       it('should remove the sortable transformer from the transformableColleciton', () => {
-        behavior.onSortClear();
+        behavior.onClearSort();
         expect(removeSpy).toHaveBeenCalledWith(behavior.transformer);
       });
     });
@@ -159,8 +159,8 @@ describe('SortableStore', () => {
     it('should define the EntityStore API methods on the store', () => {
       [
         'sortableStore',
-        'onTestSortChange',
-        'onTestSortClear'
+        'onTestChangeSort',
+        'onTestClearSort'
       ].forEach(api => expect(store[api]).toBeDefined());
     });
 
@@ -189,8 +189,8 @@ describe('SortableStore', () => {
     });
 
     it('should create properly named handlers when configuring the entity', () => {
-      expect(customSortableStore.onCustomSortChange).toBeDefined();
-      expect(customSortableStore.onCustomSortClear).toBeDefined();
+      expect(customSortableStore.onCustomChangeSort).toBeDefined();
+      expect(customSortableStore.onCustomClearSort).toBeDefined();
     });
 
     it('should use the item property as the collection by default', () => {
@@ -204,8 +204,8 @@ describe('SortableStore', () => {
     it('should add handlers for actions', () => {
       expect(TestStore.handlers)
         .toEqual(jasmine.objectContaining({
-          TEST_SORT_CHANGE: 'onTestSortChange',
-          TEST_SORT_CLEAR: 'onTestSortClear'
+          TEST_CHANGE_SORT: 'onTestChangeSort',
+          TEST_CLEAR_SORT: 'onTestClearSort'
         }));
     });
   });

@@ -37,24 +37,24 @@ export class FilterableStoreBehavior extends Behavior {
     return this._transformer;
   }
 
-  onFilterChange(filterName, expression, comparator) {
+  onChangeFilter(filterName, expression, comparator) {
     this.filters.set(filterName, items => {
       return this.$filter('filter')(items, expression, comparator);
     });
     this.doFilter();
   }
 
-  onFilterClear(filterName) {
+  onClearFilter(filterName) {
     this.filters.delete(filterName);
     this.doFilter();
   }
 
-  onSearchChange(expression) {
-    this.onFilterChange('__search', expression);
+  onChangeSearch(expression) {
+    this.onChangeFilter('__search', expression);
   }
 
-  onSearchClear() {
-    this.onFilterClear('__search');
+  onClearSearch() {
+    this.onClearFilter('__search');
   }
 
   doFilter() {
@@ -95,24 +95,24 @@ export function FilterableStore(config) {
     injectDecorator()(cls.prototype, '$filter');
     transformableDecorator()(cls.prototype, preparedConfig.collection);
 
-    const filterChangeHandlerName = `on${preparedConfig.entity}FilterChange`;
-    const filterClearHandlerName = `on${preparedConfig.entity}FilterClear`;
-    handlerDecorator(null, false)(cls.prototype, filterChangeHandlerName);
-    handlerDecorator(null, false)(cls.prototype, filterClearHandlerName);
+    const changeFilterHandlerName = `on${preparedConfig.entity}ChangeFilter`;
+    const clearFilterHandlerName = `on${preparedConfig.entity}ClearFilter`;
+    handlerDecorator(null, false)(cls.prototype, changeFilterHandlerName);
+    handlerDecorator(null, false)(cls.prototype, clearFilterHandlerName);
 
-    const searchChangeHandlerName = `on${preparedConfig.entity}SearchChange`;
-    const searchClearHandlerName = `on${preparedConfig.entity}SearchClear`;
-    handlerDecorator(null, false)(cls.prototype, searchChangeHandlerName);
-    handlerDecorator(null, false)(cls.prototype, searchClearHandlerName);
+    const changeSearchHandlerName = `on${preparedConfig.entity}ChangeSearch`;
+    const clearSearchHandlerName = `on${preparedConfig.entity}ClearSearch`;
+    handlerDecorator(null, false)(cls.prototype, changeSearchHandlerName);
+    handlerDecorator(null, false)(cls.prototype, clearSearchHandlerName);
 
     addBehavior(cls, FilterableStoreBehavior, {
       property: 'filterableStore',
       config: preparedConfig,
       proxy: [
-        `${filterChangeHandlerName}:onFilterChange`,
-        `${filterClearHandlerName}:onFilterClear`,
-        `${searchChangeHandlerName}:onSearchChange`,
-        `${searchClearHandlerName}:onSearchClear`
+        `${changeFilterHandlerName}:onChangeFilter`,
+        `${clearFilterHandlerName}:onClearFilter`,
+        `${changeSearchHandlerName}:onChangeSearch`,
+        `${clearSearchHandlerName}:onClearSearch`
       ]
     });
   };

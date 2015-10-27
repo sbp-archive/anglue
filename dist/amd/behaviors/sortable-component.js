@@ -56,9 +56,9 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
       set: function set(sortExpression) {
         this._sortExpression = sortExpression;
         if (sortExpression === null) {
-          this.actionsRef.sortClear();
+          this.actionsRef.clearSort();
         } else {
-          this.actionsRef.sortChange(sortExpression);
+          this.actionsRef.changeSort(sortExpression);
         }
       },
       get: function get() {

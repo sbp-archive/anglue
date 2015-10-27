@@ -16,10 +16,12 @@ describe('PaginatableComponent', () => {
   });
 
   describe('PaginatableComponentBehavior', () => {
+    let mockInstance, behavior, changePageSpy, changeLimitSpy;
+
     class MockComponent {
       fooActions = {
-        pageChange: changePageSpy,
-        limitChange: changeLimitSpy
+        changePage: changePageSpy,
+        changeLimit: changeLimitSpy
       };
 
       fooStore = {
@@ -32,7 +34,6 @@ describe('PaginatableComponent', () => {
       };
     }
 
-    let mockInstance, behavior, changePageSpy, changeLimitSpy;
     beforeEach(() => {
       changePageSpy = jasmine.createSpy('changePageSpy');
       changeLimitSpy = jasmine.createSpy('changeLimitSpy');
@@ -95,23 +96,23 @@ describe('PaginatableComponent', () => {
       expect(behavior.total).toEqual(100);
     });
 
-    it('should call pageChange method on the actionsRef when page is changed', () => {
+    it('should call changePage method on the actionsRef when page is changed', () => {
       behavior.page = 3;
       expect(changePageSpy).toHaveBeenCalledWith(3);
     });
 
-    it('should not call pageChange method on the actionsRef when page is the same', () => {
+    it('should not call changePage method on the actionsRef when page is the same', () => {
       mockInstance.fooStore.paginationState.page = 2;
       behavior.page = 2;
       expect(changePageSpy).not.toHaveBeenCalled();
     });
 
-    it('should call limitChange method on the actionsRef when limit is changed', () => {
+    it('should call changeLimit method on the actionsRef when limit is changed', () => {
       behavior.limit = 25;
       expect(changeLimitSpy).toHaveBeenCalledWith(25);
     });
 
-    it('should not call limitChange method on the actionsRef when limit is the same', () => {
+    it('should not call changeLimit method on the actionsRef when limit is the same', () => {
       mockInstance.fooStore.paginationState.limit = 30;
       behavior.limit = 30;
       expect(changeLimitSpy).not.toHaveBeenCalled();
@@ -131,8 +132,8 @@ describe('PaginatableComponent', () => {
 
   describe('@PaginatableComponent() decorator', () => {
     const mockActions = {
-      pageChange() {},
-      limitChange() {}
+      changePage() {},
+      changeLimit() {}
     };
     const mockStore = {
       paginatableStore: true,

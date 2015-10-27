@@ -17,14 +17,15 @@ describe('SortableComponent', () => {
   });
 
   describe('SortableComponentBehavior', () => {
+    let mockInstance, behavior, changeSpy, clearSpy;
+
     class MockComponent {
       fooActions = {
-        sortChange: changeSpy,
-        sortClear: clearSpy
+        changeSort: changeSpy,
+        clearSort: clearSpy
       };
     }
 
-    let mockInstance, behavior, changeSpy, clearSpy;
     beforeEach(() => {
       changeSpy = jasmine.createSpy('changeSpy');
       clearSpy = jasmine.createSpy('clearSpy');
@@ -53,12 +54,12 @@ describe('SortableComponent', () => {
       expect(behavior.sortExpression).toEqual('foo');
     });
 
-    it('should call sortChange method on the actionsRef when sortExpression is changed', () => {
+    it('should call changeSort method on the actionsRef when sortExpression is changed', () => {
       behavior.sortExpression = 'foo';
       expect(changeSpy).toHaveBeenCalledWith('foo');
     });
 
-    it('should call sortChange method on the actionsRef when sortExpression set to null', () => {
+    it('should call changeSort method on the actionsRef when sortExpression set to null', () => {
       behavior.sortExpression = null;
       expect(clearSpy).toHaveBeenCalled();
     });
@@ -84,7 +85,7 @@ describe('SortableComponent', () => {
     })
     class SortableComplexComponent {
       fooActions = {
-        sortChange() {}
+        changeSort() {}
       };
     }
 
