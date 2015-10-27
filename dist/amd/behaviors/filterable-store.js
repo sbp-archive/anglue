@@ -40,8 +40,8 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
     }
 
     _createClass(FilterableStoreBehavior, [{
-      key: 'onFilterChange',
-      value: function onFilterChange(filterName, expression, comparator) {
+      key: 'onChangeFilter',
+      value: function onChangeFilter(filterName, expression, comparator) {
         var _this = this;
 
         this.filters.set(filterName, function (items) {
@@ -50,20 +50,20 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         this.doFilter();
       }
     }, {
-      key: 'onFilterClear',
-      value: function onFilterClear(filterName) {
+      key: 'onClearFilter',
+      value: function onClearFilter(filterName) {
         this.filters['delete'](filterName);
         this.doFilter();
       }
     }, {
-      key: 'onSearchChange',
-      value: function onSearchChange(expression) {
-        this.onFilterChange('__search', expression);
+      key: 'onChangeSearch',
+      value: function onChangeSearch(expression) {
+        this.onChangeFilter('__search', expression);
       }
     }, {
-      key: 'onSearchClear',
-      value: function onSearchClear() {
-        this.onFilterClear('__search');
+      key: 'onClearSearch',
+      value: function onClearSearch() {
+        this.onClearFilter('__search');
       }
     }, {
       key: 'doFilter',
@@ -153,20 +153,20 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       (0, _utils.Inject)()(cls.prototype, '$filter');
       (0, _transformable.Transformable)()(cls.prototype, preparedConfig.collection);
 
-      var filterChangeHandlerName = 'on' + preparedConfig.entity + 'FilterChange';
-      var filterClearHandlerName = 'on' + preparedConfig.entity + 'FilterClear';
-      (0, _store.Handler)(null, false)(cls.prototype, filterChangeHandlerName);
-      (0, _store.Handler)(null, false)(cls.prototype, filterClearHandlerName);
+      var changeFilterHandlerName = 'on' + preparedConfig.entity + 'ChangeFilter';
+      var clearFilterHandlerName = 'on' + preparedConfig.entity + 'ClearFilter';
+      (0, _store.Handler)(null, false)(cls.prototype, changeFilterHandlerName);
+      (0, _store.Handler)(null, false)(cls.prototype, clearFilterHandlerName);
 
-      var searchChangeHandlerName = 'on' + preparedConfig.entity + 'SearchChange';
-      var searchClearHandlerName = 'on' + preparedConfig.entity + 'SearchClear';
-      (0, _store.Handler)(null, false)(cls.prototype, searchChangeHandlerName);
-      (0, _store.Handler)(null, false)(cls.prototype, searchClearHandlerName);
+      var changeSearchHandlerName = 'on' + preparedConfig.entity + 'ChangeSearch';
+      var clearSearchHandlerName = 'on' + preparedConfig.entity + 'ClearSearch';
+      (0, _store.Handler)(null, false)(cls.prototype, changeSearchHandlerName);
+      (0, _store.Handler)(null, false)(cls.prototype, clearSearchHandlerName);
 
       (0, _utils.addBehavior)(cls, FilterableStoreBehavior, {
         property: 'filterableStore',
         config: preparedConfig,
-        proxy: [filterChangeHandlerName + ':onFilterChange', filterClearHandlerName + ':onFilterClear', searchChangeHandlerName + ':onSearchChange', searchClearHandlerName + ':onSearchClear']
+        proxy: [changeFilterHandlerName + ':onChangeFilter', clearFilterHandlerName + ':onClearFilter', changeSearchHandlerName + ':onChangeSearch', clearSearchHandlerName + ':onClearSearch']
       });
     };
   }

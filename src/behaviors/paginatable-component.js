@@ -33,12 +33,12 @@ export class PaginatableComponentBehavior extends Behavior {
 
   set page(page) {
     if (page !== this.page) {
-      this.actionsRef.pageChange(page);
+      this.actionsRef.changePage(page);
     }
   }
   set limit(limit) {
     if (limit !== this.limit) {
-      this.actionsRef.limitChange(limit);
+      this.actionsRef.changeLimit(limit);
     }
   }
 

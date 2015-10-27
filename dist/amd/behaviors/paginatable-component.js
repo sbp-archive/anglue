@@ -67,7 +67,7 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
       key: 'page',
       set: function set(page) {
         if (page !== this.page) {
-          this.actionsRef.pageChange(page);
+          this.actionsRef.changePage(page);
         }
       },
       get: function get() {
@@ -77,7 +77,7 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
       key: 'limit',
       set: function set(limit) {
         if (limit !== this.limit) {
-          this.actionsRef.limitChange(limit);
+          this.actionsRef.changeLimit(limit);
         }
       },
       get: function get() {

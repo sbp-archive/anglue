@@ -26,9 +26,9 @@ export class SortableComponentBehavior extends Behavior {
   set sortExpression(sortExpression) {
     this._sortExpression = sortExpression;
     if (sortExpression === null) {
-      this.actionsRef.sortClear();
+      this.actionsRef.clearSort();
     } else {
-      this.actionsRef.sortChange(sortExpression);
+      this.actionsRef.changeSort(sortExpression);
     }
   }
 

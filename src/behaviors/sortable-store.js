@@ -59,7 +59,7 @@ export class SortableStoreBehavior extends Behavior {
    *    - `Array`: An array of string predicates. The first predicate in the array
    *      is used for sorting, but when two items are equivalent, the next predicate is used.
    */
-  onSortChange(expression = false) {
+  onChangeSort(expression = false) {
     const collection = this.transformableCollection;
     const transformer = this.transformer;
 
@@ -79,7 +79,7 @@ export class SortableStoreBehavior extends Behavior {
     }
   }
 
-  onSortClear() {
+  onClearSort() {
     this.transformableCollection.removeTransformer(this.transformer);
   }
 }
@@ -100,8 +100,8 @@ export function SortableStore(config) {
     injectDecorator()(cls.prototype, '$filter');
     transformableDecorator()(cls.prototype, preparedConfig.collection);
 
-    const changeHandlerName = `on${preparedConfig.entity}SortChange`;
-    const clearHandlerName = `on${preparedConfig.entity}SortClear`;
+    const changeHandlerName = `on${preparedConfig.entity}ChangeSort`;
+    const clearHandlerName = `on${preparedConfig.entity}ClearSort`;
     handlerDecorator(null, false)(cls.prototype, changeHandlerName);
     handlerDecorator(null, false)(cls.prototype, clearHandlerName);
 
@@ -109,8 +109,8 @@ export function SortableStore(config) {
       property: 'sortableStore',
       config: preparedConfig,
       proxy: [
-        `${changeHandlerName}:onSortChange`,
-        `${clearHandlerName}:onSortClear`
+        `${changeHandlerName}:onChangeSort`,
+        `${clearHandlerName}:onClearSort`
       ]
     });
   };

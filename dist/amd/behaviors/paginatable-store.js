@@ -75,16 +75,16 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         }
       }
     }, {
-      key: 'onPageChange',
-      value: function onPageChange(page) {
+      key: 'onChangePage',
+      value: function onChangePage(page) {
         if (this.state.page !== page) {
           this.state.page = Math.max(0, page);
           this.refresh();
         }
       }
     }, {
-      key: 'onLimitChange',
-      value: function onLimitChange(limit) {
+      key: 'onChangeLimit',
+      value: function onChangeLimit(limit) {
         if (this.state.limit !== limit) {
           this.state.limit = limit;
           this.refresh();
@@ -142,15 +142,15 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
 
       (0, _transformable.Transformable)()(cls.prototype, preparedConfig.collection);
 
-      var pageChangeHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'PageChange';
-      var limitChangeHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'LimitChange';
-      (0, _store.Handler)(null, false)(cls.prototype, pageChangeHandlerName);
-      (0, _store.Handler)(null, false)(cls.prototype, limitChangeHandlerName);
+      var changePageHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'ChangePage';
+      var changeLimitHandlerName = 'on' + (0, _utils.camelcase)(preparedConfig.entity) + 'ChangeLimit';
+      (0, _store.Handler)(null, false)(cls.prototype, changePageHandlerName);
+      (0, _store.Handler)(null, false)(cls.prototype, changeLimitHandlerName);
 
       (0, _utils.addBehavior)(cls, PaginatableStoreBehavior, {
         property: 'paginatableStore',
         config: preparedConfig,
-        proxy: [pageChangeHandlerName + ':onPageChange', limitChangeHandlerName + ':onLimitChange', 'paginationState:state']
+        proxy: [changePageHandlerName + ':onChangePage', changeLimitHandlerName + ':onChangeLimit', 'paginationState:state']
       });
     };
   }

@@ -72,14 +72,14 @@ export class PaginatableStoreBehavior extends Behavior {
     }
   }
 
-  onPageChange(page) {
+  onChangePage(page) {
     if (this.state.page !== page) {
       this.state.page = Math.max(0, page);
       this.refresh();
     }
   }
 
-  onLimitChange(limit) {
+  onChangeLimit(limit) {
     if (this.state.limit !== limit) {
       this.state.limit = limit;
       this.refresh();
@@ -101,17 +101,17 @@ export function PaginatableStore(config) {
 
     transformableDecorator()(cls.prototype, preparedConfig.collection);
 
-    const pageChangeHandlerName = `on${camelcase(preparedConfig.entity)}PageChange`;
-    const limitChangeHandlerName = `on${camelcase(preparedConfig.entity)}LimitChange`;
-    handlerDecorator(null, false)(cls.prototype, pageChangeHandlerName);
-    handlerDecorator(null, false)(cls.prototype, limitChangeHandlerName);
+    const changePageHandlerName = `on${camelcase(preparedConfig.entity)}ChangePage`;
+    const changeLimitHandlerName = `on${camelcase(preparedConfig.entity)}ChangeLimit`;
+    handlerDecorator(null, false)(cls.prototype, changePageHandlerName);
+    handlerDecorator(null, false)(cls.prototype, changeLimitHandlerName);
 
     addBehavior(cls, PaginatableStoreBehavior, {
       property: 'paginatableStore',
       config: preparedConfig,
       proxy: [
-        `${pageChangeHandlerName}:onPageChange`,
-        `${limitChangeHandlerName}:onLimitChange`,
+        `${changePageHandlerName}:onChangePage`,
+        `${changeLimitHandlerName}:onChangeLimit`,
         `paginationState:state`
       ]
     });

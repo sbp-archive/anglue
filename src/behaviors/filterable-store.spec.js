@@ -68,9 +68,9 @@ describe('FilterableStore', () => {
       });
     });
 
-    describe('onFilterChange()', () => {
+    describe('onChangeFilter()', () => {
       it('Should be able to filter on property values', () => {
-        behavior.onFilterChange('nameFilter', {
+        behavior.onChangeFilter('nameFilter', {
           name: 'Optimus'
         });
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
@@ -78,7 +78,7 @@ describe('FilterableStore', () => {
       });
 
       it('Should be able to invert filter with !', () => {
-        behavior.onFilterChange('nameFilter', {
+        behavior.onChangeFilter('nameFilter', {
           name: '!Optimus'
         });
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
@@ -87,26 +87,26 @@ describe('FilterableStore', () => {
 
       it('should just refresh if there is an active filter transformer', () => {
         behavior.transformableCollection.transformers.push(behavior.transformer);
-        behavior.onFilterChange('name');
+        behavior.onChangeFilter('name');
         expect(addSpy).not.toHaveBeenCalled();
         expect(refreshSpy).toHaveBeenCalled();
       });
     });
 
-    describe('onFilterClear', () => {
+    describe('onClearFilter', () => {
       it('When clearing a filter items should return to original state', () => {
-        behavior.onFilterChange('nameFilter', {
+        behavior.onChangeFilter('nameFilter', {
           name: 'Optimus'
         });
-        behavior.onFilterClear('nameFilter');
+        behavior.onClearFilter('nameFilter');
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
         expect(filtered).toEqual([{name: 'Optimus'}, {name: 'Bumblebee'}]);
       });
     });
 
-    describe('onSearchChange()', () => {
+    describe('onChangeSearch()', () => {
       it('Should be able to search on property value', () => {
-        behavior.onSearchChange('Optimus');
+        behavior.onChangeSearch('Optimus');
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
 
         expect(filtered).toEqual([{name: 'Optimus'}]);
@@ -114,10 +114,10 @@ describe('FilterableStore', () => {
       });
     });
 
-    describe('onSearchClear()', () => {
+    describe('onClearSearch()', () => {
       it('When clearing the search items should return to original state', () => {
-        behavior.onSearchChange('Optimus');
-        behavior.onSearchClear();
+        behavior.onChangeSearch('Optimus');
+        behavior.onClearSearch();
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
         expect(filtered).toEqual([{name: 'Optimus'}, {name: 'Bumblebee'}]);
       });
@@ -125,8 +125,8 @@ describe('FilterableStore', () => {
 
     describe('combine filter and search()', () => {
       it('Applying both a filter and search should work', () => {
-        behavior.onSearchChange('Optimus');
-        behavior.onFilterChange('nameFilter', {
+        behavior.onChangeSearch('Optimus');
+        behavior.onChangeFilter('nameFilter', {
           name: '!Bumblebee'
         });
 
@@ -176,10 +176,10 @@ describe('FilterableStore', () => {
     it('should define the FilterableStore API methods on the store', () => {
       [
         'filterableStore',
-        'onTestFilterChange',
-        'onTestFilterClear',
-        'onTestSearchChange',
-        'onTestSearchClear'
+        'onTestChangeFilter',
+        'onTestClearFilter',
+        'onTestChangeSearch',
+        'onTestClearSearch'
       ].forEach(api => expect(store[api]).toBeDefined());
     });
 
@@ -208,8 +208,8 @@ describe('FilterableStore', () => {
     });
 
     it('should create properly named handlers when configuring the entity', () => {
-      expect(customFilterableStore.onCustomFilterChange).toBeDefined();
-      expect(customFilterableStore.onCustomFilterClear).toBeDefined();
+      expect(customFilterableStore.onCustomChangeFilter).toBeDefined();
+      expect(customFilterableStore.onCustomClearFilter).toBeDefined();
     });
 
     it('should use the item property as the collection by default', () => {
@@ -223,10 +223,10 @@ describe('FilterableStore', () => {
     it('should add handlers for actions', () => {
       expect(TestStore.handlers)
         .toEqual(jasmine.objectContaining({
-          TEST_FILTER_CHANGE: 'onTestFilterChange',
-          TEST_FILTER_CLEAR: 'onTestFilterClear',
-          TEST_SEARCH_CHANGE: 'onTestSearchChange',
-          TEST_SEARCH_CLEAR: 'onTestSearchClear'
+          TEST_CHANGE_FILTER: 'onTestChangeFilter',
+          TEST_CLEAR_FILTER: 'onTestClearFilter',
+          TEST_CHANGE_SEARCH: 'onTestChangeSearch',
+          TEST_CLEAR_SEARCH: 'onTestClearSearch'
         }));
     });
   });
