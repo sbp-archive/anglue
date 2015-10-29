@@ -98,6 +98,15 @@ describe('Paginatable', () => {
         expect(behavior.transformer.exec(['foo', 'bar', 'zzz']))
           .toEqual(['zzz']);
       });
+
+      it('should change to page 1 when number of items is different the previous time', () => {
+        behavior.state.limit = 2;
+        behavior.state.page = 2;
+        behavior.transformer.exec(['foo', 'bar', 'zzz']);
+        expect(behavior.state.page).toEqual(2);
+        behavior.transformer.exec(['foo', 'bar']);
+        expect(behavior.state.page).toEqual(1);
+      });
     });
 
     describe('refresh()', () => {
