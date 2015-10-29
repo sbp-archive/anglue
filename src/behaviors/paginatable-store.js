@@ -40,6 +40,12 @@ export class PaginatableStoreBehavior extends Behavior {
     if (!this._transformer) {
       const state = this.state;
       this._transformer = new Transformer('paginatableStore', items => {
+        // When the amount of items is different then previous time the transformer ran
+        // probably some filtering has occured and we want to reset to the first page.
+        if (state.total > 0 && state.total !== items.length) {
+          this.onChangePage(1);
+        }
+
         // We update the total based on the amount of items we get
         // when this transformer is run. This means that if there is
         // a filtering transformer before the pagination filter, those
