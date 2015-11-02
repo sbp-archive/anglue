@@ -99,21 +99,21 @@ describe('SortableComponent', () => {
     }
 
     @Component() @SortableComponent({actions: 'customActions'})
-    class CustomActionsComponent {
+    class CustomSortableActionsComponent {
       customActions = {};
       customStore = {};
     }
 
     @Component() @SortableComponent('customActions')
-    class CustomActionsStringComponent {
+    class CustomSortableActionsStringComponent {
       customActions = {};
       customStore = {};
     }
 
     angular.module('sortableComponents', [
       SortableTestComponent.annotation.module.name,
-      CustomActionsComponent.annotation.module.name,
-      CustomActionsStringComponent.annotation.module.name,
+      CustomSortableActionsComponent.annotation.module.name,
+      CustomSortableActionsStringComponent.annotation.module.name,
       SortableComplexComponent.annotation.module.name
     ]);
 
@@ -127,11 +127,11 @@ describe('SortableComponent', () => {
       testComponent = compileTemplate('<sortable-test></sortable-test>', $compile, $rootScope)
         .controller('sortableTest');
       customActionsComponent = compileTemplate(
-        '<custom-actions></custom-actions>', $compile, $rootScope)
-        .controller('customActions');
+        '<custom-sortable-actions></custom-sortable-actions>', $compile, $rootScope)
+        .controller('customSortableActions');
       customActionsStringComponent = compileTemplate(
-        '<custom-actions-string></custom-actions-string>', $compile, $rootScope)
-        .controller('customActionsString');
+        '<custom-sortable-actions-string></custom-sortable-actions-string>', $compile, $rootScope)
+        .controller('customSortableActionsString');
       complexComponent = compileTemplate('<sortable-complex></sortable-complex>', $compile, $rootScope)
         .controller('sortableComplex');
     }));
