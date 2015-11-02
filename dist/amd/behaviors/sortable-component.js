@@ -28,21 +28,21 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
       var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
       var actions = _ref.actions;
-      var initial = _ref.initial;
+      var store = _ref.store;
 
       _classCallCheck(this, SortableComponentBehavior);
 
       _get(Object.getPrototypeOf(SortableComponentBehavior.prototype), 'constructor', this).apply(this, arguments);
 
       this.actions = actions;
+      this.store = store;
 
+      var className = Reflect.getPrototypeOf(instance).constructor.name;
       if (!this.actionsRef) {
-        var className = Reflect.getPrototypeOf(instance).constructor.name;
         throw new Error('SortableComponentBehavior: \'' + actions + '\' not found on ' + className);
       }
-
-      if (initial) {
-        this.sortExpression = initial;
+      if (!this.storeRef) {
+        throw new Error('SortableComponentBehavior: \'' + store + '\' not found on ' + className);
       }
     }
 
@@ -52,9 +52,13 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
         return this.instance[this.actions];
       }
     }, {
+      key: 'storeRef',
+      get: function get() {
+        return this.instance[this.store];
+      }
+    }, {
       key: 'sortExpression',
       set: function set(sortExpression) {
-        this._sortExpression = sortExpression;
         if (sortExpression === null) {
           this.actionsRef.clearSort();
         } else {
@@ -62,7 +66,7 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
         }
       },
       get: function get() {
-        return this._sortExpression || null;
+        return this.storeRef.sortExpression;
       }
     }]);
 
@@ -85,6 +89,9 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
       }
       if (!preparedConfig.actions) {
         preparedConfig.actions = preparedConfig.entity.toLowerCase() + 'Actions';
+      }
+      if (!preparedConfig.store) {
+        preparedConfig.store = preparedConfig.entity.toLowerCase() + 'Store';
       }
 
       (0, _utils.addBehavior)(cls, SortableComponentBehavior, {

@@ -4,18 +4,18 @@ import {addBehavior} from '../utils';
 import {COMPONENT_ENTITY_REGEX} from '../component';
 
 export class SortableComponentBehavior extends Behavior {
-  constructor(instance, {actions, initial} = {}) {
+  constructor(instance, {actions, store} = {}) {
     super(...arguments);
 
     this.actions = actions;
+    this.store = store;
 
+    const className = Reflect.getPrototypeOf(instance).constructor.name;
     if (!this.actionsRef) {
-      const className = Reflect.getPrototypeOf(instance).constructor.name;
       throw new Error(`SortableComponentBehavior: '${actions}' not found on ${className}`);
     }
-
-    if (initial) {
-      this.sortExpression = initial;
+    if (!this.storeRef) {
+      throw new Error(`SortableComponentBehavior: '${store}' not found on ${className}`);
     }
   }
 
@@ -23,8 +23,11 @@ export class SortableComponentBehavior extends Behavior {
     return this.instance[this.actions];
   }
 
+  get storeRef() {
+    return this.instance[this.store];
+  }
+
   set sortExpression(sortExpression) {
-    this._sortExpression = sortExpression;
     if (sortExpression === null) {
       this.actionsRef.clearSort();
     } else {
@@ -33,7 +36,7 @@ export class SortableComponentBehavior extends Behavior {
   }
 
   get sortExpression() {
-    return this._sortExpression || null;
+    return this.storeRef.sortExpression;
   }
 }
 
@@ -49,6 +52,9 @@ export function SortableComponent(config = {}) {
     }
     if (!preparedConfig.actions) {
       preparedConfig.actions = `${preparedConfig.entity.toLowerCase()}Actions`;
+    }
+    if (!preparedConfig.store) {
+      preparedConfig.store = `${preparedConfig.entity.toLowerCase()}Store`;
     }
 
     addBehavior(cls, SortableComponentBehavior, {

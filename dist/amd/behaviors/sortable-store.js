@@ -29,13 +29,19 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
 
       var collection = _ref.collection;
       var transformerWeight = _ref.transformerWeight;
+      var initial = _ref.initial;
 
       _classCallCheck(this, SortableStoreBehavior);
 
       _get(Object.getPrototypeOf(SortableStoreBehavior.prototype), 'constructor', this).apply(this, arguments);
 
+      this.sortExpression = null;
       this.collection = collection || 'items';
       this.transformerWeight = transformerWeight || 50;
+
+      if (initial) {
+        this.onChangeSort(initial);
+      }
     }
 
     _createClass(SortableStoreBehavior, [{
@@ -65,8 +71,6 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
        *      is used for sorting, but when two items are equivalent, the next predicate is used.
        */
       value: function onChangeSort() {
-        var _this = this;
-
         var expression = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
         var collection = this.transformableCollection;
@@ -77,9 +81,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
           orderByExpression = expression ? '-' : '+';
         }
 
-        transformer.fn = function (items) {
-          return _this.$filter('orderBy')(items, orderByExpression);
-        };
+        this.sortExpression = orderByExpression;
 
         if (collection.transformers.indexOf(transformer) >= 0) {
           collection.refresh();
@@ -90,6 +92,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
     }, {
       key: 'onClearSort',
       value: function onClearSort() {
+        this.sortExpression = null;
         this.transformableCollection.removeTransformer(this.transformer);
       }
     }, {
@@ -105,9 +108,11 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
     }, {
       key: 'transformer',
       get: function get() {
+        var _this = this;
+
         if (!this._transformer) {
           this._transformer = new _transformable.Transformer('sortableStore', function (items) {
-            return items;
+            return _this.$filter('orderBy')(items, _this.sortExpression);
           }, this.transformerWeight);
         }
         return this._transformer;
@@ -143,7 +148,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       (0, _utils.addBehavior)(cls, SortableStoreBehavior, {
         property: 'sortableStore',
         config: preparedConfig,
-        proxy: [changeHandlerName + ':onChangeSort', clearHandlerName + ':onClearSort']
+        proxy: [changeHandlerName + ':onChangeSort', clearHandlerName + ':onClearSort', 'sortExpression']
       });
     };
   }
