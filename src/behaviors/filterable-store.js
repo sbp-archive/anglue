@@ -17,6 +17,7 @@ export class FilterableStoreBehavior extends Behavior {
   constructor(instance, {collection, transformerWeight} = {}) {
     super(...arguments);
 
+    this.searchText = null;
     this.collection = collection || 'items';
     this.transformerWeight = transformerWeight || 25;
     this.filters = new Map();
@@ -49,11 +50,15 @@ export class FilterableStoreBehavior extends Behavior {
     this.doFilter();
   }
 
-  onChangeSearch(expression) {
-    this.onChangeFilter('__search', expression);
+  onChangeSearch(searchText) {
+    if (angular.isString(searchText) && searchText.trim().length > 0) {
+      this.searchText = searchText.trim();
+      this.onChangeFilter('__search', this.searchText);
+    }
   }
 
   onClearSearch() {
+    this.searchText = null;
     this.onClearFilter('__search');
   }
 
@@ -112,7 +117,8 @@ export function FilterableStore(config) {
         `${changeFilterHandlerName}:onChangeFilter`,
         `${clearFilterHandlerName}:onClearFilter`,
         `${changeSearchHandlerName}:onChangeSearch`,
-        `${clearSearchHandlerName}:onClearSearch`
+        `${clearSearchHandlerName}:onClearSearch`,
+        'searchText'
       ]
     });
   };

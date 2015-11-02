@@ -34,6 +34,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
 
       _get(Object.getPrototypeOf(FilterableStoreBehavior.prototype), 'constructor', this).apply(this, arguments);
 
+      this.searchText = null;
       this.collection = collection || 'items';
       this.transformerWeight = transformerWeight || 25;
       this.filters = new Map();
@@ -57,12 +58,16 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       }
     }, {
       key: 'onChangeSearch',
-      value: function onChangeSearch(expression) {
-        this.onChangeFilter('__search', expression);
+      value: function onChangeSearch(searchText) {
+        if (_angular2['default'].isString(searchText) && searchText.trim().length > 0) {
+          this.searchText = searchText.trim();
+          this.onChangeFilter('__search', this.searchText);
+        }
       }
     }, {
       key: 'onClearSearch',
       value: function onClearSearch() {
+        this.searchText = null;
         this.onClearFilter('__search');
       }
     }, {
@@ -166,7 +171,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       (0, _utils.addBehavior)(cls, FilterableStoreBehavior, {
         property: 'filterableStore',
         config: preparedConfig,
-        proxy: [changeFilterHandlerName + ':onChangeFilter', clearFilterHandlerName + ':onClearFilter', changeSearchHandlerName + ':onChangeSearch', clearSearchHandlerName + ':onClearSearch']
+        proxy: [changeFilterHandlerName + ':onChangeFilter', clearFilterHandlerName + ':onClearFilter', changeSearchHandlerName + ':onChangeSearch', clearSearchHandlerName + ':onClearSearch', 'searchText']
       });
     };
   }
