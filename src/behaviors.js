@@ -2,6 +2,7 @@ export * from './behaviors/behavior';
 export * from './behaviors/event-emitter';
 export * from './behaviors/entity-store';
 export * from './behaviors/filterable-store';
+export * from './behaviors/searchable-component';
 export * from './behaviors/sortable-store';
 export * from './behaviors/sortable-component';
 export * from './behaviors/paginatable-store';
