@@ -14,11 +14,16 @@ import {
 } from '../utils';
 
 export class SortableStoreBehavior extends Behavior {
-  constructor(instance, {collection, transformerWeight} = {}) {
+  constructor(instance, {collection, transformerWeight, initial} = {}) {
     super(...arguments);
 
+    this.sortExpression = null;
     this.collection = collection || 'items';
     this.transformerWeight = transformerWeight || 50;
+
+    if (initial) {
+      this.onChangeSort(initial);
+    }
   }
 
   get $filter() {
@@ -31,7 +36,9 @@ export class SortableStoreBehavior extends Behavior {
 
   get transformer() {
     if (!this._transformer) {
-      this._transformer = new Transformer('sortableStore', items => items, this.transformerWeight);
+      this._transformer = new Transformer('sortableStore', items => {
+        return this.$filter('orderBy')(items, this.sortExpression);
+      }, this.transformerWeight);
     }
     return this._transformer;
   }
@@ -68,9 +75,7 @@ export class SortableStoreBehavior extends Behavior {
       orderByExpression = expression ? '-' : '+';
     }
 
-    transformer.fn = items => {
-      return this.$filter('orderBy')(items, orderByExpression);
-    };
+    this.sortExpression = orderByExpression;
 
     if (collection.transformers.indexOf(transformer) >= 0) {
       collection.refresh();
@@ -80,6 +85,7 @@ export class SortableStoreBehavior extends Behavior {
   }
 
   onClearSort() {
+    this.sortExpression = null;
     this.transformableCollection.removeTransformer(this.transformer);
   }
 }
@@ -110,7 +116,8 @@ export function SortableStore(config) {
       config: preparedConfig,
       proxy: [
         `${changeHandlerName}:onChangeSort`,
-        `${clearHandlerName}:onClearSort`
+        `${clearHandlerName}:onClearSort`,
+        'sortExpression'
       ]
     });
   };

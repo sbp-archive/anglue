@@ -24,6 +24,9 @@ describe('SortableComponent', () => {
         changeSort: changeSpy,
         clearSort: clearSpy
       };
+      fooStore = {
+        sortExpression: 'foo'
+      }
     }
 
     beforeEach(() => {
@@ -31,7 +34,8 @@ describe('SortableComponent', () => {
       clearSpy = jasmine.createSpy('clearSpy');
       mockInstance = new MockComponent();
       behavior = new SortableComponentBehavior(mockInstance, {
-        actions: 'fooActions'
+        actions: 'fooActions',
+        store: 'fooStore'
       });
     });
 
@@ -42,11 +46,23 @@ describe('SortableComponent', () => {
     it('should throw an error if it cant find the actionsRef', () => {
       const invalid = () => {
         behavior = new SortableComponentBehavior(mockInstance, {
-          actions: 'barActions'
+          actions: 'barActions',
+          store: 'fooStore'
         });
       };
       expect(invalid).toThrowError(
         `SortableComponentBehavior: 'barActions' not found on MockComponent`);
+    });
+
+    it('should throw an error if it cant find the storeRef', () => {
+      const invalid = () => {
+        behavior = new SortableComponentBehavior(mockInstance, {
+          actions: 'fooActions',
+          store: 'barStore'
+        });
+      };
+      expect(invalid).toThrowError(
+        `SortableComponentBehavior: 'barStore' not found on MockComponent`);
     });
 
     it('should be possible to get the current sortExpression', () => {
@@ -63,40 +79,35 @@ describe('SortableComponent', () => {
       behavior.sortExpression = null;
       expect(clearSpy).toHaveBeenCalled();
     });
-
-    it('should set dispatch for an initial sort expression', () => {
-      behavior = new SortableComponentBehavior(mockInstance, {
-        actions: 'fooActions',
-        initial: 'foo'
-      });
-      expect(changeSpy).toHaveBeenCalledWith('foo');
-    });
   });
 
   describe('@SortableComponent() decorator', () => {
     @Component() @SortableComponent()
     class SortableTestComponent {
       sortableActions = {};
+      sortableStore = {};
     }
 
     @Component() @SortableComponent({
-      entity: 'foo',
-      initial: '+name'
+      entity: 'foo'
     })
     class SortableComplexComponent {
       fooActions = {
         changeSort() {}
       };
+      fooStore = {}
     }
 
     @Component() @SortableComponent({actions: 'customActions'})
     class CustomActionsComponent {
       customActions = {};
+      customStore = {};
     }
 
     @Component() @SortableComponent('customActions')
     class CustomActionsStringComponent {
       customActions = {};
+      customStore = {};
     }
 
     angular.module('sortableComponents', [
@@ -126,34 +137,31 @@ describe('SortableComponent', () => {
     }));
 
     it('should define the SortableComponent API on the component', () => {
-      [
-        'sortableComponent',
-        'sortExpression'
-      ].forEach(api => expect(testComponent[api]).toBeDefined());
+      expect(testComponent.sortableComponent).toBeDefined();
     });
 
     it('should have an instance of SortableComponentBehavior as the behavior property', () => {
       expect(testComponent.sortableComponent).toEqual(jasmine.any(SortableComponentBehavior));
     });
 
-    it('should use the first uppercased part of class name to determine the actions', () => {
+    it('should use the first uppercased part of class name to determine the actions and store', () => {
       expect(testComponent.sortableComponent.actions).toEqual('sortableActions');
+      expect(testComponent.sortableComponent.store).toEqual('sortableStore');
     });
 
-    it('should be possible to pass the actions in the configuration', () => {
+    it('should be possible to pass the actions and store in the configuration', () => {
       expect(customActionsComponent.sortableComponent.actions).toEqual('customActions');
+      expect(customActionsComponent.sortableComponent.store).toEqual('customStore');
     });
 
-    it('should be possible to pass the actions property as a string', () => {
+    it('should be possible to pass the actions and store properties as a string', () => {
       expect(customActionsStringComponent.sortableComponent.actions).toEqual('customActions');
+      expect(customActionsStringComponent.sortableComponent.store).toEqual('customStore');
     });
 
-    it('should be possible to configure an entity to determine the actions', () => {
+    it('should be possible to configure an entity to determine the actions and store', () => {
       expect(complexComponent.sortableComponent.actions).toEqual('fooActions');
-    });
-
-    it('should be possible to configure an initial sort expression', () => {
-      expect(complexComponent.sortExpression).toEqual('+name');
+      expect(complexComponent.sortableComponent.store).toEqual('fooStore');
     });
   });
 });

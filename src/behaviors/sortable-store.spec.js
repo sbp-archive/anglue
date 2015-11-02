@@ -97,6 +97,12 @@ describe('SortableStore', () => {
         ]);
       });
 
+      it('should store the sortExpression on the store when calling onChangeSort', () => {
+        expect(behavior.sortExpression).toEqual(null);
+        behavior.onChangeSort('name');
+        expect(behavior.sortExpression).toEqual('name');
+      });
+
       it('should add the sort transformer if it was not active yet', () => {
         behavior.onChangeSort('name');
         expect(addSpy).toHaveBeenCalled();
@@ -112,6 +118,14 @@ describe('SortableStore', () => {
     });
 
     describe('onClearSort()', () => {
+      it('should clear the sortExpression on the store when calling onClearSort', () => {
+        expect(behavior.sortExpression).toEqual(null);
+        behavior.onChangeSort('name');
+        expect(behavior.sortExpression).toEqual('name');
+        behavior.onClearSort();
+        expect(behavior.sortExpression).toEqual(null);
+      });
+
       it('should remove the sortable transformer from the transformableColleciton', () => {
         behavior.onClearSort();
         expect(removeSpy).toHaveBeenCalledWith(behavior.transformer);
@@ -124,15 +138,17 @@ describe('SortableStore', () => {
     @Store() @SortableStore({entity: 'custom'}) class CustomSortableStore {}
     @Store() @SortableStore('custom') class CustomSortableStringStore {}
     @Store() @SortableStore({collection: 'foo'}) class CollectionStore {}
+    @Store() @SortableStore({initial: 'foo'}) class InitialStore {}
 
-    let store, customSortableStore, customSortableStringStore, collectionStore, $filter;
+    let store, customSortableStore, customSortableStringStore, collectionStore, $filter, initialStore;
     beforeEach(() => {
       angular.module('test', [
         'luxyflux',
         TestStore.annotation.module.name,
         CustomSortableStore.annotation.module.name,
         CustomSortableStringStore.annotation.module.name,
-        CollectionStore.annotation.module.name
+        CollectionStore.annotation.module.name,
+        InitialStore.annotation.module.name
       ]).service('ApplicationDispatcher', () => {
         return {
           register() {},
@@ -146,12 +162,14 @@ describe('SortableStore', () => {
         _CustomSortableStore_,
         _CustomSortableStringStore_,
         _CollectionStore_,
+        _InitialStore_,
         _$filter_
       ) => {
         store = _TestStore_;
         customSortableStore = _CustomSortableStore_;
         customSortableStringStore = _CustomSortableStringStore_;
         collectionStore = _CollectionStore_;
+        initialStore = _InitialStore_;
         $filter = _$filter_;
       });
     });
@@ -207,6 +225,11 @@ describe('SortableStore', () => {
           TEST_CHANGE_SORT: 'onTestChangeSort',
           TEST_CLEAR_SORT: 'onTestClearSort'
         }));
+    });
+
+    it('should be possible to set an initial sortExpression', () => {
+      expect(initialStore.sortExpression).toEqual('foo');
+      expect(initialStore.transformables.items.transformers[0].name).toEqual('sortableStore');
     });
   });
 });
