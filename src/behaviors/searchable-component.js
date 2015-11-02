@@ -28,10 +28,10 @@ export class SearchableComponentBehavior extends Behavior {
   }
 
   set searchText(searchText) {
-    if (searchText === null) {
-      this.actionsRef.clearSearch();
-    } else {
+    if (angular.isString(searchText) && searchText.trim().length > 0) {
       this.actionsRef.changeSearch(searchText);
+    } else {
+      this.actionsRef.clearSearch();
     }
   }
 

@@ -74,6 +74,11 @@ describe('SearchableComponent', () => {
       expect(changeSpy).toHaveBeenCalledWith('foo');
     });
 
+    it('should call clearSearch method on the actionsRef when searchText is an empty string', () => {
+      behavior.searchText = '';
+      expect(clearSpy).toHaveBeenCalled();
+    });
+
     it('should call clearSearch method on the actionsRef when searchText set to null', () => {
       behavior.searchText = null;
       expect(clearSpy).toHaveBeenCalled();

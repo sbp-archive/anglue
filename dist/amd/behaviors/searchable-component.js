@@ -59,10 +59,10 @@ define(['exports', 'angular', './behavior', '../utils', '../component'], functio
     }, {
       key: 'searchText',
       set: function set(searchText) {
-        if (searchText === null) {
-          this.actionsRef.clearSearch();
-        } else {
+        if (_angular2['default'].isString(searchText) && searchText.trim().length > 0) {
           this.actionsRef.changeSearch(searchText);
+        } else {
+          this.actionsRef.clearSearch();
         }
       },
       get: function get() {
