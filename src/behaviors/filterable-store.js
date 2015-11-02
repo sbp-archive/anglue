@@ -52,8 +52,8 @@ export class FilterableStoreBehavior extends Behavior {
 
   onChangeSearch(searchText) {
     if (angular.isString(searchText) && searchText.trim().length > 0) {
-      this.searchText = searchText;
-      this.onChangeFilter('__search', searchText);
+      this.searchText = searchText.trim();
+      this.onChangeFilter('__search', this.searchText);
     }
   }
 
@@ -117,7 +117,8 @@ export function FilterableStore(config) {
         `${changeFilterHandlerName}:onChangeFilter`,
         `${clearFilterHandlerName}:onClearFilter`,
         `${changeSearchHandlerName}:onChangeSearch`,
-        `${clearSearchHandlerName}:onClearSearch`
+        `${clearSearchHandlerName}:onClearSearch`,
+        'searchText'
       ]
     });
   };

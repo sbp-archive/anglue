@@ -60,8 +60,8 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       key: 'onChangeSearch',
       value: function onChangeSearch(searchText) {
         if (_angular2['default'].isString(searchText) && searchText.trim().length > 0) {
-          this.searchText = searchText;
-          this.onChangeFilter('__search', searchText);
+          this.searchText = searchText.trim();
+          this.onChangeFilter('__search', this.searchText);
         }
       }
     }, {
@@ -171,7 +171,7 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
       (0, _utils.addBehavior)(cls, FilterableStoreBehavior, {
         property: 'filterableStore',
         config: preparedConfig,
-        proxy: [changeFilterHandlerName + ':onChangeFilter', clearFilterHandlerName + ':onClearFilter', changeSearchHandlerName + ':onChangeSearch', clearSearchHandlerName + ':onClearSearch']
+        proxy: [changeFilterHandlerName + ':onChangeFilter', clearFilterHandlerName + ':onClearFilter', changeSearchHandlerName + ':onChangeSearch', clearSearchHandlerName + ':onClearSearch', 'searchText']
       });
     };
   }

@@ -112,6 +112,18 @@ describe('FilterableStore', () => {
         expect(filtered).toEqual([{name: 'Optimus'}]);
         expect(filtered.length).toEqual(1);
       });
+
+      it('Should set the searchText', () => {
+        behavior.onChangeSearch('Blaat');
+        expect(behavior.searchText).toEqual('Blaat');
+      });
+
+      it('Should trim the searchText', () => {
+        behavior.onChangeSearch(' Optimus ');
+        const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
+        expect(filtered).toEqual([{name: 'Optimus'}]);
+        expect(filtered.length).toEqual(1);
+      });
     });
 
     describe('onClearSearch()', () => {
@@ -120,6 +132,13 @@ describe('FilterableStore', () => {
         behavior.onClearSearch();
         const filtered = behavior.transformer.exec([{name: 'Optimus'}, {name: 'Bumblebee'}]);
         expect(filtered).toEqual([{name: 'Optimus'}, {name: 'Bumblebee'}]);
+      });
+
+      it('When clearing the search, searchText should become null', () => {
+        behavior.onChangeSearch('Optimus');
+        expect(behavior.searchText).toEqual('Optimus');
+        behavior.onClearSearch();
+        expect(behavior.searchText).toEqual(null);
       });
     });
 
@@ -218,6 +237,10 @@ describe('FilterableStore', () => {
 
     it('should be possible to configure the collection property the entities are stored in', () => {
       expect(collectionStore.filterableStore.collection).toEqual('foo');
+    });
+
+    it('should expose the searchText property', () => {
+      expect(store.searchText).toBeDefined();
     });
 
     it('should add handlers for actions', () => {
