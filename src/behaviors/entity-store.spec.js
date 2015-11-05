@@ -511,6 +511,18 @@ describe('EntityStore', () => {
       });
     });
 
+    describe('getByPropertyValue', () => {
+      it('return null if there is no item with that id', () => {
+        expect(behavior.getByPropertyValue('foo', 'bar')).toBe(null);
+      });
+
+      it('return the item with value for its property if its in the store', () => {
+        const item = {foo: 'bar'};
+        behavior.items.push(item);
+        expect(behavior.getByPropertyValue('foo', 'bar')).toBe(item);
+      });
+    });
+
     describe('hasDetails()', () => {
       it('should return false if there are no details found for the item id', () => {
         expect(behavior.hasDetails(1)).toBe(false);

@@ -92,6 +92,13 @@ define(['exports', 'angular', './behavior', '../store', './transformable', '../u
         }) || null;
       }
     }, {
+      key: 'getByPropertyValue',
+      value: function getByPropertyValue(property, value) {
+        return this.items.find(function (entity) {
+          return entity[property] === value;
+        }) || null;
+      }
+    }, {
       key: 'hasDetails',
       value: function hasDetails(entityId) {
         return this.hasDetailSet.has(entityId);

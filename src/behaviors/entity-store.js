@@ -94,6 +94,10 @@ export class EntityStoreBehavior extends Behavior {
     return this.items.find(entity => entity[this.idProperty] === entityId) || null;
   }
 
+  getByPropertyValue(property, value) {
+    return this.items.find(entity => entity[property] === value) || null;
+  }
+
   hasDetails(entityId) {
     return this.hasDetailSet.has(entityId);
   }

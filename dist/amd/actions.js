@@ -122,18 +122,32 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
 
   function Action(actionName) {
     return function (cls, methodName, descriptor) {
-      var originalMethod = descriptor.value;
-      descriptor.value = function () {
-        var action = prepareActionName(cls, actionName, methodName);
+      if (descriptor) {
+        (function () {
+          var originalMethod = descriptor.value;
+          descriptor.value = function () {
+            var action = prepareActionName(cls, actionName, methodName);
 
-        for (var _len = arguments.length, payload = Array(_len), _key = 0; _key < _len; _key++) {
-          payload[_key] = arguments[_key];
-        }
+            for (var _len = arguments.length, payload = Array(_len), _key = 0; _key < _len; _key++) {
+              payload[_key] = arguments[_key];
+            }
 
-        var originalReturn = Reflect.apply(originalMethod, this, payload);
-        var dispatchPromise = this.dispatch.apply(this, [action].concat(payload));
-        return _angular2['default'].isDefined(originalReturn) ? originalReturn : dispatchPromise;
-      };
+            var originalReturn = Reflect.apply(originalMethod, this, payload);
+            var dispatchPromise = this.dispatch.apply(this, [action].concat(payload));
+            return _angular2['default'].isDefined(originalReturn) ? originalReturn : dispatchPromise;
+          };
+        })();
+      } else {
+        cls[methodName] = function () {
+          var action = prepareActionName(cls, actionName, methodName);
+
+          for (var _len2 = arguments.length, payload = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            payload[_key2] = arguments[_key2];
+          }
+
+          return this.dispatch.apply(this, [action].concat(payload));
+        };
+      }
     };
   }
 
