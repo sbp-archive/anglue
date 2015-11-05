@@ -1,4 +1,4 @@
-define(['exports', './behaviors/behavior', './behaviors/event-emitter', './behaviors/entity-store', './behaviors/filterable-store', './behaviors/searchable-component', './behaviors/sortable-store', './behaviors/sortable-component', './behaviors/paginatable-store', './behaviors/paginatable-component', './behaviors/transformable'], function (exports, _behaviorsBehavior, _behaviorsEventEmitter, _behaviorsEntityStore, _behaviorsFilterableStore, _behaviorsSearchableComponent, _behaviorsSortableStore, _behaviorsSortableComponent, _behaviorsPaginatableStore, _behaviorsPaginatableComponent, _behaviorsTransformable) {
+define(['exports', './behaviors/behavior', './behaviors/event-emitter', './behaviors/entity-store', './behaviors/filterable-store', './behaviors/searchable-actions', './behaviors/searchable-component', './behaviors/sortable-actions', './behaviors/sortable-component', './behaviors/sortable-store', './behaviors/paginatable-actions', './behaviors/paginatable-component', './behaviors/paginatable-store', './behaviors/transformable'], function (exports, _behaviorsBehavior, _behaviorsEventEmitter, _behaviorsEntityStore, _behaviorsFilterableStore, _behaviorsSearchableActions, _behaviorsSearchableComponent, _behaviorsSortableActions, _behaviorsSortableComponent, _behaviorsSortableStore, _behaviorsPaginatableActions, _behaviorsPaginatableComponent, _behaviorsPaginatableStore, _behaviorsTransformable) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
@@ -17,15 +17,21 @@ define(['exports', './behaviors/behavior', './behaviors/event-emitter', './behav
 
   _defaults(exports, _interopExportWildcard(_behaviorsFilterableStore, _defaults));
 
+  _defaults(exports, _interopExportWildcard(_behaviorsSearchableActions, _defaults));
+
   _defaults(exports, _interopExportWildcard(_behaviorsSearchableComponent, _defaults));
 
-  _defaults(exports, _interopExportWildcard(_behaviorsSortableStore, _defaults));
+  _defaults(exports, _interopExportWildcard(_behaviorsSortableActions, _defaults));
 
   _defaults(exports, _interopExportWildcard(_behaviorsSortableComponent, _defaults));
 
-  _defaults(exports, _interopExportWildcard(_behaviorsPaginatableStore, _defaults));
+  _defaults(exports, _interopExportWildcard(_behaviorsSortableStore, _defaults));
+
+  _defaults(exports, _interopExportWildcard(_behaviorsPaginatableActions, _defaults));
 
   _defaults(exports, _interopExportWildcard(_behaviorsPaginatableComponent, _defaults));
+
+  _defaults(exports, _interopExportWildcard(_behaviorsPaginatableStore, _defaults));
 
   _defaults(exports, _interopExportWildcard(_behaviorsTransformable, _defaults));
 });

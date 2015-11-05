@@ -96,13 +96,20 @@ export function AsyncAction(actionName) {
 
 export function Action(actionName) {
   return (cls, methodName, descriptor) => {
-    const originalMethod = descriptor.value;
-    descriptor.value = function(...payload) {
-      const action = prepareActionName(cls, actionName, methodName);
-      const originalReturn = Reflect.apply(originalMethod, this, payload);
-      const dispatchPromise = this.dispatch(action, ...payload);
-      return angular.isDefined(originalReturn) ? originalReturn : dispatchPromise;
-    };
+    if (descriptor) {
+      const originalMethod = descriptor.value;
+      descriptor.value = function(...payload) {
+        const action = prepareActionName(cls, actionName, methodName);
+        const originalReturn = Reflect.apply(originalMethod, this, payload);
+        const dispatchPromise = this.dispatch(action, ...payload);
+        return angular.isDefined(originalReturn) ? originalReturn : dispatchPromise;
+      };
+    } else {
+      cls[methodName] = function(...payload) {
+        const action = prepareActionName(cls, actionName, methodName);
+        return this.dispatch(action, ...payload);
+      };
+    }
   };
 }
 
