@@ -72,6 +72,18 @@ describe('EntityStore', () => {
       expect(behavior.isEmpty).toBe(true);
     });
 
+    it('should be in isEmpty state when store was loaded with empty list', () => {
+      // load  entries first:
+      behavior.onLoadStarted();
+      behavior.onLoadCompleted([1, 2, 3]);
+      expect(behavior.isEmpty).toBe(false);
+
+      // load empty list afterwards:
+      behavior.onLoadStarted();
+      behavior.onLoadCompleted([]);
+      expect(behavior.isEmpty).toBe(true);
+    });
+
     it('should be in isBusy state when current in any action', () => {
       behavior.onLoadStarted();
       expect(behavior.isBusy).toBe(true);
