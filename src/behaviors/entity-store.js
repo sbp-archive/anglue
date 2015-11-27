@@ -114,8 +114,8 @@ export class EntityStoreBehavior extends Behavior {
     this.isLoading = false;
     this.hasDetailSet.clear();
 
+    items.splice(0, items.length);
     if (entities && entities.length) {
-      items.splice(0, items.length);
       items.splice(0, 0, ...entities);
     }
 
