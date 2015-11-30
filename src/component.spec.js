@@ -15,7 +15,7 @@ import {
   StoreListener
 } from 'anglue/anglue';
 
-import {buildComponent} from 'anglue/test-helpers';
+import {buildComponent, buildModuleForComponent, injectComponentUsingModule, registerModule} from 'anglue/test-helpers';
 
 describe('Components', () => {
   // Clear the AnnotationCache for unit tests to ensure we create new annotations for each class.
@@ -256,6 +256,52 @@ describe('Components', () => {
           ctrl.fireComponentEvent('fooEvent', {$bar: 'bar'});
           expect($rootScope.callExpression).toHaveBeenCalledWith('bar');
         });
+      });
+
+      it('should not throw an error on firing an event if an event handler is not passed', () => {
+
+        @Component()
+        class MyComponent {
+          @Event() change;
+
+          activate() {
+            this.change.fire();
+          }
+        }
+
+        buildComponent(MyComponent);
+      });
+
+      it('should correctly fire an event on activation', () => {
+
+        const spy = jasmine.createSpy();
+
+        @Component()
+        @View({template: `<changer on-change="my.onChange()"></changer>`})
+        class MyComponent {
+          onChange() {
+            spy();
+          }
+        }
+
+        @Component()
+        class ChangerComponent {
+          @Event() change;
+
+          activate() {
+            this.change.fire();
+          }
+        }
+
+        const childModule = buildModuleForComponent(ChangerComponent, []);
+        const module = buildModuleForComponent(MyComponent, [childModule.name]);
+
+        registerModule(module.name);
+        const ctrl = injectComponentUsingModule(module.name, MyComponent);
+
+        expect(ctrl._element).toBeDefined();
+        expect(ctrl._element[0].getElementsByTagName('changer').length).toBe(1);
+        expect(spy).toHaveBeenCalled();
       });
     });
 

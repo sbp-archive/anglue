@@ -10,7 +10,9 @@ export const COMPONENT_ENTITY_REGEX = /^([A-Z][a-z]*)/;
 export class ComponentEvent {
   expression = null;
   fire(locals) {
-    this.expression(locals);
+    if (this.expression) {
+      this.expression(locals);
+    }
   }
 }
 
@@ -41,10 +43,6 @@ export class ComponentAnnotation extends Annotation {
               this.onDestroy();
             }
           });
-        }
-
-        if (this.activate instanceof Function) {
-          this.activate();
         }
 
         this.fireComponentEvent = (event, locals) => {
@@ -134,66 +132,92 @@ export class ComponentAnnotation extends Annotation {
     };
   }
 
+  registerEvents(events, scope, attr, ctrl) {
+    if (events) {
+      const eventHandlers = ctrl._eventHandlers = {};
+      Object.keys(events).forEach(event => {
+        if (attr[event]) {
+          eventHandlers[events[event]] = locals => {
+            scope.$parent.$eval(attr[event], locals);
+          };
+          const componentEventName = events[event];
+          if (ctrl[componentEventName] instanceof ComponentEvent) {
+            ctrl[componentEventName].expression = ctrl[`_${componentEventName}Expression`];
+          }
+        }
+      });
+    }
+  }
+
+  get directiveConfig() {
+    const name = this.name;
+    const template = this.template;
+    const bindings = this.bindings;
+    const events = this.events;
+
+    let preLink = () => {};
+    const postLink = (scope, el, attr, ctrl) => {
+      if (ctrl.activate instanceof Function) {
+        ctrl.activate();
+      }
+    };
+
+    const directiveConfig = {
+      restrict: 'EA',
+      controllerAs: name,
+      bindToController: true,
+      scope: true,
+      controller: this.getInjectionTokens().concat([this.controllerCls])
+    };
+
+    if (template) {
+      if (template.url) {
+        directiveConfig.templateUrl = template.url;
+      } else if (template.inline) {
+        directiveConfig.template = template.inline;
+      }
+      if (template.replace) {
+        directiveConfig.replace = true;
+      }
+    }
+
+    if (bindings) {
+      const scope = directiveConfig.scope = {};
+      for (const binding of Object.keys(bindings)) {
+        let attr = bindings[binding];
+        if (!attr[0].match(/(&|=|@)/)) {
+          attr = `=${attr}`;
+        }
+        scope[binding] = attr;
+      }
+    }
+
+    if (events) {
+      preLink = (scope, el, attr, ctrl) => {
+        this.registerEvents(events, scope, attr, ctrl);
+      };
+    }
+
+    directiveConfig.compile = () => {
+      return {
+        pre: preLink,
+        post: postLink
+      };
+    };
+
+    return directiveConfig;
+  }
+
   get module() {
     if (!this._module) {
       const name = this.name;
-      const template = this.template;
-      const bindings = this.bindings;
-      const events = this.events;
 
       this._module = angular.module(
         `components.${name}`,
         this.dependencies
       );
 
-      const directiveConfig = {
-        restrict: 'EA',
-        controllerAs: name,
-        bindToController: true,
-        scope: true,
-        controller: this.getInjectionTokens().concat([this.controllerCls])
-      };
-
-      if (template) {
-        if (template.url) {
-          directiveConfig.templateUrl = template.url;
-        } else if (template.inline) {
-          directiveConfig.template = template.inline;
-        }
-        if (template.replace) {
-          directiveConfig.replace = true;
-        }
-      }
-
-      if (bindings) {
-        const scope = directiveConfig.scope = {};
-        for (const binding of Object.keys(bindings)) {
-          let attr = bindings[binding];
-          if (!attr[0].match(/(&|=|@)/)) {
-            attr = `=${attr}`;
-          }
-          scope[binding] = attr;
-        }
-      }
-
-      if (events) {
-        directiveConfig.link = (scope, el, attr, ctrl) => {
-          if (events) {
-            const eventHandlers = ctrl._eventHandlers = {};
-            Object.keys(events).forEach(event => {
-              if (attr[event]) {
-                eventHandlers[events[event]] = locals => {
-                  scope.$parent.$eval(attr[event], locals);
-                };
-                const componentEventName = events[event];
-                if (ctrl[componentEventName] instanceof ComponentEvent) {
-                  ctrl[componentEventName].expression = ctrl[`_${componentEventName}Expression`];
-                }
-              }
-            });
-          }
-        };
-      }
+      const directiveConfig = this.directiveConfig;
 
       this._module.directive(name, this.getDirective(directiveConfig));
 

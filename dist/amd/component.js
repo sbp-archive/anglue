@@ -40,7 +40,9 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
     _createClass(ComponentEvent, [{
       key: 'fire',
       value: function fire(locals) {
-        this.expression(locals);
+        if (this.expression) {
+          this.expression(locals);
+        }
       }
     }]);
 
@@ -96,6 +98,26 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
         return ['$scope', '$log'].concat(_get(Object.getPrototypeOf(ComponentAnnotation.prototype), 'getInjectionTokens', this).call(this));
       }
     }, {
+      key: 'registerEvents',
+      value: function registerEvents(events, scope, attr, ctrl) {
+        if (events) {
+          (function () {
+            var eventHandlers = ctrl._eventHandlers = {};
+            Object.keys(events).forEach(function (event) {
+              if (attr[event]) {
+                eventHandlers[events[event]] = function (locals) {
+                  scope.$parent.$eval(attr[event], locals);
+                };
+                var componentEventName = events[event];
+                if (ctrl[componentEventName] instanceof ComponentEvent) {
+                  ctrl[componentEventName].expression = ctrl['_' + componentEventName + 'Expression'];
+                }
+              }
+            });
+          })();
+        }
+      }
+    }, {
       key: 'controllerCls',
       get: function get() {
         var annotation = this;
@@ -131,10 +153,6 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
                   _this.onDestroy();
                 }
               });
-            }
-
-            if (this.activate instanceof Function) {
-              this.activate();
             }
 
             this.fireComponentEvent = function (event, locals) {
@@ -193,103 +211,101 @@ define(['exports', 'angular', './annotation', './annotations', './utils'], funct
         };
       }
     }, {
-      key: 'module',
+      key: 'directiveConfig',
       get: function get() {
         var _this2 = this;
 
+        var name = this.name;
+        var template = this.template;
+        var bindings = this.bindings;
+        var events = this.events;
+
+        var preLink = function preLink() {};
+        var postLink = function postLink(scope, el, attr, ctrl) {
+          if (ctrl.activate instanceof Function) {
+            ctrl.activate();
+          }
+        };
+
+        var directiveConfig = {
+          restrict: 'EA',
+          controllerAs: name,
+          bindToController: true,
+          scope: true,
+          controller: this.getInjectionTokens().concat([this.controllerCls])
+        };
+
+        if (template) {
+          if (template.url) {
+            directiveConfig.templateUrl = template.url;
+          } else if (template.inline) {
+            directiveConfig.template = template.inline;
+          }
+          if (template.replace) {
+            directiveConfig.replace = true;
+          }
+        }
+
+        if (bindings) {
+          var scope = directiveConfig.scope = {};
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = Object.keys(bindings)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var binding = _step.value;
+
+              var attr = bindings[binding];
+              if (!attr[0].match(/(&|=|@)/)) {
+                attr = '=' + attr;
+              }
+              scope[binding] = attr;
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator['return']) {
+                _iterator['return']();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+        }
+
+        if (events) {
+          preLink = function (scope, el, attr, ctrl) {
+            _this2.registerEvents(events, scope, attr, ctrl);
+          };
+        }
+
+        directiveConfig.compile = function () {
+          return {
+            pre: preLink,
+            post: postLink
+          };
+        };
+
+        return directiveConfig;
+      }
+    }, {
+      key: 'module',
+      get: function get() {
         if (!this._module) {
-          var _iteratorNormalCompletion;
+          var _name = this.name;
 
-          var _didIteratorError;
+          this._module = _angular2['default'].module('components.' + _name, this.dependencies);
 
-          var _iteratorError;
+          var directiveConfig = this.directiveConfig;
 
-          var _iterator, _step;
+          this._module.directive(_name, this.getDirective(directiveConfig));
 
-          (function () {
-            var name = _this2.name;
-            var template = _this2.template;
-            var bindings = _this2.bindings;
-            var events = _this2.events;
-
-            _this2._module = _angular2['default'].module('components.' + name, _this2.dependencies);
-
-            var directiveConfig = {
-              restrict: 'EA',
-              controllerAs: name,
-              bindToController: true,
-              scope: true,
-              controller: _this2.getInjectionTokens().concat([_this2.controllerCls])
-            };
-
-            if (template) {
-              if (template.url) {
-                directiveConfig.templateUrl = template.url;
-              } else if (template.inline) {
-                directiveConfig.template = template.inline;
-              }
-              if (template.replace) {
-                directiveConfig.replace = true;
-              }
-            }
-
-            if (bindings) {
-              var scope = directiveConfig.scope = {};
-              _iteratorNormalCompletion = true;
-              _didIteratorError = false;
-              _iteratorError = undefined;
-
-              try {
-                for (_iterator = Object.keys(bindings)[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  var binding = _step.value;
-
-                  var attr = bindings[binding];
-                  if (!attr[0].match(/(&|=|@)/)) {
-                    attr = '=' + attr;
-                  }
-                  scope[binding] = attr;
-                }
-              } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-              } finally {
-                try {
-                  if (!_iteratorNormalCompletion && _iterator['return']) {
-                    _iterator['return']();
-                  }
-                } finally {
-                  if (_didIteratorError) {
-                    throw _iteratorError;
-                  }
-                }
-              }
-            }
-
-            if (events) {
-              directiveConfig.link = function (scope, el, attr, ctrl) {
-                if (events) {
-                  (function () {
-                    var eventHandlers = ctrl._eventHandlers = {};
-                    Object.keys(events).forEach(function (event) {
-                      if (attr[event]) {
-                        eventHandlers[events[event]] = function (locals) {
-                          scope.$parent.$eval(attr[event], locals);
-                        };
-                        var componentEventName = events[event];
-                        if (ctrl[componentEventName] instanceof ComponentEvent) {
-                          ctrl[componentEventName].expression = ctrl['_' + componentEventName + 'Expression'];
-                        }
-                      }
-                    });
-                  })();
-                }
-              };
-            }
-
-            _this2._module.directive(name, _this2.getDirective(directiveConfig));
-
-            _this2.configure(_this2._module);
-          })();
+          this.configure(this._module);
         }
 
         return this._module;
