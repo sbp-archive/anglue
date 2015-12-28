@@ -4,6 +4,7 @@
   "authors": [
     "Tommy Maintz <tommy.maintz@gmail.com>"
   ],
+  "main": "dist/amd/anglue.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
